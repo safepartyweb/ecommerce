@@ -30,6 +30,7 @@ export default function Navbar() {
         <>
           <Link href="/login" style={{ marginRight: '1rem' }}>Login</Link>
           <Link href="/register">Register</Link>
+          <Link href="/dashboard">Dashboard</Link>
         </>
       )}
     </nav>

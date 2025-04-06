@@ -2,14 +2,13 @@
 
 import { useSelector } from 'react-redux';
 import { redirect } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useUserBootstrap from '@/hooks/useUserBootstrap';
 import Loader from '@/components/Loader';
 
 export default function DashboardPage() {
   const { loading } = useUserBootstrap();
   const { user } = useSelector((state) => state.auth);
-  const [showLoader, setShowLoader] = useState(true)
   
 
 
@@ -17,15 +16,17 @@ export default function DashboardPage() {
 
 
     if (!user) {
-      //redirect('/login');
+      // redirect('/login');
+    }
+    if(user){
     }
   }, [user]);
 
   if (!user) {
-    return null; // or loading spinner
+    return <Loader />; // or loading spinner
   }
   // console.log("user", user)
-  if (loading) return <p>Loading dashboard...</p>;
+  if (loading) return <Loader />;
   return (
     <div>
       <h1>Dashboard</h1>
