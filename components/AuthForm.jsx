@@ -33,10 +33,14 @@ export default function AuthForm({ isLogin }) {
         formData.append('email', email);
         formData.append('password', password);
         const apiRes = await login(formData).unwrap();
-        console.log("apiRes", apiRes)
+        // console.log("apiRes", apiRes)
         dispatch(setCredentials(apiRes.user))
       } else {
-        await register({ email, password, name }).unwrap();
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('name', name);
+        const apiRes = await register(formData).unwrap();
+        console.log("apiRes:", apiRes)
       }
       router.push('/dashboard');
     } catch (err) {

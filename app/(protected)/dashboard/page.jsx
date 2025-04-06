@@ -22,7 +22,7 @@ export default function DashboardPage() {
   if (!user) {
     return null; // or loading spinner
   }
-  console.log("user", user)
+  // console.log("user", user)
   if (loading) return <p>Loading dashboard...</p>;
   return (
     <div>

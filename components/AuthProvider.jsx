@@ -14,7 +14,8 @@ import { logout } from '@/store/authSlice';
 export default function AuthProvider({ children }) {
   return (
     <Provider store={store}>
-        <AuthInitializer>{children}</AuthInitializer>
+        {/* <AuthInitializer>{children}</AuthInitializer> */}
+        {children}
     </Provider>
   );
 }

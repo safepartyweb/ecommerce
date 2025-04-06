@@ -7,11 +7,11 @@ import AuthForm from '@/components/AuthForm';
 
 export default function LoginPage() {
   const { user } = useSelector((state) => state.auth);
-  console.log("user", user)
+  // console.log("user from login page", user)
 
   useEffect(() => {
-    console.log("Use effect running!")
-    console.log("user", user)
+    // console.log("Use effect running!")
+    // console.log("user", user)
     if (user) {
       redirect('/dashboard');
     }

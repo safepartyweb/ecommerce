@@ -51,29 +51,13 @@ export default function useUserBootstrap() {
   useEffect(() => {
     if (error) {
       console.log("Error", error)
-      //router.push('/login');
+      router.push('/login');
     }
 
     if(data){
-      console.log("data",data)
+      console.log("data from me Hook:",data)
       dispatch(setCredentials(data.user))
-      
-      
-      /*
-      dispatch(setCredentials({
-        user: {
-          id: data.user.id,
-          name: data.user.name,
-          email: data.user.email
-          // Add other fields your slice expects
-        }
-      }
-        
-        
 
-      ))
-
-      */
       setLoading(false);
     }
   }, [error, data]);

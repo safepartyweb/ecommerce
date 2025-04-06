@@ -37,8 +37,9 @@ export async function POST(req) {
       { userId: user._id.toString() }, jwtSecret, { expiresIn: '1d' }
     );
     
+    const cookieStore = await cookies();
     
-    cookies().set('token', token, {
+    cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 24 * 60 * 60, // 1 day in seconds
@@ -55,6 +56,7 @@ export async function POST(req) {
     return Response.json({ message: "success!", user:userData }, { status: 200 })
 
   } catch (error) {
+    console.log("Login Error:", error)
     return Response.json({ message: "Something went wrong!", error }, { status: 500 })
   }
 

@@ -5,7 +5,8 @@ export async function POST(request) {
   console.log("Logout route hit!")
   try {
     // Clear the HTTP-only cookie
-    cookies().delete('token');
+    const cookieStore = await cookies();
+    cookieStore.delete('token');
     
     return NextResponse.json(
       { success: true, message: 'Logged out successfully' },

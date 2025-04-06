@@ -24,7 +24,7 @@ export default function Navbar() {
         <>
           <Link href="/dashboard" style={{ marginRight: '1rem' }}>Dashboard</Link>
           <button onClick={handleLogout}>Logout</button>
-          <Link href="/login" style={{ marginRight: '1rem' }}>Login</Link>
+          {/* <Link href="/login" style={{ marginRight: '1rem' }}>Login</Link> */}
         </>
       ) : (
         <>

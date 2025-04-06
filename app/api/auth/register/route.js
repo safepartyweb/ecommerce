@@ -14,7 +14,7 @@ export async function POST(req) {
   await connectMongo();
   const formData = await req.formData();
   const data = Object.fromEntries(formData);
-  console.log("data",data)
+  // console.log("data",data)
 
   try {
     const newUser = await User.create(data)
