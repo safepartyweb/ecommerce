@@ -26,6 +26,7 @@ export default function DashboardPage() {
     return <Loader />; // or loading spinner
   }
   // console.log("user", user)
+  // if (loading) return 'Loading dboard';
   if (loading) return <Loader />;
   return (
     <div>

@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 4000",
     "lint": "next lint"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
+    "framer-motion": "^12.7.4",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "next": "15.2.4",
