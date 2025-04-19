@@ -35,6 +35,9 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 */
+body{
+  color:#011E42;
+}
 
 .loader_screen{
   position: fixed;
@@ -75,6 +78,52 @@ body {
   left: 0;
 }
 
+/* .swiper-slide{background: #ddd;} */
+.swiper-pagination-bullet{
+  background: #ddd !important;
+  opacity: .5 !important;
+}
+
+.swiper-pagination-bullet.swiper-pagination-bullet-active{
+  background: #fff;
+  opacity: 1 !important;
+}
+
+
+
+
+.sec_marque .swiper-wrapper{
+  align-items: center;
+}
+
+.product_slider .swiper-button-prev::after{
+  display: none;
+}
+
+.product_slider .swiper-button-prev{
+  background: url('/images/arrow_left_white.svg') no-repeat center center;
+  background-size: contain;
+  width: 40px;
+  height: 40px;
+  background-color: #011E42;
+  border-radius: 100%;
+  background-position:center center; 
+  background-size:25px;
+}
+.product_slider .swiper-button-next::after{
+  display: none;
+}
+
+.product_slider .swiper-button-next{
+  background: url('/images/arrow_right_white.svg') no-repeat center center;
+  background-size: contain;
+  width: 40px;
+  height: 40px;
+  background-color: #011E42;
+  border-radius: 100%;
+  background-position:center center; 
+  background-size:25px;
+}
 
 
 /* ======== Responsive ========== */
