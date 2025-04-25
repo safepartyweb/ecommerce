@@ -66,7 +66,7 @@ export default function Navbar() {
           {/* Mobile Toggle */}
           {isMobile && (
             <div
-              className='cursor-pointer z-30'
+              className='cursor-pointer z-30 hidden'
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               <Image
@@ -104,18 +104,18 @@ export default function Navbar() {
                     animate='visible'
                     exit='exit'
                   >
-                    <ul className='sub_menu bg-gray-300 min-w-[200px] px-4 py-2 rounded shadow-lg'>
-                      <li>
-                        <Link href='#'>Product 1</Link>
+                    <ul className='sub_menu bg-siteBlack text-white min-w-[200px] px-4 py-2 rounded shadow-lg'>
+                      <li className='w-full'>
+                        <Link className='py-2 border-b border-gray-400 block w-full' href='#'>Product 1</Link>
                       </li>
-                      <li>
-                        <Link href='#'>Product 2</Link>
+                      <li className='w-full'>
+                        <Link className='py-2 border-b border-gray-400 block w-full' href='#'>Product 2</Link>
                       </li>
-                      <li>
-                        <Link href='#'>Product 3</Link>
+                      <li className='w-full'>
+                        <Link className='py-2 border-b border-gray-400 block w-full' href='#'>Product 3</Link>
                       </li>
-                      <li>
-                        <Link href='#'>Product 4</Link>
+                      <li className='w-full'>
+                        <Link className='py-2 border-b border-gray-400 block w-full' href='#'>Product 4</Link>
                       </li>
                     </ul>
                   </motion.div>
@@ -126,15 +126,15 @@ export default function Navbar() {
             {user ? (
               <>
                 <li>
-                  <Link href='/dashboard'>Dashboard</Link>
+                  <Link href='/admin'>Dashboard</Link>
                 </li>
                 <li>
-                  <button onClick={handleLogout}>Logout</button>
+                  <button className='cursor-pointer'  onClick={handleLogout}>Logout</button>
                 </li>
               </>
             ) : (
               <>
-                <li>
+                {/* <li>
                   <Link href='/login'>Login</Link>
                 </li>
                 <li>
@@ -142,6 +142,18 @@ export default function Navbar() {
                 </li>
                 <li>
                   <Link href='/dashboard'>Dashboard</Link>
+                </li> */}
+                <li>
+                  <Link href='/about'>About</Link>
+                </li>
+                <li>
+                  <Link href='/'>Members</Link>
+                </li>
+                <li>
+                  <Link href='/contact'>Contact</Link>
+                </li>
+                <li>
+                  <Link href='/login'>Login</Link>
                 </li>
               </>
             )}

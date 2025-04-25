@@ -3,6 +3,7 @@ import Image from 'next/image'
 import ProductImage from '../../images/products/bubblegum.gif'
 import ProductImage2 from '../../images/products/Raspberry.gif'
 import BlackButton from '../BlackButton'
+import AnimatedBlock from '../shared/MotionParent'
 
 const NewArrivals = () => {
   return (
@@ -11,6 +12,18 @@ const NewArrivals = () => {
         <h2 className='text-3xl md:text-5xl font-bold text-center mb-10'>New Arrivals</h2>
         <div className="prodcuts_wrap flex gap-5 md:gap-8 justify-center flex-wrap ">
           
+
+          
+
+
+          
+ 
+
+
+
+
+
+
           <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full sm:w-[45%] lg:w-[30%]">
             <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
             <div className="product_meta">

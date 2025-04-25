@@ -57,7 +57,6 @@ export default function useUserBootstrap() {
     if(data){
       console.log("data from me Hook:",data)
       dispatch(setCredentials(data.user))
-
       setLoading(false);
     }
   }, [error, data]);

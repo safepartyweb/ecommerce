@@ -5,8 +5,10 @@ import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import useUserBootstrap from '@/hooks/useUserBootstrap';
 import Loader from '@/components/Loader';
+import Link from 'next/link';
+import DashboardLeft from '@/components/admin/DashboardLeft';
 
-export default function DashboardPage() {
+export default function DashboardLayout({children}) {
   const { loading } = useUserBootstrap();
   const { user } = useSelector((state) => state.auth);
   
@@ -25,14 +27,26 @@ export default function DashboardPage() {
   if (!user) {
     return <Loader />; // or loading spinner
   }
-  // console.log("user", user)
-  // if (loading) return 'Loading dboard';
+
   if (loading) return <Loader />;
+  
   return (
-    <div>
-      <h1>Dashboard</h1>
-      <p>Welcome, {user.name}!</p>
-      <p>Your email: {user.email}</p>
-    </div>
+    
+    <section className="sec_admin ">
+      <div className="container max-w-sitemax px-4 pl-0 mx-auto ">
+        <div className="dashboard_wrapper flex gap-10 justify-between">
+          
+          <DashboardLeft />
+
+          <div className="dashboard_right w-full py-6 md:py-10">
+            {children}
+          </div>
+
+        </div>
+        
+      </div>
+    </section>
+
+
   );
 }
