@@ -90,9 +90,9 @@ export default function Navbar() {
               onMouseEnter={() => !isMobile && setIsOpen(true)}
               onMouseLeave={() => !isMobile && setIsOpen(false)}
             >
-              <span className='flex gap-[2px] items-center'>
+              <span className='flex gap-[6px] items-center'>
                 Shop
-                <Image src={ArrowDown} width={16} height={16} alt='arrow down' />
+                <Image className='relative top-[3px]'  src={ArrowDown} width={12} height={16} alt='arrow down' />
               </span>
               
               <AnimatePresence>

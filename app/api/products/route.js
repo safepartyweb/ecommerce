@@ -7,19 +7,31 @@ export async function GET() {
 
 
 export async function POST(req) {
+
   // const reqBody = await req.json();
   // console.log("Request Data", reqBody);
   await connectMongo();
   const formData = await req.formData();
   const data = Object.fromEntries(formData);
-  console.log("data",data)
+  const images = JSON.parse(data.images);
+
+  const title = data.title;
+  const price = data.price;
+  const stock = data.stock;
+  const description = data.description;
+  const bestSeller = data.bestSeller;
+  // console.log("data",title, price, stock, description,images  )
+  console.log("bestSeller",bestSeller  )
+
 
   try {
-    const newProduct = await Product.create(data)
+    const newProduct = await Product.create({title,price,stock,description,images,bestSeller })
     return Response.json({ message: "success!", product:newProduct }, { status: 200 })
   } catch (error) {
     return Response.json({ message: "Something went wrong!", error }, { status: 500 })
   }
+
+//return Response.json({ message: "test!", }, { status: 200 })
   
 }
 

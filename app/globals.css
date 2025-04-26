@@ -125,8 +125,12 @@ body{
   background-size:25px;
 }
 
-/* body a{color:#0990C4} */
-/* body a:hover{color:#06678e} */
+.bestSeller{display:none}
+.bestSeller + label{display: flex; gap:8px; align-items: center;}
+.bestSeller + label img.normal{display:block}
+.bestSeller + label img.checked{display:none}
+.bestSeller:checked + label img.normal{display:none}
+.bestSeller:checked + label img.checked{display:block}
 
 /* ======== Responsive ========== */
 

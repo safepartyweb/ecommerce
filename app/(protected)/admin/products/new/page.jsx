@@ -2,6 +2,10 @@
 import { useState } from "react";
 import uploadImage from "@/components/admin/UploadImage";
 import Image from "next/image";
+import { useCreateProductMutation } from "@/lib/api/productApi";
+import BlackButton from "@/components/BlackButton";
+import Checkbox from '@/images/checkbox-black.svg'
+import CheckboxChecked from '@/images/checkbox-black-checked.svg'
 
 export default function AddProduct() {
   const [data, setData] = useState({
@@ -9,8 +13,11 @@ export default function AddProduct() {
     price: "",
     description: "",
     stock: "",
-    image: null,
+    images: [],
+    bestSeller:false
   });
+
+  const [createProduct, {isLoading}] = useCreateProductMutation();
 
   const handleChange = async (e) => {
     const { name, value, type, files } = e.target;
@@ -20,62 +27,46 @@ export default function AddProduct() {
         [name]: value,
       }));
     }else{
-      const imgApiRes =  await uploadImage(files[0])
+      const files = Array.from(e.target.files);
+      const imgApiRes =  await uploadImage(files)
       console.log("imgApiRes",imgApiRes)
+      
+      
       setData((prev) => ({
         ...prev,
-        image: imgApiRes.secure_url
-      }))
+        images: imgApiRes
+      }))    
     }
-    
   };
+
+  const bestSellerHandler = (e) =>{
+    const isChecked = e.target.checked;
+    // console.log("Best Seller:", isChecked);
+    setData((prev) => ({
+      ...prev,
+      bestSeller: isChecked
+    }))  
+    
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('title', data.title);
+    formData.append('price', data.price);
+    formData.append('description', data.description);
+    formData.append('stock', data.stock);
+    formData.append('bestSeller', data.bestSeller);
+    formData.append('images', JSON.stringify(data.images));
 
 
+    const apiRes =  await createProduct(formData).unwrap();
+    console.log("apiRes",apiRes)
 
-    // const data ={
-    //   title: data.title,
-    //   price: data.price,
-    //   description: data.description,
-    //   stock: data.stock,
-    //   image: data.image,
-    // }
-
-    
-    console.log("Data",data)
-
-    /*
-    try {
-      // Replace this with your actual API
-      const res = await fetch("/api/products", {
-        method: "POST",
-        body: data,
-      });
-
-      const result = await res.json();
-      console.log("✅ Product Created:", result);
-      alert("Product created successfully!");
-
-      // Optional: reset form
-      setFormData({
-        title: "",
-        price: "",
-        description: "",
-        stock: "",
-        image: null,
-      });
-    } catch (err) {
-      console.error("❌ Failed to create product", err);
-      alert("Something went wrong!");
-    }
-
-    */
   };
 
   return (
-    <div className="new_product p-6 bg-white rounded shadow">
+    <div className="new_product p-0 md:p-6 bg-white rounded shadow">
       <h1 className="text-xl font-bold mb-4">Add New Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -88,12 +79,13 @@ export default function AddProduct() {
             onChange={handleChange}
             className="border rounded w-full px-3 py-2"
             accept="image/*"
+            multiple
           />
           {data.image? <Image src={data.image} alt="Product Image" width={50} height={50} /> : ''}
           
         </div>
         
-        {/* Title */}
+
         <div className="input_group">
           <label className="block font-medium">Product Title</label>
           <input
@@ -105,7 +97,7 @@ export default function AddProduct() {
           />
         </div>
 
-        {/* Price */}
+
         <div className="input_group">
           <label className="block font-medium">Price</label>
           <input
@@ -117,7 +109,7 @@ export default function AddProduct() {
           />
         </div>
 
-        {/* Description */}
+
         <div className="input_group">
           <label className="block font-medium">Description</label>
           <textarea
@@ -128,7 +120,16 @@ export default function AddProduct() {
           />
         </div>
 
-        {/* Stock */}
+        <div className="input_group flex gap-2 items-center">
+          <input onChange={bestSellerHandler} id="bestseller" name="bestseller" type="checkbox"  className="bestSeller" />
+          <label  htmlFor="bestseller" className="block font-medium ">
+            <Image className="normal" src={Checkbox} alt="icon" width={32} height={32} />
+            <Image className="checked" src={CheckboxChecked} alt="icon" width={32} height={32} />
+            Best Seller?
+          </label>
+        </div>
+
+
         <div className="input_group">
           <label className="block font-medium">Stock</label>
           <input
@@ -139,13 +140,8 @@ export default function AddProduct() {
             className="border rounded w-full px-3 py-2"
           />
         </div>
+        <button className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer">Add Product</button>
 
-        <button
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-        >
-          Add Product
-        </button>
       </form>
     </div>
   );
