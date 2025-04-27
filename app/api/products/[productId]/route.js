@@ -1,15 +1,17 @@
 import connectMongo from "@/lib/db";
 import Product from "@/models/Product";
 
-//get all products
-export async function GET() {
 
-  const allProducts = await Product.find();
+//get single product
+export async function GET(req, { params }) {
+  const {productId} = params
+  console.log("productId",productId)
+  const product = await Product.findById(productId)
 
-  return Response.json({ message: "Success!", products:allProducts }, { status: 200 });
+  return Response.json({ message: "success!",product }, { status: 200 });
 }
 
-//create product
+/*
 export async function POST(req) {
 
   // const reqBody = await req.json();
@@ -25,8 +27,7 @@ export async function POST(req) {
   const description = data.description;
   const bestSeller = data.bestSeller;
   // console.log("data",title, price, stock, description,images  )
-  // console.log("bestSeller",bestSeller  )
-  console.log("images:",images  )
+  console.log("bestSeller",bestSeller  )
 
 
   try {
@@ -40,7 +41,7 @@ export async function POST(req) {
   
 }
 
-//edit product
+
 export async function PATCH(req) {
 
   await connectMongo();
@@ -67,7 +68,7 @@ export async function PATCH(req) {
   }
 }
 
-//delete product
+
 export async function DELETE(req) {
   await connectMongo();
   const formData = await req.formData();
@@ -92,4 +93,4 @@ export async function DELETE(req) {
   return Response.json({ message: "PATCH route!" }, { status: 200 });
 }
 
-
+*/

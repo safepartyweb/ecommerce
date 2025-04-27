@@ -6,6 +6,11 @@ import { useCreateProductMutation } from "@/lib/api/productApi";
 import BlackButton from "@/components/BlackButton";
 import Checkbox from '@/images/checkbox-black.svg'
 import CheckboxChecked from '@/images/checkbox-black-checked.svg'
+import Loader from "@/components/Loader";
+import {toast} from 'react-toastify'
+import { useRouter } from 'next/navigation';
+
+
 
 export default function AddProduct() {
   const [data, setData] = useState({
@@ -16,9 +21,10 @@ export default function AddProduct() {
     images: [],
     bestSeller:false
   });
+  const [showLoader, setShowLoader] = useState(false)
 
   const [createProduct, {isLoading}] = useCreateProductMutation();
-
+  const router = useRouter();
   const handleChange = async (e) => {
     const { name, value, type, files } = e.target;
     if(name !== 'image'){
@@ -45,12 +51,13 @@ export default function AddProduct() {
     setData((prev) => ({
       ...prev,
       bestSeller: isChecked
-    }))  
+    }))
     
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShowLoader(true)
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('price', data.price);
@@ -59,14 +66,26 @@ export default function AddProduct() {
     formData.append('bestSeller', data.bestSeller);
     formData.append('images', JSON.stringify(data.images));
 
-
-    const apiRes =  await createProduct(formData).unwrap();
-    console.log("apiRes",apiRes)
+    try {
+      const apiRes =  await createProduct(formData).unwrap();
+      console.log("apiRes",apiRes)
+      toast.success("Product added successfully.")
+      setTimeout(() => {
+        router.push('/admin/products');
+      }, 1500);
+    } catch (error) {
+      console.log("Error", error)
+      toast.error("Something went wrong, please try again.")
+    } finally{
+      setShowLoader(false)
+    }
+    
 
   };
 
   return (
     <div className="new_product p-0 md:p-6 bg-white rounded shadow">
+      {showLoader && <Loader /> }
       <h1 className="text-xl font-bold mb-4">Add New Product</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
