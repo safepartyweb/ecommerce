@@ -4,11 +4,36 @@ import Product from "@/models/Product";
 
 //get single product
 export async function GET(req, { params }) {
-  const {productId} = params
-  console.log("productId",productId)
-  const product = await Product.findById(productId)
+  try {
+    const { productId } = await params;
+    
+    if (!productId) {
+      return Response.json(
+        { success: false, message: "Product ID is required" },
+        { status: 400 }
+      );
+    }
 
-  return Response.json({ message: "success!",product }, { status: 200 });
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return Response.json(
+        { success: false, message: "Product not found" },
+        { status: 404 }
+      );
+    }
+
+    return Response.json(
+      { success: true, product },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    return Response.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
 
 /*

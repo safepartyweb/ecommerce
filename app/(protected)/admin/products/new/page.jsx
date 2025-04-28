@@ -35,7 +35,7 @@ export default function AddProduct() {
     }else{
       const files = Array.from(e.target.files);
       const imgApiRes =  await uploadImage(files)
-      console.log("imgApiRes",imgApiRes)
+      // console.log("imgApiRes",imgApiRes)
       
       
       setData((prev) => ({

@@ -132,9 +132,11 @@ body{
 .bestSeller:checked + label img.normal{display:none}
 .bestSeller:checked + label img.checked{display:block}
 .verticaldots{height: 42px; width: auto;}
-
-
-
+.thumb_slider .swiper-slide{opacity: 0.5;}
+.thumb_slider .swiper-slide.swiper-slide-thumb-active{opacity: 1;}
+.product_wrap .swiper img{object-fit: contain;}
+.product_wrap .main_image{padding:16px !important }
+.swiper-thumbs .swiper-slide{border:1px solid #6A7282; border-radius:4px; padding:6px;}
 
 
 

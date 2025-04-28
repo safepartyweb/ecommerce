@@ -31,7 +31,7 @@ export default function LoginPage() {
 
           <AnimatedBlock className='' direction="up">
             <AuthForm isLogin={true} />
-            <p className="register_link mt-6 text-center">Don't have an account? <Link className="text-bold" href="/register">Register here.</Link></p>
+            <p className="register_link mt-6 text-center">Don&apos;t have an account? <Link className="text-bold" href="/register">Register here.</Link></p>
           </AnimatedBlock>          
           
         </div>

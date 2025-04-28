@@ -2,6 +2,7 @@ import React,{useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import VerDot from '@/images/verticaldots.svg'
 import Link from 'next/link'
+import AnimatedBlock from '@/components/shared/MotionParent'
 
 const SingleProductItem = ({prod,sl}) => {
   
@@ -29,6 +30,7 @@ const SingleProductItem = ({prod,sl}) => {
   }, []);
 
   return (
+    <AnimatedBlock direction="up">
     <div className='flex gap-2 justify-between items-center border-b border-gray-500 pb-4'>
       <div className="prod_sl flex-1">{sl+1}.</div>
       <div className="prod_img flex-3"> {prod.images[0] ? <Image src={prod.images[0].url} alt="Product Image" width={50} height={50} /> :'No image'}   </div>
@@ -40,7 +42,7 @@ const SingleProductItem = ({prod,sl}) => {
         {showOptions && <div  className="options absolute top-[110%] right-0 bg-gray-700 p-6 min-w-[200px] text-white rounded z-10">
           <ul>
             <li className='py-2 border-b border-gray-300 w-full cursor-pointer'>
-              <Link href={`/admin/products/${prod._id}`}>See Details</Link>
+              <Link href={`/admin/products/${prod._id}`}>View Details</Link>
               
             </li>
             <li className='py-2 border-b border-gray-300 w-full cursor-pointer'>
@@ -54,6 +56,7 @@ const SingleProductItem = ({prod,sl}) => {
       </div>
 
     </div>
+    </AnimatedBlock>
   )
 }
 

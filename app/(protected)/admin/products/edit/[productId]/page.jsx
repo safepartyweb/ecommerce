@@ -3,6 +3,7 @@ import React,{useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useGetSingleProductQuery } from '@/lib/api/productApi'
 import Loader from '@/components/Loader'
+import ProductEdit from '@/components/admin/product/ProductEdit'
 
 const page = () => {
   const {productId} = useParams()
@@ -40,9 +41,7 @@ const page = () => {
   return (
     <div>
       <h2 className='text-xl font-bold'>{product.title}</h2>
-      <div className="images">
-
-      </div>
+      <ProductEdit product={product} />
     </div>
   )
 }

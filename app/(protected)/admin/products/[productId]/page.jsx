@@ -3,6 +3,8 @@ import React,{useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useGetSingleProductQuery } from '@/lib/api/productApi'
 import Loader from '@/components/Loader'
+import ThumbnailSlider from '@/components/ThumbnailSlider'
+import BlackButton from '@/components/BlackButton'
 
 const page = () => {
   const {productId} = useParams()
@@ -34,13 +36,29 @@ const page = () => {
   if(isLoading){
     return <Loader />
   }
-  console.log("data",data)
+  console.log("Product data",data)
   const product = data.product;
 
   return (
     <div>
-      <h2 className='text-xl font-bold'>{product.title}</h2>
-      <div className="images">
+      
+      <div className="product_title flex justify-between items-center mb-6 flex-col sm:flex-row gap-4">
+        <h1 className='text-2xl font-bold'>{product.title}</h1>
+        <BlackButton link={`/admin/products/edit/${product._id}`}>Edit Product</BlackButton>
+      </div>
+
+      <div className="product_wrap grid grid-cols-2 gap-16 ">
+        
+        <div className="images col-span-2 lg:col-span-1 ">
+          <ThumbnailSlider images={product.images} />
+        </div>
+
+        <div className="prod_details ">
+          
+          <p className="text-lg font-medium">Price: {product.price}</p>
+          <p className="text-lg font-medium">Details: {product.description}</p>
+          <p className="text-lg font-medium">Best Seller? {product.bestSeller ? 'Yes' : 'No'}</p>
+        </div>
 
       </div>
     </div>

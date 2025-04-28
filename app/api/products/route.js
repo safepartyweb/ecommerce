@@ -48,6 +48,7 @@ export async function PATCH(req) {
   const data = Object.fromEntries(formData);
   console.log("data",data)
   const productId = data.productId;
+  const images = JSON.parse(data.images);
 
   try {
     const product = await Product.findById(productId);
@@ -55,9 +56,12 @@ export async function PATCH(req) {
       throw new Error("Product not found!")
     }
 
-    product.name = data.name || product.name;
+    product.title = data.title || product.title;
     product.price = data.price || product.price;
     product.description = data.description || product.description;
+    product.stock = data.stock || product.stock;
+    product.bestSeller = data.bestSeller || product.bestSeller;
+    product.images = images || product.images;
 
     const updatedProduct = await product.save();
 
