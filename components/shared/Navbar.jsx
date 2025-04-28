@@ -1,35 +1,39 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
-import { useLogoutMutation } from '@/lib/api/authApi';
+import { useSelector, useDispatch } from 'react-redux';
+import { useLogOutMutation } from '@/lib/api/authApi';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import ArrowDown from '../../images/arrow_down.png'
-
+import ArrowDown from '../../images/arrow_down.png';
+import { logout } from '@/store/authSlice';
+import { setCredentials } from '@/store/authSlice';
 
 export default function Navbar() {
-  const { user } = useSelector((state) => state.auth);
-  const [logout] = useLogoutMutation();
+  const { userInfo } = useSelector((state) => state.auth);
+  const [logOut] = useLogOutMutation();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);  // State to check if it's client side
+  const dispatch = useDispatch()
+
 
   const handleLogout = async () => {
     try {
-      await logout();
-      window.location.href = '/login';
+      dispatch(logout())
+      const logOutHandler = await logOut();
+      console.log("logOutHandler", logOutHandler)
+      //window.location.href = '/login';
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
   useEffect(() => {
-
+    setIsClient(true);  // Ensures the component renders only on the client side
   }, []);
-
-
 
   const menuVariants = {
     hidden: { opacity: 0, y: -10 },
@@ -49,6 +53,19 @@ export default function Navbar() {
       transition: { duration: 0.2, ease: 'easeIn' },
     },
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userInfo = localStorage.getItem('userInfo');
+      if (userInfo) {
+        dispatch(setCredentials(JSON.parse(userInfo)));
+      }
+    }
+  }, [dispatch]);
+
+  if (!isClient) {
+    return null; // Prevent rendering before the component has been hydrated
+  }
 
   return (
     <header className='border-b border-gray-500 py-4'>
@@ -79,7 +96,7 @@ export default function Navbar() {
           )}
 
           <nav
-            className={`text-xl font-medium main_menu list-none hidden lg:flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-4 transition-all duration-300 bg-white md:bg-transparent absolute md:static top-full md:top-auto left-0 w-full md:w-auto p-6 md:p-0 shadow-md md:shadow-none z-20  `}
+            className={`text-xl font-medium main_menu list-none hidden lg:flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-4 transition-all duration-300 bg-white md:bg-transparent absolute md:static top-full md:top-auto left-0 w-full md:w-auto p-6 md:p-0 shadow-md md:shadow-none z-20`}
           >
             <li>
               <Link href='/'>Home</Link>
@@ -92,7 +109,7 @@ export default function Navbar() {
             >
               <span className='flex gap-[6px] items-center'>
                 Shop
-                <Image className='relative top-[3px]'  src={ArrowDown} width={12} height={16} alt='arrow down' />
+                <Image className='relative top-[3px]' src={ArrowDown} width={12} height={16} alt='arrow down' />
               </span>
               
               <AnimatePresence>
@@ -123,31 +140,22 @@ export default function Navbar() {
               </AnimatePresence>
             </li>
 
-            {user ? (
+            {userInfo ? (
               <>
                 <li>
                   <Link href='/admin'>Dashboard</Link>
                 </li>
                 <li>
-                  <button className='cursor-pointer'  onClick={handleLogout}>Logout</button>
+                  <button className='cursor-pointer' onClick={handleLogout}>Logout</button>
                 </li>
               </>
             ) : (
               <>
-                {/* <li>
-                  <Link href='/login'>Login</Link>
-                </li>
-                <li>
-                  <Link href='/register'>Register</Link>
-                </li>
-                <li>
-                  <Link href='/dashboard'>Dashboard</Link>
-                </li> */}
                 <li>
                   <Link href='/about'>About</Link>
                 </li>
                 <li>
-                  <Link href='/'>Members</Link>
+                  <Link href='/admin'>Members</Link>
                 </li>
                 <li>
                   <Link href='/contact'>Contact</Link>
@@ -160,47 +168,37 @@ export default function Navbar() {
           </nav>
 
           <nav
-            className={`text-xl font-medium main_menu list-none hidden lg:hidden flex-col md:flex-row items-start md:items-center gap-6 md:gap-4 transition-all duration-300 bg-white md:bg-transparent absolute md:static top-full md:top-auto left-0 w-full md:w-auto p-6 md:p-0 shadow-md md:shadow-none z-20  `}
+            className={`text-xl font-medium main_menu list-none hidden lg:hidden flex-col md:flex-row items-start md:items-center gap-6 md:gap-4 transition-all duration-300 bg-white md:bg-transparent absolute md:static top-full md:top-auto left-0 w-full md:w-auto p-6 md:p-0 shadow-md md:shadow-none z-20`}
           >
             <li>
               <Link href='/'>Home</Link>
             </li>
 
-            <li
-              className='cursor-pointer list-none relative flex gap-[2px] items-center has_children'
-            >
+            <li className='cursor-pointer list-none relative flex gap-[2px] items-center has_children'>
               <span className='flex gap-[2px] items-center'>
                 Shop
                 <Image src={ArrowDown} width={16} height={16} alt='arrow down' />
               </span>
-              
-              
-                  <div
-                    className='submenu_wrap absolute left-0 pt-4 z-20 top-full'
-                    variants={menuVariants}
-                    initial='hidden'
-                    animate='visible'
-                    exit='exit'
-                  >
-                    <ul className='sub_menu bg-gray-300 min-w-[200px] px-4 py-2 rounded shadow-lg'>
-                      <li>
-                        <Link href='#'>Product 1</Link>
-                      </li>
-                      <li>
-                        <Link href='#'>Product 2</Link>
-                      </li>
-                      <li>
-                        <Link href='#'>Product 3</Link>
-                      </li>
-                      <li>
-                        <Link href='#'>Product 4</Link>
-                      </li>
-                    </ul>
-                  </div>
-                  
+
+              <div className='submenu_wrap absolute left-0 pt-4 z-20 top-full'>
+                <ul className='sub_menu bg-gray-300 min-w-[200px] px-4 py-2 rounded shadow-lg'>
+                  <li>
+                    <Link href='#'>Product 1</Link>
+                  </li>
+                  <li>
+                    <Link href='#'>Product 2</Link>
+                  </li>
+                  <li>
+                    <Link href='#'>Product 3</Link>
+                  </li>
+                  <li>
+                    <Link href='#'>Product 4</Link>
+                  </li>
+                </ul>
+              </div>
             </li>
 
-            {user ? (
+            {userInfo ? (
               <>
                 <li>
                   <Link href='/dashboard'>Dashboard</Link>
@@ -223,9 +221,6 @@ export default function Navbar() {
               </>
             )}
           </nav>
-
-
-
 
           <div className='header_right cart_wrap flex items-center gap-2 cursor-pointer z-10'>
             <p className='cart_amount font-bold text-xl'>

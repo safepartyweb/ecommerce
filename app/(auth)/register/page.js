@@ -12,7 +12,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (user) {
-      redirect('/dashboard');
+      redirect('/admin');
     }
   }, [user]);
 

@@ -14,8 +14,9 @@ export default function useUserBootstrap() {
 
   const {data, isLoading, isError, error} = useGetMeQuery();
 
-  /*
+ 
   useEffect(() => {
+    
     const fetchUser = async () => {
       try {
         const res = await fetch('/api/me'); // sends cookie automatically
@@ -36,20 +37,22 @@ export default function useUserBootstrap() {
       }
     };
 
-    //fetchUser();
+    fetchUser();
     if(data){
       console.log("datafound",data)
     }
     if(isError){
       console.log("error",error)
     }
-  }, [dispatch, isLoading, data, redirectIfUnauthed]);
+  }, [dispatch, isLoading, data]);
 
 
-  */
+  
 
+  /*
   useEffect(() => {
-    if (error) {
+    console.log("useEffect running from user Bootstrap file")
+    if (isError) {
       console.log("Error", error)
       router.push('/login');
     }
@@ -59,7 +62,10 @@ export default function useUserBootstrap() {
       dispatch(setCredentials(data.user))
       setLoading(false);
     }
-  }, [error, data]);
+  }, [error,isError, data]);
+*/
+
+
 
   return { loading };
 

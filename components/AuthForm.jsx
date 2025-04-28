@@ -9,6 +9,7 @@ import Button from './Button';
 import BlackButton from './BlackButton';
 import Link from 'next/link';
 import Loader from './Loader';
+import { toast } from "react-toastify";
 
 
 export default function AuthForm({ isLogin }) {
@@ -43,17 +44,20 @@ export default function AuthForm({ isLogin }) {
         const apiRes = await login(formData).unwrap();
         // console.log("apiRes", apiRes)
         dispatch(setCredentials(apiRes.user))
+        toast.success("Login successful!")
       } else {
         formData.append('email', email);
         formData.append('password', password);
         formData.append('name', name);
         const apiRes = await register(formData).unwrap();
         console.log("apiRes:", apiRes)
+        toast.success("Registration successful!")
       }
-      router.push('/dashboard');
+      router.push('/admin');
     } catch (err) {
       console.log("Error", err)
       setError(err.data?.message || 'Something went wrong');
+      toast.error(err.data?.message || 'Something went wrong')
     } finally{
       setShowLoader(false)
     }

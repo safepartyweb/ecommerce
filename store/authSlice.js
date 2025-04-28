@@ -1,20 +1,34 @@
+'use client'
 import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from '@/lib/api/authApi';
 
+// const initialState = {
+//   userInfo: typeof window !== 'undefined' && localStorage.getItem('userInfo')
+//     ? JSON.parse(localStorage.getItem('userInfo'))
+//     : null
+// };
+
+const initialState = {
+  userInfo: null,
+};
+
+
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    user: null,
-  },
+  initialState,
   reducers: {
     setCredentials: (state, action) => {
       // console.log("Payload", action.payload)
-      state.user = action.payload;
+      state.userInfo = action.payload;
+      localStorage.setItem('userInfo', JSON.stringify(action.payload))
     },
 
     logout: (state) => {
-      state.user = null;
+      console.log("Logiing out!")
+      state.userInfo = null;
+      localStorage.removeItem('userInfo')
     },
+
   },
 
   /*
