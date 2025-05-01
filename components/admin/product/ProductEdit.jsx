@@ -12,34 +12,31 @@ import Image from 'next/image';
 
 
 export default function ProductEdit({ product }) {
+  console.log("Product", product)
   const [title, setTitle] = useState(product.title);
   const [price, setPrice] = useState(product.price);
   const [description, setDescription] = useState(product.description);
   const [stock, setStock] = useState(product.stock);
   const [bestSeller, setBestSeller] = useState(product.bestSeller);
+  const [showHero, setShowHero] = useState(product.showHero);
   const [images, setImages] = useState(product.images || []);
   const [showLoader, setShowLoader] = useState(false)
 
   const router = useRouter();
-  // Handle image remove
+
   const removeImage = (index) => {
     const newImages = [...images];
     newImages.splice(index, 1);
     setImages(newImages);
   };
 
-  // Handle new image upload (you'll complete this)
+
   const handleImageUpload = async (e) => {
     console.log("Image upload action!")
     const file = e.target.files[0];
     if (!file) return;
     const imgApiRes =  await UploadSingleImage(file)
     console.log("imgApiRes",imgApiRes) 
-
-
-    // Your upload logic here...
-    // Example pseudo code:
-    // const uploaded = await uploadImage(file);
     setImages([...images, {url:imgApiRes.secure_url, public_id:imgApiRes.public_id}]);
   };
 
@@ -55,6 +52,7 @@ export default function ProductEdit({ product }) {
     formData.append('description', description);
     formData.append('stock', stock);
     formData.append('bestSeller', bestSeller);
+    formData.append('showHero', showHero);
     formData.append('images', JSON.stringify(images));
 
     //console.log('Submitting updated product:', updatedProduct);
@@ -167,7 +165,23 @@ export default function ProductEdit({ product }) {
             Best Seller?
           </label>
 
+      </div>
 
+
+      <div className="flex items-center gap-2">
+        <input
+          id="showHero"
+          type="checkbox"
+          checked={showHero}
+          onChange={(e) => setShowHero(e.target.checked)}
+          className="w-5 h-5 bestSeller"
+        />
+
+        <label  htmlFor="showHero" className="block font-medium ">
+            <Image className="normal" src={Checkbox} alt="icon" width={32} height={32} />
+            <Image className="checked" src={CheckboxChecked} alt="icon" width={32} height={32} />
+            Show on hero slider?
+          </label>
 
       </div>
 

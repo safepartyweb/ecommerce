@@ -2,6 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { authApi } from '@/lib/api/authApi';
 
+
 // const initialState = {
 //   userInfo: typeof window !== 'undefined' && localStorage.getItem('userInfo')
 //     ? JSON.parse(localStorage.getItem('userInfo'))

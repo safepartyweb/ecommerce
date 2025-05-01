@@ -1,3 +1,7 @@
+'use client'
+
+
+import { useState } from "react";
 import Image from "next/image";
 import Loader from "@/components/Loader";
 import Hero from "@/components/home/Hero";
@@ -9,16 +13,26 @@ import HomeSlider from "@/components/home/HomeSlider";
 import BestSeller from "@/components/home/BestSeller";
 import NewsLetter from "@/components/shared/NewsLetter";
 import AnimatedBlock from "@/components/shared/MotionParent";
-
+import { useGetProductsQuery } from "@/lib/api/productApi";
 
 
 
 
 export default function Home() {
+
+  const [ showLoader, setShowLoader ] = useState()
+  const {data, isLoading} = useGetProductsQuery()
+
+  if(isLoading) return <Loader />
+
+
+
+
   return (
     <div className="">
-      {/* <Loader /> */}
-      <Hero />
+      
+      
+      <Hero productsData={data} />
       <AnimatedBlock className='' direction="up">
         <Bar />
       </AnimatedBlock>
@@ -32,7 +46,7 @@ export default function Home() {
       </AnimatedBlock>
 
       <AnimatedBlock className='' direction="up">
-        <BestSeller />
+        <BestSeller productsData={data} />
       </AnimatedBlock>
 
       <AnimatedBlock className='' direction="up">
@@ -40,7 +54,7 @@ export default function Home() {
       </AnimatedBlock>
 
       <AnimatedBlock className='' direction="up">
-        <NewArrivals />
+        <NewArrivals productsData={data} />
       </AnimatedBlock>
 
       <AnimatedBlock className='' direction="up">

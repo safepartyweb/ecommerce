@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 import useUserBootstrap from '@/hooks/useUserBootstrap';
 import Loader from '@/components/Loader';
 import Link from 'next/link';
-import DashboardLeft from '@/components/admin/DashboardLeft';
+import DashboardLeft from '@/components/customer/DashboardLeft';
 import AnimatedBlock from '@/components/shared/MotionParent';
 import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
@@ -29,7 +29,7 @@ export default function DashboardLayout({children}) {
 
     const fetchUser = async () => {
       try {
-        const res = await fetch('/api/auth/me'); // sends cookie automatically
+        const res = await fetch('/api/auth/customerme'); // sends cookie automatically
 
         if (res.ok) {
           const data = await res.json();
@@ -38,13 +38,13 @@ export default function DashboardLayout({children}) {
         } else {
           dispatch(logout());
           console.log("ftch err!")
-          router.push('/admin-login')
+          router.push('/login')
           //if (redirectIfUnauthed) router.push('/login');
         }
       } catch (err) {
         console.error('Auth check failed:', err);
         dispatch(logout());
-        router.push('/admin-login')
+        router.push('/login')
         //if (redirectIfUnauthed) router.push('/login');
       } finally {
         //setLoading(false);
@@ -54,7 +54,7 @@ export default function DashboardLayout({children}) {
     fetchUser()
 
     if (!userInfo && !locInfo ) {
-      router.push('/admin-login')
+      router.push('/login')
     }
     
   }, [userInfo]);

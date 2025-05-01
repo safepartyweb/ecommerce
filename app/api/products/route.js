@@ -1,5 +1,6 @@
 import connectMongo from "@/lib/db";
 import Product from "@/models/Product";
+import slugify from "slugify";
 
 //get all products
 export async function GET() {
@@ -19,18 +20,28 @@ export async function POST(req) {
   const data = Object.fromEntries(formData);
   const images = JSON.parse(data.images);
 
-  const title = data.title;
+  const title = data.title.trim();
+  const slug = slugify(title, { lower: true, strict: true });
   const price = data.price;
   const stock = data.stock;
   const description = data.description;
   const bestSeller = data.bestSeller;
+  const showHero = data.showHero;
   // console.log("data",title, price, stock, description,images  )
-  // console.log("bestSeller",bestSeller  )
-  console.log("images:",images  )
+  console.log("showHero",showHero  )
+  // console.log("images:",images  )
+  const existingProduct = await Product.findOne({ title: title.trim() });
+  if (existingProduct) {
+    return Response.json(
+      { message: "A product with this title already exists." },
+      { status: 409 } // 409 Conflict
+    );
+  }
+
 
 
   try {
-    const newProduct = await Product.create({title,price,stock,description,images,bestSeller })
+    const newProduct = await Product.create({title,price,stock,description,images,bestSeller,showHero,slug })
     return Response.json({ message: "success!", product:newProduct }, { status: 200 })
   } catch (error) {
     return Response.json({ message: "Something went wrong!", error }, { status: 500 })
@@ -57,11 +68,17 @@ export async function PATCH(req) {
     }
 
     product.title = data.title || product.title;
+    let slug;
+    if(data.title){
+      slug = slugify(data.title, { lower: true, strict: true });
+    }
     product.price = data.price || product.price;
     product.description = data.description || product.description;
     product.stock = data.stock || product.stock;
     product.bestSeller = data.bestSeller || product.bestSeller;
+    product.showHero = data.showHero || product.showHero;
     product.images = images || product.images;
+    product.slug = slug || product.slug;
 
     const updatedProduct = await product.save();
 

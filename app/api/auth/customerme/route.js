@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import connectMongo from '@/lib/db';
-import User from '@/models/User';
 import Customer from '@/models/Customer';
 
 export async function GET() {
@@ -24,7 +23,7 @@ export async function GET() {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
     // 3. Find user in database
-    const user = await User.findById(decoded.userId).select('-password');
+    const user = await Customer.findById(decoded.userId).select('-password');
     
     if (!user) {
       // User not found but token was valid - clear invalid token

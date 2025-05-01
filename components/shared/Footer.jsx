@@ -19,10 +19,10 @@ const Footer = () => {
                 <div className="footer_column w-full">
                   <p className="text-2xl font-bold mb-6">Accepted Payments</p>
                   <div className="payment_icons_wrap flex gap-6 flex-col ">
-                    <Image className='max-w-[120px]' src={Bitcoin} alt="payment logo" width={320} height={100} />
-                    <Image className='max-w-[120px]' src={Eth} alt="payment logo" width={320} height={100} />
-                    <Image className='max-w-[120px]' src={Litecoin} alt="payment logo" width={320} height={100} />
-                    <Image className='max-w-[120px]' src={Transfer} alt="payment logo" width={320} height={100} />
+                    <Image className='max-w-[120px] h-auto' src={Bitcoin} alt="payment logo" width={320} height={100} />
+                    <Image className='max-w-[120px] h-auto' src={Eth} alt="payment logo" width={320} height={100} />
+                    <Image className='max-w-[120px] h-auto' src={Litecoin} alt="payment logo" width={320} height={100} />
+                    <Image className='max-w-[120px] h-auto' src={Transfer} alt="payment logo" width={320} height={100} />
                   </div>
                 </div>
 

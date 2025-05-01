@@ -19,9 +19,12 @@ import AnimatedBlock from '../shared/MotionParent';
 
 
 
-const Hero = () => {
+const Hero = ({productsData}) => {
+  const products = productsData.products;
+  // console.log("products from hero",products )
 
-
+  const showHeroProducts = products.filter(product => product.showHero)
+  // console.log("showHeroProducts", showHeroProducts)
 
   return (
     <section className='sec-home-hero py-6 md:py-10 pt-12 md:pt-20'> 
@@ -56,37 +59,24 @@ const Hero = () => {
                 loop
                 className="overflow-hidden h-full rounded"
               >
-                <SwiperSlide>
+                {showHeroProducts.map(product => <SwiperSlide>
                   <div className="single_slide flex flex-col gap-4 items-center justify-center h-full bg-siteBlack text-white py-8 lg:py-0">
-                    <Image className='rounded' src={ProductImage} alt="Product Image" width={200} height={200} />
+                    <Image className='rounded' src={product.images[0].url} alt="Product Image" width={200} height={200} />
                     <div className="product_meta flex gap-0 flex-col justify-center">
-                      <p className="slide_title text-center text-uppercase font-bold">COCAINE SPRAY – BUBBLEGUM</p>
-                      <p className="slide_description text-center font-bold">$90 - $100</p>
+                      <p className="slide_title text-center text-uppercase font-bold">{product.title}</p>
+                      <p className="slide_description text-center font-bold">${product.price}</p>
                       <div className="btn_wrap flex justify-center mt-4">
-                        <Button link="#">Shop Now</Button>
+                        <Button link={`/products/${product.slug}`}>Shop Now</Button>
                       </div>
                       
                     </div>
                   </div>
                   
-                </SwiperSlide>
+                </SwiperSlide> )}
                 
-                <SwiperSlide>
-                  <div className="single_slide flex flex-col gap-4 items-center justify-center h-full bg-siteBlack text-white py-8 lg:py-0">
-                    <Image className='rounded' src={ProductImage2} alt="Product Image" width={200} height={200} />
-                    <div className="product_meta flex gap-0 flex-col justify-center">
-                      <p className="slide_title text-center text-uppercase font-bold">COCAINE – RASPBERRY WASH</p>
-                      <p className="slide_description text-center font-bold">$110 - $1600</p>
-                      <div className="btn_wrap flex justify-center mt-4">
-                        <Button link="#">Shop Now</Button>
-                      </div>
-                      
-                    </div>
-                  </div>
-                  
-                </SwiperSlide>
+                
 
-                <SwiperSlide>
+                {/* <SwiperSlide>
                   <div className="single_slide flex flex-col gap-4 items-center justify-center h-full bg-siteBlack text-white py-8 lg:py-0">
                     <Image className='rounded' src={ProductImage} alt="Product Image" width={200} height={200} />
                     <div className="product_meta flex gap-0 flex-col justify-center">
@@ -99,7 +89,7 @@ const Hero = () => {
                     </div>
                   </div>
                   
-                </SwiperSlide>
+                </SwiperSlide> */}
 
               </Swiper>
             </div>

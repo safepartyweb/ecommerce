@@ -19,7 +19,8 @@ export default function AddProduct() {
     description: "",
     stock: "",
     images: [],
-    bestSeller:false
+    bestSeller:false,
+    showHero:false,
   });
   const [showLoader, setShowLoader] = useState(false)
 
@@ -55,6 +56,16 @@ export default function AddProduct() {
     
   }
 
+  const showHeroHandler = (e) =>{
+    const isChecked = e.target.checked;
+    // console.log("Best Seller:", isChecked);
+    setData((prev) => ({
+      ...prev,
+      bestSeller: isChecked
+    }))
+    
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setShowLoader(true)
@@ -64,7 +75,10 @@ export default function AddProduct() {
     formData.append('description', data.description);
     formData.append('stock', data.stock);
     formData.append('bestSeller', data.bestSeller);
+    formData.append('showHero', data.showHero);
     formData.append('images', JSON.stringify(data.images));
+
+    console.log("showHero", data.showHero )
 
     try {
       const apiRes =  await createProduct(formData).unwrap();
@@ -75,6 +89,9 @@ export default function AddProduct() {
       }, 1500);
     } catch (error) {
       console.log("Error", error)
+      if(error.status == 409){
+        return toast.error(error.data.message)
+      }
       toast.error("Something went wrong, please try again.")
     } finally{
       setShowLoader(false)
@@ -145,6 +162,15 @@ export default function AddProduct() {
             <Image className="normal" src={Checkbox} alt="icon" width={32} height={32} />
             <Image className="checked" src={CheckboxChecked} alt="icon" width={32} height={32} />
             Best Seller?
+          </label>
+        </div>
+
+        <div className="input_group flex gap-2 items-center">
+          <input onChange={showHeroHandler} id="showHero" name="showHero" type="checkbox"  className="bestSeller" />
+          <label  htmlFor="showHero" className="block font-medium ">
+            <Image className="normal" src={Checkbox} alt="icon" width={32} height={32} />
+            <Image className="checked" src={CheckboxChecked} alt="icon" width={32} height={32} />
+            Show on hero slider?
           </label>
         </div>
 

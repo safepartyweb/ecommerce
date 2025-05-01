@@ -16,7 +16,9 @@ import ProductImage from '../../images/products/bubblegum.gif'
 
 
 
-const ProductSlider = () => {
+const ProductSlider = ({products}) => {
+
+
   return (
     <Swiper
       modules={[Navigation, Pagination, Autoplay,EffectFade]}
@@ -27,8 +29,8 @@ const ProductSlider = () => {
       // effect="fade"
       // fadeEffect={{ crossFade: true }}
       speed={500}
-      autoplay={{ delay: 3000 }}
-      // autoplay={false}
+      // autoplay={{ delay: 3000 }}
+      autoplay={false}
       loop
 
       breakpoints={{
@@ -48,112 +50,28 @@ const ProductSlider = () => {
 
       className="overflow-hidden h-full rounded product_slider"
     >
-      <SwiperSlide>
+      {products.map(product =><SwiperSlide>
         
-        <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full">
-          <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
-          <div className="product_meta">
-            <h3 className="product_title font-bold text-xl text-center">COCAINE – RASPBERRY WASH</h3>
-            <p className="product_price font-bold text-lg text-center">$110 - $1600</p>
+        <div className="single_product border border-siteBlack rounded  flex gap-6 flex-col justify-center items-center w-full">
+          <div className="img_wrap h-auto xl:h-[280px] p-4 md:p-6">
+            <Image className='rounded max-h-[280px] w-auto' src={product.images[0]?.url} alt="product image" width={200} height={200} />
+          </div>
+          <div className="product_meta p-4">
+            <div className="">
+              <h3 className="product_title font-bold text-lg text-center">{product.title}</h3>
+            </div>
+            
+            <p className="product_price font-bold text-lg text-center">${product.price}</p>
             <div className="btn_wrap flex items-center justify-center mt-6">
-              <BlackButton >Shop Now</BlackButton>
+              <BlackButton link={`/products/${product.slug}`} >Shop Now</BlackButton>
             </div>
           </div>
         </div>
         
-      </SwiperSlide>
-
-      <SwiperSlide>
-        
-        <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full">
-          <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
-          <div className="product_meta">
-            <h3 className="product_title font-bold text-xl text-center">COCAINE – RASPBERRY WASH</h3>
-            <p className="product_price font-bold text-lg text-center">$110 - $1600</p>
-            <div className="btn_wrap flex items-center justify-center mt-6">
-              <BlackButton >Shop Now</BlackButton>
-            </div>
-          </div>
-        </div>
-        
-      </SwiperSlide>
-
-      <SwiperSlide>
-        
-        <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full">
-          <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
-          <div className="product_meta">
-            <h3 className="product_title font-bold text-xl text-center">COCAINE – RASPBERRY WASH</h3>
-            <p className="product_price font-bold text-lg text-center">$110 - $1600</p>
-            <div className="btn_wrap flex items-center justify-center mt-6">
-              <BlackButton >Shop Now</BlackButton>
-            </div>
-          </div>
-        </div>
-        
-      </SwiperSlide>
-
-      <SwiperSlide>
-        
-        <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full">
-          <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
-          <div className="product_meta">
-            <h3 className="product_title font-bold text-xl text-center">COCAINE – RASPBERRY WASH</h3>
-            <p className="product_price font-bold text-lg text-center">$110 - $1600</p>
-            <div className="btn_wrap flex items-center justify-center mt-6">
-              <BlackButton >Shop Now</BlackButton>
-            </div>
-          </div>
-        </div>
-        
-      </SwiperSlide>
-
-      <SwiperSlide>
-        
-        <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full">
-          <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
-          <div className="product_meta">
-            <h3 className="product_title font-bold text-xl text-center">COCAINE – RASPBERRY WASH</h3>
-            <p className="product_price font-bold text-lg text-center">$110 - $1600</p>
-            <div className="btn_wrap flex items-center justify-center mt-6">
-              <BlackButton >Shop Now</BlackButton>
-            </div>
-          </div>
-        </div>
-        
-      </SwiperSlide>
-
-      <SwiperSlide>
-        
-        <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full">
-          <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
-          <div className="product_meta">
-            <h3 className="product_title font-bold text-xl text-center">COCAINE – RASPBERRY WASH</h3>
-            <p className="product_price font-bold text-lg text-center">$110 - $1600</p>
-            <div className="btn_wrap flex items-center justify-center mt-6">
-              <BlackButton >Shop Now</BlackButton>
-            </div>
-          </div>
-        </div>
-        
-      </SwiperSlide>
+      </SwiperSlide> )}
       
-      <SwiperSlide>
-        
-        <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full">
-          <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
-          <div className="product_meta">
-            <h3 className="product_title font-bold text-xl text-center">COCAINE – RASPBERRY WASH</h3>
-            <p className="product_price font-bold text-lg text-center">$110 - $1600</p>
-            <div className="btn_wrap flex items-center justify-center mt-6">
-              <BlackButton >Shop Now</BlackButton>
-            </div>
-          </div>
-        </div>
-        
-      </SwiperSlide>
 
-      <SwiperSlide>
+      {/* <SwiperSlide>
         
         <div className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full">
           <Image className='rounded w-full h-auto' src={ProductImage} alt="product image" width={200} height={200} />
@@ -166,8 +84,9 @@ const ProductSlider = () => {
           </div>
         </div>
         
-      </SwiperSlide>
-      
+      </SwiperSlide> */}
+
+
 
 
 
