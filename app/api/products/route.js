@@ -4,7 +4,7 @@ import slugify from "slugify";
 
 //get all products
 export async function GET() {
-
+  await connectMongo();
   const allProducts = await Product.find();
 
   return Response.json({ message: "Success!", products:allProducts }, { status: 200 });

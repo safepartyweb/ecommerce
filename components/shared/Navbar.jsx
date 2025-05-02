@@ -11,7 +11,14 @@ import { setCredentials } from '@/store/authSlice';
 
 export default function Navbar() {
   const { userInfo } = useSelector((state) => state.auth);
+  const {cartItems} = useSelector((state) => state.cart);
   const [logOut] = useLogOutMutation();
+  // console.log("userInfo from navbar state", userInfo)
+  console.log("cartItemscart", cartItems)
+  const cartCount = cartItems.reduce((prev,cur) => prev + cur.quantity,0);
+  const cartTotal = cartItems.reduce((prev,cur) => prev + (cur.quantity * cur.price),0);
+  console.log("cartCount",cartCount)
+  console.log("cartTotal",cartTotal)
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -222,23 +229,25 @@ export default function Navbar() {
             )}
           </nav>
 
-          <div className='header_right cart_wrap flex items-center gap-2 cursor-pointer z-10'>
-            <p className='cart_amount font-bold text-xl'>
-              $<span>100.00</span>
-            </p>
-            <div className='cart_icon_wrap relative'>
-              <Image
-                className='mb-[7px]'
-                src='/images/Cart.svg'
-                alt='Cart Image'
-                width={32}
-                height={32}
-              />
-              <p className='quantity absolute text-sm -top-6 -right-3 font-semibold bg-siteBlack rounded-full p-1 text-white'>
-                10
+          <Link href="/cart">
+            <div className='header_right cart_wrap flex items-center gap-2 cursor-pointer z-10'>
+              <p className='cart_amount font-bold text-xl'>
+                $<span>{cartTotal}</span>
               </p>
+              <div className='cart_icon_wrap relative'>
+                <Image
+                  className='mb-[7px]'
+                  src='/images/Cart.svg'
+                  alt='Cart Image'
+                  width={32}
+                  height={32}
+                />
+                <p className='quantity absolute text-sm -top-6 -right-3 font-semibold bg-siteBlack rounded-full p-1 text-white w-8 h-8 flex items-center justify-center'>
+                  {cartCount}
+                </p>
+              </div>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </header>

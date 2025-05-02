@@ -18,7 +18,7 @@ const NewArrivals = ({productsData}) => {
         <h2 className='text-3xl md:text-5xl font-bold text-center mb-10'>New Arrivals</h2>
         <div className="prodcuts_wrap flex gap-5 md:gap-8 justify-center flex-wrap ">
           
-          {newArrivals.map(product=> <div key={product._id} className="single_product border border-siteBlack rounded p-4 md:p-6 flex gap-6 flex-col justify-center items-center w-full sm:w-[45%] lg:w-[30%]">
+          {newArrivals.map(product=> <AnimatedBlock key={product._id} direction='up' className=' w-full sm:w-[45%] lg:w-[30%] single_product border border-siteBlack rounded p-4 md:p-6'> <div  className=" flex gap-6 flex-col justify-center items-center">
             
             {/* <Image className='rounded w-full h-auto' src={product.images[0].url} alt="product image" width={200} height={200} /> */}
             <div className="img_wrap h-auto xl:h-[280px] p-4 md:p-6 mb-4">
@@ -32,7 +32,7 @@ const NewArrivals = ({productsData}) => {
                 <BlackButton link={`/products/${product.slug}`} >Shop Now</BlackButton>
               </div>
             </div>
-          </div> )}
+          </div></AnimatedBlock> )}
 
 
           

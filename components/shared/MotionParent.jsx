@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 
-export default function AnimatedBlock({ children, direction = 'up' }) {
+export default function AnimatedBlock({ children, direction = 'up', className = '' }) {
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
 
   const getInitial = () => {
@@ -23,7 +23,7 @@ export default function AnimatedBlock({ children, direction = 'up' }) {
       initial={getInitial()}
       animate={inView ? { opacity: 1, x: 0, y: 0 } : {}}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className='w-full'
+      className={`${className} w-full `}
     >
       {children}
     </motion.div>
