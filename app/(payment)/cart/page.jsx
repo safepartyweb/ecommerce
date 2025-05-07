@@ -32,7 +32,7 @@ const page = () => {
 
   return (
     <section className='sec_hero_bar py-6 md:py-10 '>
-      <div className='container max-w-sitemax px-4 mx-auto '>
+      <div className='container max-w-5xl px-4 mx-auto '>
       <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
 
       

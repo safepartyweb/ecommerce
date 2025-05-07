@@ -19,6 +19,9 @@ export async function POST(req) {
   try {
 
     const user = await User.findOne({email})
+    // console.log("user: ", user)
+
+
     if(!user){
       return Response.json(
         { message: "Invalid email or password!" }, 
@@ -34,7 +37,7 @@ export async function POST(req) {
     
 
     const token = jwt.sign(
-      { userId: user._id.toString() }, jwtSecret, { expiresIn: '1d' }
+      { userId: user._id.toString(), role:user.role }, jwtSecret, { expiresIn: '1d' }
     );
     
     const cookieStore = await cookies();
@@ -51,6 +54,7 @@ export async function POST(req) {
       id: user._id,
       name: user.name,
       email: user.email,
+      role: user.role,
     };
 
     return Response.json({ message: "success!", user:userData }, { status: 200 })

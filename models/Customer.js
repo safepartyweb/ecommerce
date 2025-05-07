@@ -10,6 +10,7 @@ const customerSchema = new mongoose.Schema({
   city: { type: String },
   postalCode: { type: String },
   country: { type: String },
+  role: { type: String, default:"customer" },
   password: { type: String, required: true },
 }, { timestamps: true });
 

@@ -49,8 +49,14 @@ export async function POST(req) {
 
     const userData = {
       id: customer._id,
-      name: customer.name,
+      fullName: customer.fullName,
       email: customer.email,
+      phone: customer.phone,
+      address: customer.address,
+      city: customer.city,
+      postalCode: customer.postalCode,
+      country: customer.country,
+      role: customer.role,
     };
 
     return Response.json({ message: "success!", user:userData }, { status: 200 })

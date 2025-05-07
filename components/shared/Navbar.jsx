@@ -13,7 +13,7 @@ export default function Navbar() {
   const { userInfo } = useSelector((state) => state.auth);
   const {cartItems} = useSelector((state) => state.cart);
   const [logOut] = useLogOutMutation();
-  // console.log("userInfo from navbar state", userInfo)
+  console.log("userInfo from navbar state", userInfo)
   console.log("cartItemscart", cartItems)
   const cartCount = cartItems.reduce((prev,cur) => prev + cur.quantity,0);
   const cartTotal = cartItems.reduce((prev,cur) => prev + (cur.quantity * cur.price),0);
@@ -147,10 +147,18 @@ export default function Navbar() {
               </AnimatePresence>
             </li>
 
+
+            <li>
+              <Link href='/about'>About</Link>
+            </li>
+            <li>
+              <Link href='/contact'>Contact</Link>
+            </li>
+
             {userInfo ? (
               <>
                 <li>
-                  <Link href='/admin'>Dashboard</Link>
+                  <Link href='/dashboard'>Dashboard</Link>
                 </li>
                 <li>
                   <button className='cursor-pointer' onClick={handleLogout}>Logout</button>
@@ -159,77 +167,14 @@ export default function Navbar() {
             ) : (
               <>
                 <li>
-                  <Link href='/about'>About</Link>
-                </li>
-                <li>
-                  <Link href='/admin'>Members</Link>
-                </li>
-                <li>
-                  <Link href='/contact'>Contact</Link>
-                </li>
-                <li>
                   <Link href='/login'>Login</Link>
                 </li>
               </>
             )}
+
           </nav>
 
-          <nav
-            className={`text-xl font-medium main_menu list-none hidden lg:hidden flex-col md:flex-row items-start md:items-center gap-6 md:gap-4 transition-all duration-300 bg-white md:bg-transparent absolute md:static top-full md:top-auto left-0 w-full md:w-auto p-6 md:p-0 shadow-md md:shadow-none z-20`}
-          >
-            <li>
-              <Link href='/'>Home</Link>
-            </li>
-
-            <li className='cursor-pointer list-none relative flex gap-[2px] items-center has_children'>
-              <span className='flex gap-[2px] items-center'>
-                Shop
-                <Image src={ArrowDown} width={16} height={16} alt='arrow down' />
-              </span>
-
-              <div className='submenu_wrap absolute left-0 pt-4 z-20 top-full'>
-                <ul className='sub_menu bg-gray-300 min-w-[200px] px-4 py-2 rounded shadow-lg'>
-                  <li>
-                    <Link href='#'>Product 1</Link>
-                  </li>
-                  <li>
-                    <Link href='#'>Product 2</Link>
-                  </li>
-                  <li>
-                    <Link href='#'>Product 3</Link>
-                  </li>
-                  <li>
-                    <Link href='#'>Product 4</Link>
-                  </li>
-                </ul>
-              </div>
-            </li>
-
-            {userInfo ? (
-              <>
-                <li>
-                  <Link href='/dashboard'>Dashboard</Link>
-                </li>
-                <li>
-                  <button onClick={handleLogout}>Logout</button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link href='/login'>Login</Link>
-                </li>
-                <li>
-                  <Link href='/register'>Register</Link>
-                </li>
-                <li>
-                  <Link href='/dashboard'>Dashboard</Link>
-                </li>
-              </>
-            )}
-          </nav>
-
-          <Link href="/cart">
+          { ( userInfo?.role !== 'admin') &&  <Link href="/cart">
             <div className='header_right cart_wrap flex items-center gap-2 cursor-pointer z-10'>
               <p className='cart_amount font-bold text-xl'>
                 $<span>{cartTotal}</span>
@@ -247,7 +192,8 @@ export default function Navbar() {
                 </p>
               </div>
             </div>
-          </Link>
+          </Link>}
+          
         </div>
       </div>
     </header>
