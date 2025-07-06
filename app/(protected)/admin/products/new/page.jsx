@@ -21,6 +21,7 @@ export default function AddProduct() {
     images: [],
     bestSeller:false,
     showHero:false,
+    isFeatured:false,
   });
   const [showLoader, setShowLoader] = useState(false)
 
@@ -76,9 +77,14 @@ export default function AddProduct() {
     formData.append('stock', data.stock);
     formData.append('bestSeller', data.bestSeller);
     formData.append('showHero', data.showHero);
+    formData.append('isFeatured', data.isFeatured);
     formData.append('images', JSON.stringify(data.images));
 
-    console.log("showHero", data.showHero )
+
+
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
 
     try {
       const apiRes =  await createProduct(formData).unwrap();

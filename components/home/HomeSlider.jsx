@@ -10,7 +10,8 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 import ProductImage from '../../images/products/bubblegum.gif'
-import Technician from '../../images/technician.png'
+import Doctor from '../../images/doctor-3.jpg'
+import Technician from '../../images/doctor.jpg'
 import Money from '../../images/money.png'
 import Button from '../Button';
 
@@ -83,7 +84,7 @@ const HomeSlider = () => {
                       </div>
                   </div>
                   <div className="slide_right  flex ">
-                    <Image className='rounded' src={Technician} alt="Product Image" width={200} height={200} />
+                    <Image className='rounded' src={Doctor} alt="Product Image" width={200} height={200} />
                   </div>
                 </div>
                 

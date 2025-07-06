@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Category from './Category';
 
 const productSchema = new mongoose.Schema({
   title: {type: String, unique:true},
@@ -12,15 +13,33 @@ const productSchema = new mongoose.Schema({
       public_id: { type: String },
     },
   ],
-  // tag:{
-  //   type:String,
-  //   enum:['Best Seller',]
-  // }
+
+  
+  unit: {
+    type: String,
+    enum: ['grams', 'oz', 'pounds'],
+    //required: true,
+  },
+  quantity: {
+    type: Number,
+  },
+
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    //required: true,
+  },
+
+
   bestSeller:{
     type:Boolean
   },
   showHero:{
     type:Boolean
+  },
+  isFeatured:{
+    type:Boolean,
+    default:false,
   },
 });
 

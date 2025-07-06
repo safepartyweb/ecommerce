@@ -27,8 +27,9 @@ export async function POST(req) {
   const description = data.description;
   const bestSeller = data.bestSeller;
   const showHero = data.showHero;
+  const isFeatured = data.isFeatured === 'true';
   // console.log("data",title, price, stock, description,images  )
-  console.log("showHero",showHero  )
+  console.log("isFeatured while creating",isFeatured  )
   // console.log("images:",images  )
   const existingProduct = await Product.findOne({ title: title.trim() });
   if (existingProduct) {
@@ -41,7 +42,7 @@ export async function POST(req) {
 
 
   try {
-    const newProduct = await Product.create({title,price,stock,description,images,bestSeller,showHero,slug })
+    const newProduct = await Product.create({title,price,stock,description,images,bestSeller,showHero,slug, isFeatured })
     return Response.json({ message: "success!", product:newProduct }, { status: 200 })
   } catch (error) {
     return Response.json({ message: "Something went wrong!", error }, { status: 500 })
@@ -72,6 +73,8 @@ export async function PATCH(req) {
     if(data.title){
       slug = slugify(data.title, { lower: true, strict: true });
     }
+
+    //console.log("isFeatured", data.isFeatured)
     product.price = data.price || product.price;
     product.description = data.description || product.description;
     product.stock = data.stock || product.stock;
@@ -79,11 +82,17 @@ export async function PATCH(req) {
     product.showHero = data.showHero || product.showHero;
     product.images = images || product.images;
     product.slug = slug || product.slug;
+    product.isFeatured = data.isFeatured || product.isFeatured;
+    product.quantity = data.quantity || product.quantity;
+    product.category = data.category || product.category;
+
+
 
     const updatedProduct = await product.save();
 
     return Response.json({ message: "success!", product:updatedProduct }, { status: 200 })
   } catch (error) {
+    console.log("Erorr on Edit:", error)
     return Response.json({ message: error.message, error }, { status: 500 })
   }
 }

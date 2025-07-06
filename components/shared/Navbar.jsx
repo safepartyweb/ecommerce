@@ -10,15 +10,16 @@ import { logout } from '@/store/authSlice';
 import { setCredentials } from '@/store/authSlice';
 
 export default function Navbar() {
+
   const { userInfo } = useSelector((state) => state.auth);
   const {cartItems} = useSelector((state) => state.cart);
   const [logOut] = useLogOutMutation();
-  console.log("userInfo from navbar state", userInfo)
-  console.log("cartItemscart", cartItems)
+  // console.log("userInfo from navbar state", userInfo)
+  // console.log("cartItemscart", cartItems)
   const cartCount = cartItems.reduce((prev,cur) => prev + cur.quantity,0);
   const cartTotal = cartItems.reduce((prev,cur) => prev + (cur.quantity * cur.price),0);
-  console.log("cartCount",cartCount)
-  console.log("cartTotal",cartTotal)
+  // console.log("cartCount",cartCount)
+  // console.log("cartTotal",cartTotal)
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -87,20 +88,8 @@ export default function Navbar() {
             />
           </a>
 
-          {/* Mobile Toggle */}
-          {isMobile && (
-            <div
-              className='cursor-pointer z-30 hidden'
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            >
-              <Image
-                src='/icons/menu.svg' // Update this to your menu icon
-                alt='menu'
-                width={30}
-                height={30}
-              />
-            </div>
-          )}
+
+          
 
           <nav
             className={`text-xl font-medium main_menu list-none hidden lg:flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-4 transition-all duration-300 bg-white md:bg-transparent absolute md:static top-full md:top-auto left-0 w-full md:w-auto p-6 md:p-0 shadow-md md:shadow-none z-20`}
@@ -116,10 +105,10 @@ export default function Navbar() {
             >
               <span className='flex gap-[6px] items-center'>
                 Shop
-                <Image className='relative top-[3px]' src={ArrowDown} width={12} height={16} alt='arrow down' />
+                {/* <Image className='relative top-[3px]' src={ArrowDown} width={12} height={16} alt='arrow down' /> */}
               </span>
               
-              <AnimatePresence>
+              {/* <AnimatePresence>
                 {isOpen && (
                   <motion.div
                     className='submenu_wrap absolute left-0 pt-4 z-20 top-full'
@@ -144,7 +133,7 @@ export default function Navbar() {
                     </ul>
                   </motion.div>
                 )}
-              </AnimatePresence>
+              </AnimatePresence> */}
             </li>
 
 
@@ -174,6 +163,53 @@ export default function Navbar() {
 
           </nav>
 
+          <nav
+
+            className={`mobile_nav flex flex-col text-xl font-medium main_menu list-none lg:hidden items-start gap-6 md:gap-4 transition-all duration-300 bg-siteSecondBlack text-white absolute left-0 w-full shadow-md md:shadow-none z-20 p-6 ${
+              isMobileMenuOpen 
+                ? 'opacity-100 visible top-full' 
+                : 'opacity-0 invisible top-[50px] pointer-events-none'
+            }`}
+          >
+            <li onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              <Link href='/'>Home</Link>
+            </li>
+
+            <li  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className='cursor-pointer list-none relative flex gap-[2px] items-center has_children'
+            >
+              <Link href='/shop'>Shop</Link>
+            </li>
+
+            <li onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} >
+              <Link href='/about'>About</Link>
+            </li>
+            <li onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} >
+              <Link href='/contact'>Contact</Link>
+            </li>
+
+            {userInfo ? (
+              <>
+                <li onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} >
+                  <Link href='/dashboard'>Dashboard</Link>
+                </li>
+                <li onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} >
+                  <button className='cursor-pointer' onClick={handleLogout}>Logout</button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} >
+                  <Link href='/login'>Login</Link>
+                </li>
+              </>
+            )}
+
+          </nav>
+
+
+
+
+
           { ( userInfo?.role !== 'admin') &&  <Link href="/cart">
             <div className='header_right cart_wrap flex items-center gap-2 cursor-pointer z-10'>
               <p className='cart_amount font-bold text-xl'>
@@ -193,6 +229,29 @@ export default function Navbar() {
               </div>
             </div>
           </Link>}
+
+
+          {/* Mobile Toggle */}
+
+          <div
+            className='cursor-pointer z-30'
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <Image
+              src='/images/menu.svg'
+              alt='menu'
+              width={46}
+              height={46}
+              className={`${isMobileMenuOpen ? 'hidden' : 'block'}`}
+            />
+            <Image
+              src='/images/close-x.svg'
+              alt='menu'
+              width={46}
+              height={46}
+              className={`${isMobileMenuOpen ? 'block' : 'hidden'}`}
+            />
+          </div>
           
         </div>
       </div>

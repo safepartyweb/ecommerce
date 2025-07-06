@@ -19,6 +19,9 @@ export default function ProductEdit({ product }) {
   const [stock, setStock] = useState(product.stock);
   const [bestSeller, setBestSeller] = useState(product.bestSeller);
   const [showHero, setShowHero] = useState(product.showHero);
+  const [isFeatured, setIsFeatured] = useState(product.isFeatured || false);
+  const [quantity, setQuantity] = useState(product.quantity || null);
+  const [category, setCategory] = useState(product.category );
   const [images, setImages] = useState(product.images || []);
   const [showLoader, setShowLoader] = useState(false)
 
@@ -45,6 +48,7 @@ export default function ProductEdit({ product }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setShowLoader(true)
+    console.log("isFeatured:",isFeatured)
     const formData = new FormData();
     formData.append('productId', product._id);
     formData.append('title', title);
@@ -52,23 +56,27 @@ export default function ProductEdit({ product }) {
     formData.append('description', description);
     formData.append('stock', stock);
     formData.append('bestSeller', bestSeller);
+    formData.append('isFeatured', isFeatured);
     formData.append('showHero', showHero);
+    formData.append('quantity', quantity);
+    // formData.append('category', category);
     formData.append('images', JSON.stringify(images));
 
     //console.log('Submitting updated product:', updatedProduct);
+    console.log("formData", formData)
     try {
       const apiRes = await editProduct(formData).unwrap()
       console.log("apiRes", apiRes )
       toast.success("Editing successful!")
       setTimeout(() => {
-        router.push('/admin/products');
+        //router.push('/admin/products');
       }, 1500);
 
     } catch (error) {
       toast.success(error.message)
       console.log("Error", error)
     }finally{
-      console.log("Done!")
+      // console.log("Done!")
       setShowLoader(false)
     }
 
@@ -181,6 +189,23 @@ export default function ProductEdit({ product }) {
             <Image className="normal" src={Checkbox} alt="icon" width={32} height={32} />
             <Image className="checked" src={CheckboxChecked} alt="icon" width={32} height={32} />
             Show on hero slider?
+          </label>
+
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          id="isFeatured"
+          type="checkbox"
+          checked={isFeatured}
+          onChange={(e) => setIsFeatured(e.target.checked)}
+          className="w-5 h-5 bestSeller"
+        />
+
+        <label  htmlFor="isFeatured" className="block font-medium ">
+            <Image className="normal" src={Checkbox} alt="icon" width={32} height={32} />
+            <Image className="checked" src={CheckboxChecked} alt="icon" width={32} height={32} />
+            Featured?
           </label>
 
       </div>
