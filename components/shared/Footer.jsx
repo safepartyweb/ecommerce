@@ -35,7 +35,7 @@ const Footer = () => {
                 </div>
 
                 <div className="footer_column w-full">
-                  <Image src='/images/logo_lotus.png' alt="logo" width={150} height={200} />
+                  <Image src='/images/logo-new.jpg' alt="logo" width={150} height={200} />
                 </div>
 
                 <div className="footer_column w-full">

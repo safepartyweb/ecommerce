@@ -17,10 +17,10 @@ const productSchema = new mongoose.Schema({
   
   unit: {
     type: String,
-    enum: ['grams', 'oz', 'pounds'],
+    enum: ['Grams', 'Oz', 'Pounds'],
     //required: true,
   },
-  quantity: {
+  weight: {
     type: Number,
   },
 

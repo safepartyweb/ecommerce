@@ -81,7 +81,7 @@ export default function Navbar() {
         <div className='header_wrapper flex justify-between items-center text-siteBlack relative'>
           <a href='/'>
             <Image
-              src='/images/logo_lotus.png'
+              src='/images/logo-new.jpg'
               alt='Logo image'
               width={80}
               height={90}
@@ -97,45 +97,9 @@ export default function Navbar() {
             <li>
               <Link href='/'>Home</Link>
             </li>
-
-            <li
-              className='cursor-pointer list-none relative flex gap-[2px] items-center has_children'
-              onMouseEnter={() => !isMobile && setIsOpen(true)}
-              onMouseLeave={() => !isMobile && setIsOpen(false)}
-            >
-              <span className='flex gap-[6px] items-center'>
-                Shop
-                {/* <Image className='relative top-[3px]' src={ArrowDown} width={12} height={16} alt='arrow down' /> */}
-              </span>
-              
-              {/* <AnimatePresence>
-                {isOpen && (
-                  <motion.div
-                    className='submenu_wrap absolute left-0 pt-4 z-20 top-full'
-                    variants={menuVariants}
-                    initial='hidden'
-                    animate='visible'
-                    exit='exit'
-                  >
-                    <ul className='sub_menu bg-siteBlack text-white min-w-[200px] px-4 py-2 rounded shadow-lg'>
-                      <li className='w-full'>
-                        <Link className='py-2 border-b border-gray-400 block w-full' href='#'>Product 1</Link>
-                      </li>
-                      <li className='w-full'>
-                        <Link className='py-2 border-b border-gray-400 block w-full' href='#'>Product 2</Link>
-                      </li>
-                      <li className='w-full'>
-                        <Link className='py-2 border-b border-gray-400 block w-full' href='#'>Product 3</Link>
-                      </li>
-                      <li className='w-full'>
-                        <Link className='py-2 border-b border-gray-400 block w-full' href='#'>Product 4</Link>
-                      </li>
-                    </ul>
-                  </motion.div>
-                )}
-              </AnimatePresence> */}
+            <li>
+              <Link href='/shop'>Shop</Link>
             </li>
-
 
             <li>
               <Link href='/about'>About</Link>

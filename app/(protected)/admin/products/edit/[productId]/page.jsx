@@ -7,7 +7,7 @@ import ProductEdit from '@/components/admin/product/ProductEdit'
 
 const page = () => {
   const {productId} = useParams()
-  console.log("Product Id:", productId )
+  // console.log("Product Id:", productId )
   const {data, isLoading} = useGetSingleProductQuery({productId})
 
   const [images, setImages] = useState([]);
@@ -35,7 +35,7 @@ const page = () => {
   if(isLoading){
     return <Loader />
   }
-  console.log("data",data)
+  // console.log("data",data)
   const product = data.product;
 
   return (

@@ -9,9 +9,11 @@ import { toast } from 'react-toastify';
 import Checkbox from '@/images/checkbox-black.svg'
 import CheckboxChecked from '@/images/checkbox-black-checked.svg'
 import Image from 'next/image';
+import { useGetCategoriesQuery } from '@/lib/api/categoryApi';
 
 
 export default function ProductEdit({ product }) {
+  
   console.log("Product", product)
   const [title, setTitle] = useState(product.title);
   const [price, setPrice] = useState(product.price);
@@ -20,8 +22,9 @@ export default function ProductEdit({ product }) {
   const [bestSeller, setBestSeller] = useState(product.bestSeller);
   const [showHero, setShowHero] = useState(product.showHero);
   const [isFeatured, setIsFeatured] = useState(product.isFeatured || false);
-  const [quantity, setQuantity] = useState(product.quantity || null);
-  const [category, setCategory] = useState(product.category );
+  const [weight, setWeight] = useState(product.weight || '');
+  const [unit, setUnit] = useState(product.unit);
+  const [category, setCategory] = useState(product.category);
   const [images, setImages] = useState(product.images || []);
   const [showLoader, setShowLoader] = useState(false)
 
@@ -44,11 +47,18 @@ export default function ProductEdit({ product }) {
   };
 
   const [editProduct,{isLoading}] = useEditProductMutation()
+  const {data, isLoading:catLoading} = useGetCategoriesQuery()
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowLoader(true)
-    console.log("isFeatured:",isFeatured)
+    
+
+    if(weight && !unit){
+      return alert("Please select unit type")
+    }
+
+
+    //setShowLoader(true)
     const formData = new FormData();
     formData.append('productId', product._id);
     formData.append('title', title);
@@ -58,12 +68,30 @@ export default function ProductEdit({ product }) {
     formData.append('bestSeller', bestSeller);
     formData.append('isFeatured', isFeatured);
     formData.append('showHero', showHero);
-    formData.append('quantity', quantity);
-    // formData.append('category', category);
+    if(weight){
+      formData.append('weight', weight);
+    }
+   
+    if(unit){
+      formData.append('unit', unit);
+    }  
+    if(weight){
+      formData.append('weight', weight);
+    }
+    
+    if(category){
+      formData.append('category', category);
+    }
+    
     formData.append('images', JSON.stringify(images));
 
-    //console.log('Submitting updated product:', updatedProduct);
-    console.log("formData", formData)
+    console.log('FormData contents:');
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    
+
     try {
       const apiRes = await editProduct(formData).unwrap()
       console.log("apiRes", apiRes )
@@ -73,15 +101,24 @@ export default function ProductEdit({ product }) {
       }, 1500);
 
     } catch (error) {
-      toast.success(error.message)
+      toast.error("Something went wrong!")
       console.log("Error", error)
     }finally{
       // console.log("Done!")
       setShowLoader(false)
     }
 
+    
+
     // Here you would send updatedProduct to your backend (PUT / PATCH)
   };
+
+  console.log("unit", unit)
+
+  if(catLoading){
+    return <Loader />
+  }
+  // console.log("category data",data)
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -124,6 +161,16 @@ export default function ProductEdit({ product }) {
         />
       </div>
 
+      {/* Category */}
+      <div>
+        <label className="block mb-1 font-semibold">Category</label>
+        <select onChange={(e => setCategory(e.target.value))} name="" className='border w-full p-2 rounded' id="" value={category}>
+          <option value="Select One">Select One</option>
+          {data.map(cat => <option key={cat._id} value={cat._id}>{cat.name}</option>)}
+        </select>
+      </div>
+
+
 
       {/* Price */}
       <div>
@@ -134,6 +181,31 @@ export default function ProductEdit({ product }) {
           onChange={(e) => setPrice(e.target.value)}
           className="border w-full p-2 rounded"
         />
+      </div>
+
+
+      {/* Weight */}
+      <div className="flex gap-4">
+        <div>
+          <label className="block mb-1 font-semibold">Weight</label>
+          <input
+            type="number"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            className="border w-full p-2 rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 font-semibold">Unit</label>
+          <select onChange={(e => setUnit(e.target.value))} name="" className='border w-full p-2 rounded' id="" value={unit}>
+            <option value="Select One">Select One</option>
+            <option value="Grams">Grams</option>
+            <option value="Oz">Oz</option>
+            <option value="Pounds">Pounds</option>
+            
+          </select>
+        </div>
       </div>
 
       {/* Stock */}

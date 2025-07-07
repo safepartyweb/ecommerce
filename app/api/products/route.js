@@ -5,7 +5,7 @@ import slugify from "slugify";
 //get all products
 export async function GET() {
   await connectMongo();
-  const allProducts = await Product.find();
+  const allProducts = await Product.find().populate({path:'category'});
 
   return Response.json({ message: "Success!", products:allProducts }, { status: 200 });
 }
@@ -85,6 +85,8 @@ export async function PATCH(req) {
     product.isFeatured = data.isFeatured || product.isFeatured;
     product.quantity = data.quantity || product.quantity;
     product.category = data.category || product.category;
+    product.weight = data.weight || product.weight;
+    product.unit = data.unit || product.unit;
 
 
 
