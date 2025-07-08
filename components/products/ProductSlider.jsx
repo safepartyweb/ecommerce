@@ -7,16 +7,21 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
-import Image from 'next/image';
+
 import Link from 'next/link';
 import Button from '../Button';
 import BlackButton from '../BlackButton';
 import ProductImage from '../../images/products/bubblegum.gif'
 
+import SlideSingleProduct from './SlideSingleProduct';
 
 
 
 const ProductSlider = ({products}) => {
+
+
+
+
 
 
   return (
@@ -52,21 +57,7 @@ const ProductSlider = ({products}) => {
     >
       {products.map(product =><SwiperSlide>
         
-        <div className="single_product border border-siteBlack rounded  flex gap-6 flex-col justify-center items-center w-full">
-          <div className="img_wrap h-auto xl:h-[280px] p-4 md:p-6">
-            <Image className='rounded max-h-[280px] w-auto' src={product.images[0]?.url} alt="product image" width={200} height={200} />
-          </div>
-          <div className="product_meta p-4">
-            <div className="">
-              <h3 className="product_title font-bold text-lg text-center">{product.title}</h3>
-            </div>
-            
-            <p className="product_price font-bold text-lg text-center">${product.price}</p>
-            <div className="btn_wrap flex items-center justify-center mt-6">
-              <BlackButton link={`/products/${product.slug}`} >Shop Now</BlackButton>
-            </div>
-          </div>
-        </div>
+        <SlideSingleProduct product={product} />
         
       </SwiperSlide> )}
       

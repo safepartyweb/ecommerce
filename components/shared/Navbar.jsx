@@ -198,7 +198,7 @@ export default function Navbar() {
           {/* Mobile Toggle */}
 
           <div
-            className='cursor-pointer z-30'
+            className='cursor-pointer z-30 lg:hidden'
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             <Image

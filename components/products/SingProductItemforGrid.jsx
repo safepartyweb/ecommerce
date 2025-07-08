@@ -1,8 +1,30 @@
 import React from "react";
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/store/cartSlice";
+import BlackButton from "../BlackButton";
+import Link from "next/link";
+import { toast } from "react-toastify";
+
 
 const SingProductItemforGrid = ({ product }) => {
   // console.log("Product from single product item for grid:", product);
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({
+      productId: product._id,
+      name: product.title,
+      image: product.images[0]?.url,
+      price: product.price,
+      quantity: 1,
+    }));
+
+    toast.success("Added to cart!")
+
+  };
+
+
   return (
     <div className="flex flex-col gap-4">
 
@@ -19,6 +41,13 @@ const SingProductItemforGrid = ({ product }) => {
         ) : ''}
         
       </div>
+      
+      <div className="flex gap-4">
+        <Link className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer max-w-[175px]" href={`/products/${product.slug}`}>View Details</Link>
+        <button className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer max-w-[175px]" onClick={handleAddToCart}>Add to cart </button>
+      </div>
+
+
     </div>
   );
 };

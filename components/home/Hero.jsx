@@ -15,6 +15,8 @@ import ProductImage from '../../images/products/bubblegum.gif'
 import ProductImage2 from '../../images/products/Raspberry.gif'
 
 import AnimatedBlock from '../shared/MotionParent';
+import SlideSingleProduct from '../products/SlideSingleProduct';
+import HeroSlideSingleProduct from '../products/HeroSlideSingleProduct';
 
 
 
@@ -60,36 +62,13 @@ const Hero = ({productsData}) => {
                 className="overflow-hidden h-full rounded"
               >
                 {showHeroProducts.map(product => <SwiperSlide>
-                  <div className="single_slide flex flex-col gap-4 items-center justify-center h-full bg-siteBlack text-white py-8 lg:py-0">
-                    <Image className='rounded' src={product.images[0].url} alt="Product Image" width={200} height={200} />
-                    <div className="product_meta flex gap-0 flex-col justify-center">
-                      <p className="slide_title text-center text-uppercase font-bold">{product.title}</p>
-                      <p className="slide_description text-center font-bold">${product.price}</p>
-                      <div className="btn_wrap flex justify-center mt-4">
-                        <Button link={`/products/${product.slug}`}>Shop Now</Button>
-                      </div>
-                      
-                    </div>
-                  </div>
+
+                  
+                  <HeroSlideSingleProduct product={product}/>
                   
                 </SwiperSlide> )}
                 
                 
-
-                {/* <SwiperSlide>
-                  <div className="single_slide flex flex-col gap-4 items-center justify-center h-full bg-siteBlack text-white py-8 lg:py-0">
-                    <Image className='rounded' src={ProductImage} alt="Product Image" width={200} height={200} />
-                    <div className="product_meta flex gap-0 flex-col justify-center">
-                      <p className="slide_title text-center text-uppercase font-bold">COCAINE SPRAY – BUBBLEGUM</p>
-                      <p className="slide_description text-center font-bold">$90 - $100</p>
-                      <div className="btn_wrap flex justify-center mt-4">
-                        <Button link="#">Shop Now</Button>
-                      </div>
-                      
-                    </div>
-                  </div>
-                  
-                </SwiperSlide> */}
 
               </Swiper>
             </div>
