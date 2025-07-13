@@ -26,6 +26,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);  // State to check if it's client side
   const dispatch = useDispatch()
+  const [showProfile, setShowProfile] = useState(false)
 
 
   const handleLogout = async () => {
@@ -33,7 +34,7 @@ export default function Navbar() {
       dispatch(logout())
       const logOutHandler = await logOut();
       console.log("logOutHandler", logOutHandler)
-      //window.location.href = '/login';
+      window.location.href = '/login';
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -90,7 +91,7 @@ export default function Navbar() {
 
 
           
-
+          {/* Desktop Nav */}
           <nav
             className={`text-xl font-medium main_menu list-none hidden lg:flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-4 transition-all duration-300 bg-white md:bg-transparent absolute md:static top-full md:top-auto left-0 w-full md:w-auto p-6 md:p-0 shadow-md md:shadow-none z-20`}
           >
@@ -108,25 +109,10 @@ export default function Navbar() {
               <Link href='/contact'>Contact</Link>
             </li>
 
-            {userInfo ? (
-              <>
-                <li>
-                  <Link href='/dashboard'>Dashboard</Link>
-                </li>
-                <li>
-                  <button className='cursor-pointer' onClick={handleLogout}>Logout</button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li>
-                  <Link href='/login'>Login</Link>
-                </li>
-              </>
-            )}
-
           </nav>
+          {/* End Desktop Nav */}
 
+          {/* Mobile Nav */}
           <nav
 
             className={`mobile_nav flex flex-col text-xl font-medium main_menu list-none lg:hidden items-start gap-6 md:gap-4 transition-all duration-300 bg-siteSecondBlack text-white absolute left-0 w-full shadow-md md:shadow-none z-20 p-6 ${
@@ -169,38 +155,83 @@ export default function Navbar() {
             )}
 
           </nav>
+          {/* End Mobile Nav */}
 
 
 
 
 
-          { ( userInfo?.role !== 'admin') &&  <Link href="/cart">
-            <div className='header_right cart_wrap flex items-center gap-2 cursor-pointer z-10'>
-              <p className='cart_amount font-bold text-xl'>
-                $<span>{cartTotal}</span>
-              </p>
-              <div className='cart_icon_wrap relative'>
-                <Image
-                  className='mb-[7px]'
-                  src='/images/Cart.svg'
-                  alt='Cart Image'
-                  width={32}
-                  height={32}
-                />
-                <p className='quantity absolute text-sm -top-6 -right-3 font-semibold bg-siteBlack rounded-full p-1 text-white w-8 h-8 flex items-center justify-center'>
-                  {cartCount}
-                </p>
-              </div>
+          
+          <div className="flex">
+            { ( userInfo?.role !== 'admin') &&  
+              <Link href="/cart">
+                <div className='header_right cart_wrap flex items-center gap-2 cursor-pointer z-10'>
+                  <p className='cart_amount font-bold text-xl'>
+                    $<span>{cartTotal}</span>
+                  </p>
+                  <div className='cart_icon_wrap relative'>
+                    <Image
+                      className='mb-[7px]'
+                      src='/images/Cart.svg'
+                      alt='Cart Image'
+                      width={32}
+                      height={32}
+                    />
+                    <p className='quantity absolute text-sm -top-6 -right-3 font-semibold bg-siteBlack rounded-full p-1 text-white w-8 h-8 flex items-center justify-center'>
+                      {cartCount}
+                    </p>
+                  </div>
+
+                  
+                </div>
+              </Link>
+            }
+            <div onMouseEnter={() => setShowProfile(true)} onMouseLeave={() => {setShowProfile(false)}} className="profile cursor-pointer pl-4 hidden lg:block">
+              <Image  src="/images/user.svg" alt='profile' width={36} height={36} />
+              
+              
+                <div className={`dropdown absolute min-w-[150px]  h-auto right-0 bg-siteBlack text-white rounded transition-all duration-300 ${showProfile ? 'opacity-100 visible top-[70%]' 
+                : 'opacity-0 invisible top-[50px] pointer-events-none'}`}>
+                  <ul>
+                  {userInfo ? (
+                  <>
+                    { ( userInfo?.role !== 'admin') &&
+                      <li onClick={() => {setShowProfile(false)}} className='px-4 py-2 border-b border-white text-center font-medium' >
+                        <Link href='/dashboard'>Dashboard</Link>
+                      </li>
+                     }
+
+                    { ( userInfo?.role == 'admin') &&
+                      <li onClick={() => {setShowProfile(false)}} className='px-4 py-2 border-b border-white text-center font-medium' >
+                        <Link href='/admin'>Dashboard</Link>
+                      </li>
+                     }
+                    <li onClick={() => {setShowProfile(false)}} className='px-4 py-2 border-b border-white text-center font-medium'>
+                      <button className='cursor-pointer' onClick={handleLogout}>Logout</button>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    <li onClick={() => {setShowProfile(false)}} className='px-4 py-2 border-b border-white text-center font-medium'>
+                      <Link href='/login'>Login</Link>
+                    </li>
+                  </>
+                  )}
+                  </ul>
+                </div>
+              
+              
             </div>
-          </Link>}
+
+          </div>
+
+
 
 
           {/* Mobile Toggle */}
 
-          <div
-            className='cursor-pointer z-30 lg:hidden'
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
+          <div className='cursor-pointer z-30 lg:hidden' 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} >
             <Image
               src='/images/menu.svg'
               alt='menu'
@@ -216,6 +247,8 @@ export default function Navbar() {
               className={`${isMobileMenuOpen ? 'block' : 'hidden'}`}
             />
           </div>
+
+          
           
         </div>
       </div>

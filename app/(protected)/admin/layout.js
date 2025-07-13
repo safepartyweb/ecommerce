@@ -96,9 +96,8 @@ export default function DashboardLayout({children}) {
     <section className="sec_admin ">
       <div className="container max-w-sitemax px-4 mx-auto  ">
         <div className="dashboard_wrapper grid grid-cols-6 gap-6 md:gap-10 justify-between flex-col sm:flex-row">
-          <AnimatedBlock direction="left">
-            <DashboardLeft />
-          </AnimatedBlock>
+          
+          <DashboardLeft />
           
 
           <div className="dashboard_right py-6 md:py-10 px-4 col-span-6 sm:col-span-4 md:col-span-4 lg:col-span-4 xl:col-span-5">

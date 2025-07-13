@@ -17,6 +17,7 @@ export default function RegisterPage() {
     phone: "",
     address: "",
     city: "",
+    state: "",
     postalCode: "",
     country: "",
     password: "",
@@ -51,6 +52,7 @@ export default function RegisterPage() {
     data.append('phone', formData.phone);
     data.append('address', formData.address);
     data.append('city', formData.city);
+    data.append('state', formData.state);
     data.append('postalCode', formData.postalCode);
     data.append('country', formData.country);
     data.append('password', formData.password);
@@ -118,6 +120,11 @@ export default function RegisterPage() {
               <div className='flex flex-col gap-1 mb-4'>
                 <label className='text-lg font-medium'>City</label>
                 <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} required className="py-2 px-4 rounded border border-siteBlack w-full" />
+              </div>
+
+              <div className='flex flex-col gap-1 mb-4'>
+                <label className='text-lg font-medium'>State</label>
+                <input type="text" name="state" placeholder="State" value={formData.state} onChange={handleChange} required className="py-2 px-4 rounded border border-siteBlack w-full" />
               </div>
 
               <div className='flex flex-col gap-1 mb-4'>

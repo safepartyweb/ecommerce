@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 import { useSelector } from 'react-redux';
 import { redirect } from 'next/navigation';
 // import { useEffect, useState } from 'react';
@@ -15,6 +15,9 @@ import { logout } from '@/store/authSlice';
 
 
 export default function DashboardLayout({children}) {
+  
+  const [loading, setLoading] = useState(true);
+  
   // const { loading } = useUserBootstrap();
   const { userInfo } = useSelector((state) => state.auth);
   // console.log("userInfo", userInfo)
@@ -33,11 +36,11 @@ export default function DashboardLayout({children}) {
 
         if (res.ok) {
           const data = await res.json();
-          console.log("data from fetch me",data)
+          // console.log("data from fetch me",data)
           //dispatch(setCredentials({ user: data.user }));
         } else {
           dispatch(logout());
-          console.log("ftch err!")
+          console.log("fetch err, user not found!")
           router.push('/login')
           //if (redirectIfUnauthed) router.push('/login');
         }
@@ -47,7 +50,7 @@ export default function DashboardLayout({children}) {
         router.push('/login')
         //if (redirectIfUnauthed) router.push('/login');
       } finally {
-        //setLoading(false);
+        setLoading(false);
       }
     };
 
@@ -57,7 +60,7 @@ export default function DashboardLayout({children}) {
       router.push('/login')
     }
     
-  }, [userInfo]);
+  }, []);
 
   
 
@@ -90,15 +93,15 @@ export default function DashboardLayout({children}) {
 
   // if (loading) return <Loader />;
  
-  
+  if (loading) return <Loader />; 
   return (
     
     <section className="sec_admin ">
       <div className="container max-w-sitemax px-4 mx-auto  ">
-        <div className="dashboard_wrapper grid grid-cols-6 gap-6 md:gap-10 justify-between flex-col sm:flex-row">
-          <AnimatedBlock direction="left">
-            <DashboardLeft />
-          </AnimatedBlock>
+        <div className="dashboard_wrapper grid grid-cols-6  gap-6 md:gap-10 justify-between flex-col sm:flex-row">
+          
+          
+          <DashboardLeft />
           
 
           <div className="dashboard_right py-6 md:py-10 px-4 col-span-6 sm:col-span-4 md:col-span-4 lg:col-span-4 xl:col-span-5">

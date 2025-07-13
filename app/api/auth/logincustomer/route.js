@@ -34,7 +34,7 @@ export async function POST(req) {
     
 
     const token = jwt.sign(
-      { userId: customer._id.toString() }, jwtSecret, { expiresIn: '1d' }
+      { userId: customer._id.toString() }, jwtSecret, { expiresIn: '30d' }
     );
     
     const cookieStore = await cookies();
@@ -42,7 +42,7 @@ export async function POST(req) {
     cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60, // 1 day in seconds
+      maxAge: 30 * 24 * 60 * 60, // 30 day in seconds
       sameSite: 'strict',
       path: '/',
     });
@@ -54,6 +54,7 @@ export async function POST(req) {
       phone: customer.phone,
       address: customer.address,
       city: customer.city,
+      state: customer.state,
       postalCode: customer.postalCode,
       country: customer.country,
       role: customer.role,

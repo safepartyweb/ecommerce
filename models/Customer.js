@@ -8,6 +8,7 @@ const customerSchema = new mongoose.Schema({
   phone: { type: String },
   address: { type: String },
   city: { type: String },
+  state: { type: String },
   postalCode: { type: String },
   country: { type: String },
   role: { type: String, default:"customer" },
