@@ -7,7 +7,7 @@ import { getAuthUser } from "@/lib/auth";
 //get single order
 export async function GET(req, { params }) {
 
-  console.log("Individual Order route hit!")
+  // console.log("Individual Order route hit!")
   
   try {
     const { orderId } = await params;
@@ -48,7 +48,60 @@ export async function GET(req, { params }) {
   }
 }
 
+export async function PATCH(req, { params }) {
+
+  await connectMongo();
+
+  const data = await req.json();
+  console.log("Edit order data:",data)
+
+
+  try {
+    const { orderId } = await params;
+    // console.log("Order Id", orderId)
+    
+    const user = await getAuthUser();
+    if (!user && user.role !=='admin' ) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+    
+    if (!orderId) {
+      return Response.json(
+        { success: false, message: "Order ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const order = await Order.findById(orderId);
+
+    const paymentStatus = data.isPaid == 'true' ? true : false
+    order.isPaid = paymentStatus
+    order.status = data.status;
+
+    const updatedOrder = await order.save();
+
+    /*
+    product.name = data.name || product.name;
+    product.price = data.price || product.price;
+    product.description = data.description || product.description;
+
+    const updatedProduct = await product.save();
+    */
+    return Response.json({ message: "success!", order: updatedOrder}, { status: 200 })
+  } catch (error) {
+    return Response.json({ message: error.message, error }, { status: 500 })
+  }
+}
+
+
 /*
+
+
+
+
+
+
+
 export async function POST(req) {
 
   // const reqBody = await req.json();
@@ -77,34 +130,6 @@ export async function POST(req) {
 //return Response.json({ message: "test!", }, { status: 200 })
   
 }
-
-
-export async function PATCH(req) {
-
-  await connectMongo();
-  const formData = await req.formData();
-  const data = Object.fromEntries(formData);
-  console.log("data",data)
-  const productId = data.productId;
-
-  try {
-    const product = await Product.findById(productId);
-    if(!product){
-      throw new Error("Product not found!")
-    }
-
-    product.name = data.name || product.name;
-    product.price = data.price || product.price;
-    product.description = data.description || product.description;
-
-    const updatedProduct = await product.save();
-
-    return Response.json({ message: "success!", product:updatedProduct }, { status: 200 })
-  } catch (error) {
-    return Response.json({ message: error.message, error }, { status: 500 })
-  }
-}
-
 
 export async function DELETE(req) {
   await connectMongo();

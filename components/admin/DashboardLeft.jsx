@@ -12,7 +12,7 @@ const DashboardLeft = () => {
           <li className='border-b border-gray-500 py-2 px-2  text-white font-medium'><Link href="/admin/products">Products</Link></li>
           <li className='border-b border-gray-500 py-2 px-2  text-white font-medium'><Link href="/admin/categories">Categories</Link></li>
           <li className='border-b border-gray-500 py-2 px-2  text-white font-medium'><Link href="/admin/orders">Orders</Link></li>
-          <li className='py-1 px-2  text-white font-medium'><Link href="/admin/users/">Users</Link></li>
+          {/* <li className='py-1 px-2  text-white font-medium'><Link href="/admin/users/">Users</Link></li> */}
         </ul>
       </AnimatedBlock>
     </div>

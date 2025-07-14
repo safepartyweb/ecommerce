@@ -50,7 +50,6 @@ const SingleOrder = ({order,sl}) => {
               <li className='py-2 border-b border-gray-300 w-full cursor-pointer'>
                 <Link href={`/dashboard/orders/${order._id}`}>View Details</Link>
               </li>
-              <li className='py-2 border-b border-gray-300 w-full cursor-pointer'>Change Status</li>
             </ul>
           </div>}
           
