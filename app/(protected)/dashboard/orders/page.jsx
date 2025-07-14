@@ -13,8 +13,8 @@ const page = () => {
   const [totalCount, setTotalCount] = useState()
   const [orders, setOrders] = useState()
 
-
-  const {data,isLoading} = useGetPaginatedOrdersQuery({page,limit:5})
+  const limit = 5;
+  const {data,isLoading} = useGetPaginatedOrdersQuery({page,limit})
 
   useEffect(() => {
     
@@ -47,7 +47,7 @@ const page = () => {
             <div className="title flex-1">Payment</div>
             <div className="title flex-1 flex justify-end">Actions</div>
           </div>
-          <CustomerOrders orders={data.orders} />
+          <CustomerOrders orders={data.orders} page={page} limit={limit} />
           
           
         </div>

@@ -5,7 +5,7 @@ import { getAuthUser } from "@/lib/auth";
 
 
 
-
+// get orders for customer 
 export async function GET(request) {
 
 

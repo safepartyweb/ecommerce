@@ -3,6 +3,10 @@ import Image from 'next/image'
 import VerDot from '@/images/verticaldots.svg'
 import Link from 'next/link'
 import AnimatedBlock from '@/components/shared/MotionParent'
+import dayjs from 'dayjs'
+
+
+
 
 const SingleOrderItem = ({order,sl}) => {
   
@@ -32,8 +36,9 @@ const SingleOrderItem = ({order,sl}) => {
   return (
     <AnimatedBlock direction="up">
     <div className='flex gap-2 justify-between items-center border-b border-gray-500 pb-4'>
-      <div className="prod_sl flex-1">{sl+1}.</div>
-      <div className="prod_img flex-3"> {order.user.fullName}   </div>
+      <div className="prod_sl flex-1">{sl}.</div>
+      <div className="prod_sl flex-[1.5]">{dayjs(order.createdAt).format('DD MMM, YYYY')}.</div>
+      <div className="prod_img flex-2"> {order.user.fullName}   </div>
       {/* <div className="title flex-6">{order.title}</div> */}
       <div className="title flex-3">${order.totalPrice}</div>
       <div className="title flex-3">{order.status}</div>

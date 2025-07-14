@@ -3,25 +3,57 @@ import Order from "@/models/Orders";
 import { NextResponse } from 'next/server';
 import { getAuthUser } from "@/lib/auth";
 import Customer from "@/models/Customer";
+import User from "@/models/User";
 
 
 
-// get all orders
-export async function GET() {
+// get all orders for admins
+export async function GET(request) {
 
   const user = await getAuthUser();
+  
+  console.log("user", user)
+
   if (!user) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
   await connectMongo();
 
-  if (user.role !== 'admin') {
+  const userData = await User.findById(user.id)
+
+  if (userData.role !== 'admin') {
     return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const page = parseInt(searchParams.get('page')) || 1;
+  const limit = parseInt(searchParams.get('limit')) || 10;
+
   try {
-    const orders = await Order.find().populate('user', 'fullName email');
-    return Response.json({ message: "Success!", orders }, { status: 200 });
+
+    const skip = (page - 1) * limit;
+
+    const [orders, totalCount] = await Promise.all([
+      Order.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Order.find().countDocuments()
+    ]);
+
+    return NextResponse.json({
+      success: true,
+      orders,
+      totalCount,
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit)
+    });
+
+
+
+
+    //const orders = await Order.find().populate('user', 'fullName email').sort({"createdAt":-1});
+    //return Response.json({ message: "Success!", orders }, { status: 200 });
   } catch (error) {
     console.log("Error:", error)
     return Response.json({ message: "Failed!", error }, { status: 500 });

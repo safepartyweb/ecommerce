@@ -36,6 +36,8 @@ export default function CheckoutPage() {
   });
 
   const [total, setTotal] = useState(0);
+  const [subTotal, setSubTotal] = useState(0);
+  const [shipping, setShipping] = useState(0);
 
   useEffect(() => {
     if (!userInfo) {
@@ -44,11 +46,13 @@ export default function CheckoutPage() {
   }, [userInfo, router]);
 
   useEffect(() => {
-    const calculated = cartItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
-    setTotal(calculated);
+    const calculated = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0 );
+    setSubTotal(calculated);
+    if(calculated > 500){
+      setShipping(0)
+    }else{
+      setShipping(100)
+    }
   }, [cartItems]);
 
   useEffect(() => {
@@ -100,11 +104,11 @@ export default function CheckoutPage() {
     // const paymentMethod = useSelector((state) => state.cart.paymentMethod || 'Cash on Delivery');
   
     const itemsPrice = cartItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
+      (sum, item) => sum + (item.price * item.quantity),
       0
     );
 
-    let shippingPrice = itemsPrice > 500 ? 0 : 0;
+    let shippingPrice = itemsPrice > 500 ? 0 : 100;
     const taxPrice = 0;
     const totalPrice = itemsPrice + shippingPrice + taxPrice;
   
@@ -291,9 +295,19 @@ export default function CheckoutPage() {
             ))}
           </ul>
           <hr className="my-4" />
+
+          <div className="text-lg font-semibold flex justify-between">
+            <span>Sub Total:</span>
+            <span>${subTotal.toFixed(2)}</span>
+          </div>
+          <div className="text-lg font-semibold flex justify-between">
+            <span>Shipping:</span>
+            <span>${shipping.toFixed(2)}</span>
+          </div>
+
           <div className="text-lg font-semibold flex justify-between">
             <span>Total:</span>
-            <span>${total.toFixed(2)}</span>
+            <span>${(subTotal + shipping).toFixed(2)}</span>
           </div>
         </div>
       </div>

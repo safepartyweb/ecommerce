@@ -57,7 +57,7 @@ export default function DashboardLayout({children}) {
       router.push('/admin-login')
     }
     
-  }, [userInfo]);
+  }, []);
 
   
 
