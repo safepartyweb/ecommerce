@@ -16,6 +16,7 @@ const page = () => {
   const [totalPages, setTotalPages] = useState()
   const [totalCount, setTotalCount] = useState()
   const [orders, setOrders] = useState()
+
   
   /*
   if (!user) {
@@ -54,7 +55,8 @@ const page = () => {
     return <Loader />
   }
 
-  console.log("orders data",data)
+
+  // console.log("orders data",data)
   // const orders = data?.orders;
   // console.log("Orders", orders)
 
@@ -69,23 +71,28 @@ const page = () => {
         {/* <div className="buttn_wrap"><BlackButton link="/admin/products/new">Add New Product</BlackButton></div> */}
       </div>
 
-      <div className="products_list">
-        <h1 className='text-lg font-semibold'>All Orders:</h1>
+      <div className="products_list overflow-x-auto">
         
-        <div className="products_header flex gap-2 justify-between mb-6 border-b border-gray-400 pb-4">
-          <div className="prod_sl flex-1">SL.</div>
-          <div className="prod_sl flex-[1.5]">Date</div>
-          <div className="prod_img flex-2">Customer Name</div>
-          {/* <div className="title flex-6">Title</div> */}
-          <div className="title flex-3">Amount</div>
-          <div className="title flex-3">Status</div>
-          <div className="title flex-3">Payment</div>
-          {/* <div className="title flex-3">Best Seller</div> */}
-          <div className="title flex-1 flex justify-center">Actions</div>
-        </div>
+        <h1 className='text-lg font-semibold'>All Orders ({data.totalCount})</h1>
         
-        <div className="prod_wrap flex flex-col gap-4">
-          { orders && orders.map((item,index) => <SingleOrderItem key={index} order={item} sl={page > 1 ?(page - 1)*limit+(index+1) : index+1} /> )}
+        <div className="min-w-[600px]">
+          
+          <div className="products_header flex gap-2 justify-between mb-6 border-b border-gray-400 pb-4">
+            <div className="prod_sl flex-1">SL.</div>
+            <div className="prod_sl flex-[1.5]">Date</div>
+            <div className="prod_img flex-[2.5]">Customer Name</div>
+            {/* <div className="title flex-6">Title</div> */}
+            <div className="title flex-3">Amount</div>
+            <div className="title flex-3">Status</div>
+            <div className="title flex-3">Payment</div>
+            {/* <div className="title flex-3">Best Seller</div> */}
+            <div className="title flex-1 flex justify-center">Actions</div>
+          </div>
+          
+          <div className="prod_wrap flex flex-col gap-4">
+            { orders && orders.map((item,index) => <SingleOrderItem key={index} order={item} sl={page > 1 ?(page - 1)*limit+(index+1) : index+1} /> )}
+          </div>
+
         </div>
 
       </div>

@@ -2,8 +2,8 @@
 import React,{useState, useEffect} from 'react'
 import { useGetPaginatedOrdersQuery } from '@/lib/api/customerApi'
 import Loader from '@/components/Loader'
-import CustomerOrders from '@/components/dashboards/customerOrders'
 import ReactPaginate from 'react-paginate';
+import CustomerOrders from '@/components/dashboards/CustomerOrders'
 
 
 

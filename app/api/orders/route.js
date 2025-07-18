@@ -37,7 +37,7 @@ export async function GET(request) {
       Order.find()
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(limit),
+        .limit(limit).populate('user'),
       Order.find().countDocuments()
     ]);
 

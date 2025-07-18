@@ -94,6 +94,33 @@ export async function PATCH(req, { params }) {
 }
 
 
+export async function DELETE(req, { params }) {
+  console.log("Order delete hit!")
+  await connectMongo();
+  const { orderId } = await params;
+
+
+  try {
+    
+    const deletedOrder = await Order.findByIdAndDelete(orderId);
+    
+    if(!deletedOrder){
+      throw new Error("Order not found!")
+    }
+
+    return Response.json({ message: "deleted successfully!", order:deletedOrder }, { status: 200 })
+  } catch (error) {
+    return Response.json({ message: error.message, error }, { status: 500 })
+  }
+  
+}
+
+
+
+
+
+
+
 /*
 
 
@@ -131,28 +158,5 @@ export async function POST(req) {
   
 }
 
-export async function DELETE(req) {
-  await connectMongo();
-  const formData = await req.formData();
-  const data = Object.fromEntries(formData);
-  console.log("data",data)
-  const productId = data.productId;
-
-
-  try {
-    const deletedProduct = await Product.findByIdAndDelete(productId);
-    if(!deletedProduct){
-      throw new Error("Product not found!")
-    }
-
-    return Response.json({ message: "deleted successfully!", product:deletedProduct }, { status: 200 })
-  } catch (error) {
-    return Response.json({ message: error.message, error }, { status: 500 })
-  }
-  
-
-
-  return Response.json({ message: "PATCH route!" }, { status: 200 });
-}
 
 */

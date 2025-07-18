@@ -129,7 +129,7 @@ const page = () => {
       </div> */}
 
       {showEdit && (
-        <div className="overlay fixed w-full h-full top-0 left-0 backdrop-blur-sm flex items-center justify-center z-[90]">
+        <div className="overlay fixed w-full h-full top-0 left-0 backdrop-blur-sm flex items-center justify-center z-[90] p-4">
 
           <div className="modal_inner flex flex-col justify-center w-full max-w-[500px] p-6 bg-siteGray text-white rounded">
             <h1 className='text-center text-2xl font-bold mb-6'>Edit Order!</h1>
@@ -155,7 +155,7 @@ const page = () => {
 
 
               <div className="flex gap-4">
-                <div className="bg-white text-siteBlack border border-white rounded hover:bg-siteBlack hover:text-white px-6 py-3 block font-bold font-lg" onClick={e => setShowEdit(false)}>Cancel</div>
+                <div className="bg-white text-siteBlack border border-white rounded hover:bg-siteBlack hover:text-white px-6 py-3 block font-bold font-lg cursor-pointer" onClick={e => setShowEdit(false)}>Cancel</div>
                 <button className="bg-white text-siteBlack border border-white rounded hover:bg-siteBlack hover:text-white px-6 py-3 block font-bold font-lg cursor-pointer">Update</button>
               </div>
             </form>
