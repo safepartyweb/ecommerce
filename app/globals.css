@@ -84,11 +84,11 @@ body{
 /* .swiper-slide{background: #ddd;} */
 .swiper-pagination-bullet{
   background: #ddd !important;
-  opacity: .5 !important;
+  opacity: 1 !important;
 }
 
 .swiper-pagination-bullet.swiper-pagination-bullet-active{
-  background: #fff;
+  background: #17365c !important;
   opacity: 1 !important;
 }
 

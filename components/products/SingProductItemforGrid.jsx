@@ -26,19 +26,26 @@ const SingProductItemforGrid = ({ product }) => {
 
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 bg-gray-100 rounded p-4">
 
-      <Image className="rounded mx-auto" src={product.images[0].url} width={300} height={300} alt={product.title} />
+      <Image
+        className="rounded mx-auto h-[212px] w-auto object-cover"
+        src={product.images[0].url}
+        width={300}
+        height={212}
+        alt={product.title}
+      />
+
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold">{product.title}</h2>
         <p>Price: ${product.price}</p>
         <p>Stock: {product.stock}</p>
-        {product.weight ? (
+        {/* {product.weight ? (
           <p>Quantity: {product.weight} {product.unit}</p>
-        ) : ''}
-        {product.category ? (
+        ) : ''} */}
+        {/* {product.category ? (
           <p>Category: {product.category.name}</p>
-        ) : ''}
+        ) : ''} */}
         
       </div>
       

@@ -1,11 +1,12 @@
 'use client';
 
-import React,{ } from 'react';
+import React,{useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import Image from 'next/image';
 import Button from '../Button';
 import BlackButton from '../BlackButton';
+import Link from 'next/link';
 
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -21,21 +22,21 @@ import HeroSlideSingleProduct from '../products/HeroSlideSingleProduct';
 
 
 
+
 const Hero = ({productsData}) => {
   const products = productsData.products;
   // console.log("products from hero",products )
+
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   const showHeroProducts = products.filter(product => product.showHero)
   // console.log("showHeroProducts", showHeroProducts)
 
   return (
-    <section className='sec-home-hero py-6 md:py-10 pt-12 md:pt-20'> 
+    <section className='sec-home-hero'> 
       <div className='container max-w-sitemax px-4 mx-auto'>
-        
-        
-          
-        
-          <div className="home-hero-wrap flex flex-col lg:flex-row gap-8 lg:gap-0 justify-between items-center h-auto lg:h-[400px]">
+            
+          {/* <div className="home-hero-wrap flex flex-col lg:flex-row gap-8 lg:gap-0 justify-between items-center h-auto lg:h-[400px]">
             <div className="home-hero-left w-full lg:w-[50%] h-full flex items-center flex-col justify-center gap-6 lg:order-first order-last pr-0 lg:pr-10">
               <h1 className='text-3xl  md:text-5xl font-bold text-siteBlack'>Trusted Supplier of Pharmaceutical-Grade Cocaine</h1>
               <p className="text-siteBlack font-medium text-xl md:text-2xl ">Serving licensed professionals across Canada with high-purity, regulated products for clinical and scientific use.</p>
@@ -73,10 +74,47 @@ const Hero = ({productsData}) => {
               </Swiper>
             </div>
 
+          </div> */}
+        
+        <AnimatedBlock direction='up'>
+
+          <div className="relative w-full h-screen overflow-hidden rounded">
+            
+            
+            <img
+              src="/videos/vid_placeholder.png"
+              alt="Hero placeholder"
+              className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${
+                videoLoaded ? 'opacity-0' : 'opacity-100'
+              }`}
+            />
+            
+            {/* Background video or image */}
+            <video
+              className="absolute top-0 left-0 w-full h-full object-cover"
+              src="/videos/video.mp4" // replace with your actual video path
+              autoPlay
+              loop
+              muted
+              playsInline
+              onLoadedData={() => setVideoLoaded(true)}
+            />
+
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/40 bg-opacity-30 z-10"></div>
+
+            {/* Text Content */}
+            <div className="relative z-20 flex flex-col items-center justify-center text-center text-white h-full px-4">
+              <h1 className="text-4xl md:text-6xl font-bold mb-4">
+                Transform Your Life With
+              </h1>
+              <p className="text-xl md:text-2xl mb-6">Psychedelic Medicine</p>
+
+                <Link className="px-6 py-3 border border-white hover:bg-white hover:text-black transition-all rounded-md text-lg" href="/shop">Shop Now</Link>
+
+            </div>
           </div>
-
-
-
+        </AnimatedBlock>
         
 
 
