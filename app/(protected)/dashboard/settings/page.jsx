@@ -90,18 +90,18 @@ const page = () => {
     }
 
     try {
-      const apiRes = await editCustomer(data)
-      console.log("apiRes", apiRes)
-      toast.success("Password changed succesfully!")
+      const apiRes = await editCustomer(data).unwrap();
+      console.log("EapiResrror:", apiRes);
+      toast.success("Password changed successfully!");
       setShowEditPass(false);
-      setPassword('')
-      setNewPassword('')
-      setNewConfirmPassword('')
-    } catch (error) {
-      console.log("error", "Something went wrong", error)
-      toast.error("Something went wrong!")
+      setPassword('');
+      setNewPassword('');
+      setNewConfirmPassword('');
+    } catch (err) {
+      console.log("Error:", err);
+      toast.error(err?.data?.message || "Something went wrong");
     }
-
+    
     
 
 

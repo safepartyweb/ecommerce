@@ -79,16 +79,15 @@ export async function POST(request) {
     if(data.password){
       const isMatch = await customer.comparePassword(data.password);
       if (!isMatch) {
-        return Response.json({ message: "Invalid email or password!"  }, { status: 401 })
+        return Response.json({ message: "Wrong old password!"  }, { status: 401 })
       }
 
       customer.password = data.newPassword;
 
       await customer.save();
 
-      return NextResponse.json({
-        success: true,
-      });
+      return Response.json({ message: "Password changed!"  }, { status: 200 })
+      // return Response.json({message: "Password changed!" }, { status: 200 })
 
     }
     //End pass changed tasks.

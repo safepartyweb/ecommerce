@@ -28,6 +28,14 @@ export async function POST(req) {
         { status: 401 }
       );
     }
+
+    if(user.status === 'inactive'){
+      return Response.json(
+        { message: "Not authorized yet!" }, 
+        { status: 401 }
+      );
+    }
+    
     const isMatch = await user.comparePassword(password);
     //console.log("isMatch", isMatch)
     if (!isMatch) {

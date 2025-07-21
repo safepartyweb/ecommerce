@@ -16,8 +16,13 @@ export async function POST(req) {
   const data = Object.fromEntries(formData);
   console.log("data",data)
 
+  const userData = {
+    ...data,
+    status: 'inactive',
+  };
+
   try {
-    const newUser = await User.create(data)
+    const newUser = await User.create(userData)
     return Response.json({ message: "success!", user:newUser }, { status: 200 })
   } catch (error) {
     return Response.json({ message: "Something went wrong!", error }, { status: 500 })

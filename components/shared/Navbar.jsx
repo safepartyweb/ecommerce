@@ -14,7 +14,7 @@ export default function Navbar() {
   const { userInfo } = useSelector((state) => state.auth);
   const {cartItems} = useSelector((state) => state.cart);
   const [logOut] = useLogOutMutation();
-  // console.log("userInfo from navbar state", userInfo)
+  console.log("userInfo from navbar state", userInfo)
   // console.log("cartItemscart", cartItems)
   const cartCount = cartItems.reduce((prev,cur) => prev + cur.quantity,0);
   const cartTotal = cartItems.reduce((prev,cur) => prev + (cur.quantity * cur.price),0);
@@ -33,8 +33,10 @@ export default function Navbar() {
     try {
       dispatch(logout())
       const logOutHandler = await logOut();
-      console.log("logOutHandler", logOutHandler)
-      window.location.href = '/login';
+      // console.log("logOutHandler", logOutHandler)
+      
+      {userInfo.role !== 'customer' ? window.location.href = '/admin-login' :  window.location.href = '/login' }
+     
     } catch (error) {
       console.error('Logout failed:', error);
     }

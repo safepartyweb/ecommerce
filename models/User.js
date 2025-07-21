@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
   },
   role: { type: String, default:"admin" },
+  status: { type: String, default:"inactive" },
 }, {
   timestamps: true,
 });

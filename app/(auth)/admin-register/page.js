@@ -7,6 +7,7 @@ import AuthForm from '@/components/AuthForm';
 import Link from 'next/link';
 import AnimatedBlock from '@/components/shared/MotionParent';
 
+
 export default function RegisterPage() {
   const { user } = useSelector((state) => state.auth);
 

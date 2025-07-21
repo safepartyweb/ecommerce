@@ -34,7 +34,7 @@ export async function POST(req) {
     
 
     const token = jwt.sign(
-      { userId: customer._id.toString() }, jwtSecret, { expiresIn: '30d' }
+      { userId: customer._id.toString(), role: 'customer'  }, jwtSecret, { expiresIn: '30d' }
     );
     
     const cookieStore = await cookies();
