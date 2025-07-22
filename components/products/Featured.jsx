@@ -13,9 +13,16 @@ import SingleFeaturedProduct from './SingleFeaturedProduct'
 
 const Featured = ({productsData}) => {
   const products = productsData.products;
-  // console.log("productsL:", products)
+  console.log("products:", products)
   const newArrivals = products.slice(0,6);
-  // console.log("newArrivals", newArrivals)
+  const featuredProds = products.filter(prod => prod.isFeatured)
+  let showAbleProds;
+  if(featuredProds.length > 5){
+    showAbleProds = featuredProds.slice(0,6);
+  }else{
+    showAbleProds = featuredProds
+  }
+  console.log("showAbleProds", showAbleProds)
   
   const dispatch = useDispatch();
   const handleAddToCart = () => {
@@ -25,6 +32,7 @@ const Featured = ({productsData}) => {
       image: product.images[0]?.url,
       price: product.price,
       quantity: 1,
+      isVariable: product.isVariable ? product.isVariable : false ,
     }));
 
     toast.success("Added to cart!")
@@ -38,7 +46,7 @@ const Featured = ({productsData}) => {
         <h2 className='text-3xl md:text-5xl font-bold text-center mb-10'>Featured Products</h2>
         <div className="prodcuts_wrap flex gap-5 md:gap-8 justify-center flex-wrap ">
           
-          {newArrivals.map(product=> <AnimatedBlock key={product._id} direction='up' className=' w-full sm:w-[45%] lg:w-[23%] single_product border border-siteBlack rounded p-4 md:p-6'>
+          {showAbleProds.map(product=> <AnimatedBlock key={product._id} direction='up' className=' w-full sm:w-[45%] lg:w-[23%] single_product border border-siteBlack rounded p-4 md:p-6'>
             <SingleFeaturedProduct product={product} />
             </AnimatedBlock> )}
 

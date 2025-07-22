@@ -96,6 +96,8 @@ export async function POST(req) {
       totalPrice,
     });
 
+    //console.log("new order:", )
+
     const savedOrder = await newOrder.save();
 
     return NextResponse.json(savedOrder, { status: 201 });
@@ -104,10 +106,6 @@ export async function POST(req) {
     return NextResponse.json({ message: 'Failed to create order', error }, { status: 500 });
   }  
 
-  
 
-
-
-  //return Response.json({ message: "order creation test!", }, { status: 200 })
   
 }

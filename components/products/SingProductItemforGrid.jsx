@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 
 const SingProductItemforGrid = ({ product }) => {
-  // console.log("Product from single product item for grid:", product);
+  console.log("Product from single product item for grid:", product);
   const dispatch = useDispatch();
 
   const handleAddToCart = () => {
@@ -18,6 +18,7 @@ const SingProductItemforGrid = ({ product }) => {
       image: product.images[0]?.url,
       price: product.price,
       quantity: 1,
+      isVariable: product.isVariable ? product.isVariable : false ,
     }));
 
     toast.success("Added to cart!")

@@ -10,12 +10,23 @@ const orderItemSchema = new mongoose.Schema(
       required: true,
     },
     name: String,
-    price: Number,
+    image: String,
+    isVariable:{
+      type:Boolean,
+      required:true
+    },
+    variationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      // required: true,
+    },
+    variationLabel: String, // e.g., "10g"
+    unit: String,           // e.g., "g", "ml"
+    price: Number,          // price of selected variation
+
     quantity: {
       type: Number,
       required: true,
     },
-    image: String, // optional thumbnail
   },
   { _id: false }
 );
@@ -39,7 +50,6 @@ const orderSchema = new mongoose.Schema(
 
     paymentMethod: {
       type: String,
-      // required: true,
     },
 
     paymentResult: {
@@ -91,4 +101,3 @@ const orderSchema = new mongoose.Schema(
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
 
 export default Order;
-

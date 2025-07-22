@@ -144,7 +144,7 @@ export default function CheckoutPage() {
 
       //2. Get Order Id, amount etc
       const orderId = data._id;
-      console.log('📦 Order ID:', orderId);
+      // console.log('📦 Order ID:', orderId);
 
       
 
@@ -289,7 +289,7 @@ export default function CheckoutPage() {
           <ul className="space-y-2">
             {cartItems.map((item) => (
               <li key={item.productId} className="flex justify-between items-center">
-                <span>{item.name} ( {item.price} × {item.quantity})</span>
+                <span>{item.name} {item.variable ? ` - ${item.variation.label}`  : ''} ( {item.price} × {item.quantity})</span>
                 <span>${(item.price * item.quantity).toFixed(2)}</span>
               </li>
             ))}

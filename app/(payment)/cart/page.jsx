@@ -60,7 +60,7 @@ const page = () => {
                 <tr key={item.productId} className="border-t">
                   <td className="p-3 flex items-center gap-3">
                     <img src={item.image} alt={item.name} className="w-12 h-12 object-cover" />
-                    {item.name}
+                    {item.name} {item.variable ? ` - ${item.variation.label}` : ''}
                   </td>
                   <td className="p-3">${item.price.toFixed(2)}</td>
                   <td className="p-3">
