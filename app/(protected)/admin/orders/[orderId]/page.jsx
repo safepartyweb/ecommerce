@@ -96,11 +96,11 @@ const page = () => {
 
       <div className="mb-6">
         <h2 className="font-semibold text-lg mb-2">Items in this Order</h2>
-        {order.orderItems.map(item => (
-          <div key={item.productId} className="flex gap-4 border-b py-3">
+        {order.orderItems.map((item,index) => (
+          <div key={index} className="flex gap-4 border-b py-3">
             <Image src={item.image} alt={item.name} width={60} height={60} />
             <div className="flex-grow">
-              <p className="font-medium">{item.name}</p>
+              <p className="font-medium">{item.name}  {item.isVariable ? ` - ${item.variationLabel}`  : ''}</p>
               <p className="text-sm">Qty: {item.quantity} × ${item.price}</p>
             </div>
             <p className="font-semibold">${item.price * item.quantity}</p>

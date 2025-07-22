@@ -287,9 +287,9 @@ export default function CheckoutPage() {
         <div className="bg-gray-50 border p-4 rounded">
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
           <ul className="space-y-2">
-            {cartItems.map((item) => (
-              <li key={item.productId} className="flex justify-between items-center">
-                <span>{item.name} {item.variable ? ` - ${item.variation.label}`  : ''} ( {item.price} × {item.quantity})</span>
+            {cartItems.map((item,index) => (
+              <li key={index} className="flex justify-between items-center">
+                <span>{item.name} {item.isVariable ? ` - ${item.variation.label}`  : ''} ( {item.price} × {item.quantity})</span>
                 <span>${(item.price * item.quantity).toFixed(2)}</span>
               </li>
             ))}
