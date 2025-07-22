@@ -21,9 +21,6 @@ const ProductSlider = ({products}) => {
 
 
 
-
-
-
   return (
     <Swiper
       modules={[Navigation, Pagination, Autoplay,EffectFade]}

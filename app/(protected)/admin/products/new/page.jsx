@@ -24,9 +24,20 @@ export default function AddProduct() {
     isFeatured:false,
   });
   const [showLoader, setShowLoader] = useState(false)
+  const [isVariable, setIsVariable] = useState(false);
+  const [variations, setVariations] = useState([
+    { label: "", unit: "", price: "", stock: "" }
+  ]);
+
+
+
+
+
 
   const [createProduct, {isLoading}] = useCreateProductMutation();
   const router = useRouter();
+  
+  //image upload
   const handleChange = async (e) => {
     const { name, value, type, files } = e.target;
     if(name !== 'image'){
@@ -67,44 +78,69 @@ export default function AddProduct() {
     
   }
 
+
+
+  const handleVariationChange = (index, field, value) => {
+    const updated = [...variations];
+    updated[index][field] = value;
+    setVariations(updated);
+  };
+  
+  const addVariation = () => {
+    setVariations([...variations, { label: "", unit: "", price: "", stock: "" }]);
+  };
+  
+  const removeVariation = (index) => {
+    const updated = variations.filter((_, i) => i !== index);
+    setVariations(updated);
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowLoader(true)
+    setShowLoader(true);
+  
     const formData = new FormData();
-    formData.append('title', data.title);
-    formData.append('price', data.price);
-    formData.append('description', data.description);
-    formData.append('stock', data.stock);
-    formData.append('bestSeller', data.bestSeller);
-    formData.append('showHero', data.showHero);
-    formData.append('isFeatured', data.isFeatured);
-    formData.append('images', JSON.stringify(data.images));
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("bestSeller", data.bestSeller);
+    formData.append("showHero", data.showHero);
+    formData.append("isFeatured", data.isFeatured);
+    formData.append("images", JSON.stringify(data.images));
+    formData.append("isVariable", isVariable);
+  
+    console.log("Variations:", variations);
 
-
-
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
+    if (isVariable) {
+      formData.append("variations", JSON.stringify(variations));
+    } else {
+      formData.append("price", data.price);
+      formData.append("stock", data.stock);
     }
 
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(`${key}: ${value}`);
+    // }
+  
+    
     try {
-      const apiRes =  await createProduct(formData).unwrap();
-      console.log("apiRes",apiRes)
-      toast.success("Product added successfully.")
+      const apiRes = await createProduct(formData).unwrap();
+      toast.success("Product added successfully.");
       setTimeout(() => {
-        router.push('/admin/products');
+        router.push("/admin/products");
       }, 1500);
     } catch (error) {
-      console.log("Error", error)
-      if(error.status == 409){
-        return toast.error(error.data.message)
-      }
-      toast.error("Something went wrong, please try again.")
-    } finally{
-      setShowLoader(false)
+      console.log("Error", error);
+      toast.error("Something went wrong.");
+    } finally {
+      setShowLoader(false);
     }
-    
 
+    
   };
+  
+
+
 
   return (
     <div className="new_product p-0 md:p-6 bg-white rounded shadow">
@@ -191,6 +227,72 @@ export default function AddProduct() {
             className="border rounded w-full px-3 py-2"
           />
         </div>
+
+        <div className="input_group">
+          <label className="block font-medium">Variable Product?</label>
+          <input
+            type="checkbox"
+            checked={isVariable}
+            onChange={() => setIsVariable(!isVariable)}
+            className="mr-2"
+          />
+        </div>
+
+        {isVariable && (
+          <div className="space-y-4">
+            <label className="block font-medium">Product Variations</label>
+            {variations.map((v, i) => (
+              <div key={i} className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                <input
+                  type="text"
+                  placeholder="Label (e.g. 250g)"
+                  value={v.label}
+                  onChange={(e) => handleVariationChange(i, "label", e.target.value)}
+                  className="border px-2 py-1 rounded"
+                />
+                <input
+                  type="text"
+                  placeholder="Unit (e.g. g, ml)"
+                  value={v.unit}
+                  onChange={(e) => handleVariationChange(i, "unit", e.target.value)}
+                  className="border px-2 py-1 rounded"
+                />
+                <input
+                  type="number"
+                  placeholder="Price"
+                  value={v.price}
+                  onChange={(e) => handleVariationChange(i, "price", e.target.value)}
+                  className="border px-2 py-1 rounded"
+                />
+                <input
+                  type="number"
+                  placeholder="Stock"
+                  value={v.stock}
+                  onChange={(e) => handleVariationChange(i, "stock", e.target.value)}
+                  className="border px-2 py-1 rounded"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeVariation(i)}
+                  className="text-red-500 text-sm"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addVariation}
+              className="bg-gray-800 text-white px-3 py-1 rounded"
+            >
+              + Add Variation
+            </button>
+          </div>
+        )}
+
+
+
+
         <button className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer">Add Product</button>
 
       </form>

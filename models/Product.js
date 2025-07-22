@@ -1,6 +1,13 @@
 import mongoose from 'mongoose';
 import Category from './Category';
 
+const variationSchema = new mongoose.Schema({
+  label: String,
+  unit: String,
+  price: Number,
+  stock: Number,
+}, { _id: true });
+
 const productSchema = new mongoose.Schema({
   title: {type: String, unique:true},
   slug: { type: String, unique: true },
@@ -41,6 +48,16 @@ const productSchema = new mongoose.Schema({
     type:Boolean,
     default:false,
   },
+  isVariable: {
+    type:Boolean,
+    default:false,
+  },
+  variations: [variationSchema],
+
+
+
+
+
 });
 
 const Product = mongoose.models.Product || mongoose.model('Product', productSchema);

@@ -30,7 +30,7 @@ const SingProductItemforGrid = ({ product }) => {
 
       <Image
         className="rounded mx-auto h-[212px] w-auto object-cover"
-        src={product.images[0].url}
+        src={product?.images[0].url}
         width={300}
         height={212}
         alt={product.title}
