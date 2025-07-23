@@ -75,7 +75,7 @@ const page = () => {
         
         <h1 className='text-lg font-semibold'>All Orders ({data.totalCount})</h1>
         
-        <div className="min-w-[600px]">
+        <div className="min-w-[600px] mb-24">
           
           <div className="products_header flex gap-2 justify-between mb-6 border-b border-gray-400 pb-4">
             <div className="prod_sl flex-1">SL.</div>

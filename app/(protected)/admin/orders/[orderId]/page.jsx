@@ -50,7 +50,7 @@ const page = () => {
     
 
     try {
-      const apiRes = await editOrder(data);
+      const apiRes = await editOrder(data).unwrap();
       console.log("apiRes", apiRes)
       toast.success("Order updated!")
       setShowEdit(false)

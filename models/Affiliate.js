@@ -28,11 +28,18 @@ const affiliateSchema = new mongoose.Schema({
     required: true,
   },
 
-  totalCommission: {
+  totalClicks: { type: Number, default: 0 },
+  totalSignups: { type: Number, default: 0 },
+  totalOrders: { type: Number, default: 0 },
+  totalEarned: { type: Number, default: 0 },
+  currentBalance: {
     type: Number,
     default: 0,
   },
-
+  withdrawnAmount: {
+    type: Number,
+    default: 0,
+  },
   referredCustomers: [
     {
       customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },

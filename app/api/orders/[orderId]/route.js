@@ -1,6 +1,8 @@
 import connectMongo from "@/lib/db";
 import Order from "@/models/Orders";
 import { getAuthUser } from "@/lib/auth";
+import Affiliate from "@/models/Affiliate";
+import { NextResponse } from "next/server";
 
 
 
@@ -48,6 +50,9 @@ export async function GET(req, { params }) {
   }
 }
 
+
+//edit single order
+/*
 export async function PATCH(req, { params }) {
 
   await connectMongo();
@@ -78,20 +83,105 @@ export async function PATCH(req, { params }) {
     order.isPaid = paymentStatus
     order.status = data.status;
 
+    if( data.isPaid == 'true' && order.referredBy ){
+      const commission = order.total * 0.1; // 10% commission example
+
+        await Affiliate.findByIdAndUpdate(order.referrer, {
+          $inc: {
+            totalOrders: 1,
+            totalEarned: commission,
+            currentBalance: commission,
+          },
+        });
+    }
+
     const updatedOrder = await order.save();
 
-    /*
-    product.name = data.name || product.name;
-    product.price = data.price || product.price;
-    product.description = data.description || product.description;
+    
+    // product.name = data.name || product.name;
+    // product.price = data.price || product.price;
+    // product.description = data.description || product.description;
 
-    const updatedProduct = await product.save();
-    */
+    // const updatedProduct = await product.save();
+    
     return Response.json({ message: "success!", order: updatedOrder}, { status: 200 })
   } catch (error) {
     return Response.json({ message: error.message, error }, { status: 500 })
   }
 }
+
+*/
+
+
+export async function PATCH(req, { params }) {
+  await connectMongo();
+
+  try {
+    const { orderId } = params;
+    const data = await req.json();
+
+    const user = await getAuthUser();
+    if (!user || user.role !== 'admin') {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!orderId) {
+      return NextResponse.json(
+        { success: false, message: 'Order ID is required' },
+        { status: 400 }
+      );
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return NextResponse.json({ message: 'Order not found' }, { status: 404 });
+    }
+
+    const wasPaid = order.isPaid; // track previous payment status
+    const paymentStatus = data.isPaid === 'true';
+
+    order.isPaid = paymentStatus;
+    order.status = data.status;
+
+    // Only update affiliate commission **if payment is newly marked as paid**
+    if (paymentStatus && !wasPaid && order.referredBy) {
+      const commission = order.itemsPrice * 0.1; // 10% commission
+
+      await Affiliate.findByIdAndUpdate(order.referredBy, {
+        $inc: {
+          totalOrders: 1,
+          totalEarned: commission,
+          currentBalance: commission,
+        },
+      });
+    }
+
+    // Only update affiliate commission **if payment is newly marked as paid**
+    if (!paymentStatus && wasPaid && order.referredBy) {
+      const commission = order.itemsPrice * 0.1; // 10% commission
+
+      await Affiliate.findByIdAndUpdate(order.referredBy, {
+        $inc: {
+          totalOrders: -1,
+          totalEarned: -commission,
+          currentBalance: -commission,
+        },
+      });
+    }
+
+
+
+
+    const updatedOrder = await order.save();
+
+    return NextResponse.json({ message: 'Order updated', order: updatedOrder }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
+  }
+}
+
+
 
 
 export async function DELETE(req, { params }) {
