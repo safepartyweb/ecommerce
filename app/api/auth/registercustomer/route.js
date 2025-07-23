@@ -1,5 +1,6 @@
 import connectMongo from "@/lib/db";
 import Customer from "@/models/Customer";
+import Affiliate from '@/models/Affiliate'
 
 export async function GET(req) {
 
@@ -7,7 +8,7 @@ export async function GET(req) {
   
 }
 
-
+//Register Customer:
 export async function POST(req) {
 
   await connectMongo();
@@ -15,11 +16,44 @@ export async function POST(req) {
   const data = Object.fromEntries(formData);
   // console.log("data",data)
 
+
+  const cookieHeader = req.headers.get('cookie') || ''
+  const refMatch = cookieHeader.match(/ref=([^;]+)/)
+  const refCode = refMatch ? refMatch[1] : null
+
+  let referredBy = null
+
+  if (refCode) {
+    console.log("Ref Code",refCode )
+    const affiliate = await Affiliate.findOne({ affiliateCode: refCode })
+    if (affiliate) {
+      console.log("Affiliate found!")
+      referredBy = affiliate._id
+
+      /*
+      if(affiliate.referredUsers){
+        affiliate.referredUsers.push({ userId: newUser._id })
+      }else {
+        affiliate.referredUsers = [{ userId: newUser._id }]
+      }
+      await affiliate.save()
+      */
+
+    }
+  }
+
+  // return Response.json({ message: "success!", status: 201 }, { status: 201 })
+
+  const newDataWithAffiliate = [{...data, referredBy}]
+
+
   try {
-    const newCustomer = await Customer.create(data)
+    const newCustomer = await Customer.create(newDataWithAffiliate)
     return Response.json({ message: "success!", customer:newCustomer,status: 201 }, { status: 201 })
   } catch (error) {
     return Response.json({ message: "Something went wrong!", error }, { status: 500 })
   }
+
+
 
 }

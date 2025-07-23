@@ -58,6 +58,7 @@ export async function POST(req) {
       postalCode: customer.postalCode,
       country: customer.country,
       role: customer.role,
+      referredBy: customer.referredBy,
     };
 
     return Response.json({ message: "success!", user:userData }, { status: 200 })

@@ -127,6 +127,7 @@ export default function CheckoutPage() {
           taxPrice,
           totalPrice,
           userId: userInfo.id,
+          referredBy: userInfo.referredBy,
         }),
       });
 

@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 import Product from './Product';
 import Customer from './Customer';
+import Affiliate from '@/models/Affiliate'
+
+
+
+
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -94,6 +99,16 @@ const orderSchema = new mongoose.Schema(
       enum: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
       default: 'Pending',
     },
+
+    referredBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Affiliate',
+      default: null,
+    }
+
+
+
+
   },
   { timestamps: true }
 );

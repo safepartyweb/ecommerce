@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 import bcrypt from 'bcryptjs';
+import Affiliate from '@/models/Affiliate'
 
 
 const customerSchema = new mongoose.Schema({
@@ -13,6 +14,11 @@ const customerSchema = new mongoose.Schema({
   country: { type: String },
   role: { type: String, default:"customer" },
   password: { type: String, required: true },
+  referredBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Affiliate',
+    default: null,
+  }
 }, { timestamps: true });
 
 

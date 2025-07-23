@@ -6,6 +6,7 @@ import { orderApi } from '@/lib/api/orderApi';
 import { customerApi } from '@/lib/api/customerApi';
 import cartReducer from './cartSlice.js';
 import { categoryApi } from '@/lib/api/categoryApi';
+import { affiliateApi } from '@/lib/api/affiliateApi';
 
 export const store = configureStore({
   reducer: {
@@ -14,11 +15,12 @@ export const store = configureStore({
     [orderApi.reducerPath]: orderApi.reducer,
     [customerApi.reducerPath]: customerApi.reducer,
     [categoryApi.reducerPath]: categoryApi.reducer,
+    [affiliateApi.reducerPath]: affiliateApi.reducer,
     auth: authReducer,
     cart: cartReducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, productApi.middleware, customerApi.middleware, orderApi.middleware,categoryApi.middleware, ),
+    getDefaultMiddleware().concat(authApi.middleware, productApi.middleware, customerApi.middleware, orderApi.middleware,categoryApi.middleware, affiliateApi.middleware, ),
 });
 
 export default store
