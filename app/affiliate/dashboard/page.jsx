@@ -16,6 +16,7 @@ export default function AffiliateDashboard() {
         const ordersRes = await axios.get('/api/affiliates/orders');
         setStats(statsRes.data);
         setOrders(ordersRes.data);
+        console.log("statsRes", statsRes)
       } catch (err) {
         console.error("Failed to load dashboard", err);
       } finally {
@@ -28,7 +29,9 @@ export default function AffiliateDashboard() {
   // if (loading) return <p className="text-center py-10">Loading dashboard...</p>;
   if (loading) return <Loader />;
 
-  console.log("Orders", orders)
+  // console.log("Orders", orders)
+  console.log("stats", stats)
+  
 
   return (
     <div className="max-w-5xl mx-auto p-6">

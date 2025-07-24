@@ -100,6 +100,7 @@ export default function ProductEdit({ product }) {
   };
 
   if (catLoading) return <Loader />;
+  console.log("Categories", data)
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">

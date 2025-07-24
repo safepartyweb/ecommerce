@@ -40,9 +40,8 @@ const SingProductItemforGrid = ({ product }) => {
   return (
     <div className="flex flex-col gap-4 bg-gray-100 rounded p-4">
 
-      <Image
-        className="rounded mx-auto h-[212px] w-auto object-cover"
-        src={product?.images[0].url}
+      <Image className="rounded mx-auto h-[212px] w-auto object-cover"
+        src={ product.images[0] ? product.images[0].url : '/images/prod-new.jpg'  }
         width={300}
         height={212}
         alt={product.title}

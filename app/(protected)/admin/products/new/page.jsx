@@ -9,10 +9,13 @@ import CheckboxChecked from '@/images/checkbox-black-checked.svg'
 import Loader from "@/components/Loader";
 import {toast} from 'react-toastify'
 import { useRouter } from 'next/navigation';
-
+import { useGetCategoriesQuery } from '@/lib/api/categoryApi';
 
 
 export default function AddProduct() {
+
+  const { data:catData, isLoading:catLoading, isError, error } = useGetCategoriesQuery();
+  
   const [data, setData] = useState({
     title: "",
     price: "",
@@ -22,7 +25,9 @@ export default function AddProduct() {
     bestSeller:false,
     showHero:false,
     isFeatured:false,
+    category:'',
   });
+
   const [showLoader, setShowLoader] = useState(false)
   const [isVariable, setIsVariable] = useState(false);
   const [variations, setVariations] = useState([
@@ -108,8 +113,10 @@ export default function AddProduct() {
     formData.append("isFeatured", data.isFeatured);
     formData.append("images", JSON.stringify(data.images));
     formData.append("isVariable", isVariable);
+    formData.append("category", data.category);
   
-    console.log("Variations:", variations);
+    // console.log("Variations:", variations);
+    // console.log("category:", data.category);
 
     if (isVariable) {
       formData.append("variations", JSON.stringify(variations));
@@ -135,10 +142,18 @@ export default function AddProduct() {
     } finally {
       setShowLoader(false);
     }
+    
+
 
     
   };
   
+  if(catLoading) return <Loader />
+  if(isError){
+    console.log("Cat data error:", error)
+  }
+  
+  // console.log("categories Data:", catData)
 
 
 
@@ -227,6 +242,20 @@ export default function AddProduct() {
             className="border rounded w-full px-3 py-2"
           />
         </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Category</label>
+          <select value={data.category} name='category' onChange={handleChange} className="border w-full p-2 rounded">
+            <option value="">Select One</option>
+            {catData.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+
 
         <div className="input_group">
           <label className="block font-medium">Variable Product?</label>

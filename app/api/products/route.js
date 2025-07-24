@@ -68,6 +68,7 @@ export async function POST(req) {
   const title = data.title?.trim();
   const slug = slugify(title, { lower: true, strict: true });
   const description = data.description;
+  const category = data.category;
   const bestSeller = data.bestSeller === 'true';
   const showHero = data.showHero === 'true';
   const isFeatured = data.isFeatured === 'true';
@@ -92,6 +93,7 @@ export async function POST(req) {
       showHero,
       isFeatured,
       isVariable,
+      category
     };
 
     if (isVariable) {
@@ -221,9 +223,14 @@ export async function PATCH(req) {
 //delete product
 export async function DELETE(req) {
   await connectMongo();
-  const formData = await req.formData();
-  const data = Object.fromEntries(formData);
+  // const formData = await req.formData();
+  // const data = Object.fromEntries(formData);
+  // console.log("data",data)
+
+  const data = await req.json()
+
   console.log("data",data)
+
   const productId = data.productId;
 
 
@@ -233,14 +240,14 @@ export async function DELETE(req) {
       throw new Error("Product not found!")
     }
 
-    return Response.json({ message: "deleted successfully!", product:deletedProduct }, { status: 200 })
+    return Response.json({ message: "deleted successfully!", product:deletedProduct, staus:200, }, { status: 200 })
   } catch (error) {
     return Response.json({ message: error.message, error }, { status: 500 })
   }
   
 
 
-  return Response.json({ message: "PATCH route!" }, { status: 200 });
+  //return Response.json({ message: "PATCH route!" }, { status: 200 });
 }
 
 

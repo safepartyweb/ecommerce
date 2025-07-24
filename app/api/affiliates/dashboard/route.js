@@ -4,7 +4,7 @@ import connectMongo from '@/lib/db';
 import { getAuthUser } from '@/lib/auth';
 import Affiliate from '@/models/Affiliate';
 import Customer from '@/models/Customer';
-import Order from '@/models/Order';
+import Order from '@/models/Orders';
 
 export async function GET() {
   await connectMongo();
