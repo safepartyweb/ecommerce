@@ -23,21 +23,17 @@ export async function POST(req) {
 
   let referredBy = null
 
+  let affiliate;
   if (refCode) {
     console.log("Ref Code",refCode )
-    const affiliate = await Affiliate.findOne({ affiliateCode: refCode })
+    affiliate = await Affiliate.findOne({ affiliateCode: refCode })
     if (affiliate) {
       console.log("Affiliate found!")
       referredBy = affiliate._id
 
-      /*
-      if(affiliate.referredUsers){
-        affiliate.referredUsers.push({ userId: newUser._id })
-      }else {
-        affiliate.referredUsers = [{ userId: newUser._id }]
-      }
-      await affiliate.save()
-      */
+      
+      
+      
 
     }
   }
@@ -49,6 +45,26 @@ export async function POST(req) {
 
   try {
     const newCustomer = await Customer.create(newDataWithAffiliate)
+    
+    if (affiliate) {
+      console.log("Affiliate found!")
+      referredBy = affiliate._id
+
+      if(affiliate.referredCustomers){
+        affiliate.referredCustomers.push({ userId: newCustomer._id })
+      }else {
+        affiliate.referredCustomers = [{ userId: newCustomer._id }]
+      }
+      await affiliate.save()     
+      
+      
+
+    }
+
+    
+
+
+
     return Response.json({ message: "success!", customer:newCustomer,status: 201 }, { status: 201 })
   } catch (error) {
     return Response.json({ message: "Something went wrong!", error }, { status: 500 })

@@ -1,8 +1,10 @@
 // /app/api/admin/affiliate/withdrawals/[id]/route.js
 import { NextResponse } from 'next/server';
 import connectMongo from '@/lib/db';
-import { getAuthUser } from '@/lib/getAuthUser';
+import { getAuthUser } from '@/lib/auth';
 import AffiliateWithdrawal from '@/models/AffiliateWithdrawal';
+import Affiliate from '@/models/Affiliate';
+
 
 export async function PATCH(req, { params }) {
   await connectMongo();
@@ -12,8 +14,12 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id } = params;
-  const { action } = await req.json(); // 'approve' or 'reject'
+  const param = await params;
+  const { id } = await param;
+  const { status } = await req.json(); // 'approve' or 'reject'
+
+  console.log("request data", id, status)
+
 
   const withdrawal = await AffiliateWithdrawal.findById(id);
   if (!withdrawal) {
@@ -24,12 +30,12 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: 'Already processed' }, { status: 400 });
   }
 
-  if (action === 'approve') {
+  if (status === 'approved') {
     withdrawal.status = 'approved';
     withdrawal.processedAt = new Date();
     await withdrawal.save();
     return NextResponse.json({ message: 'Withdrawal approved' });
-  } else if (action === 'reject') {
+  } else if (status === 'rejected') {
     // Refund balance
     const affiliate = await Affiliate.findById(withdrawal.affiliate);
     affiliate.currentBalance += withdrawal.amount;

@@ -97,16 +97,16 @@ function LoginForm() {
 
             <p className="register_link mt-6 text-center">
               Don&apos;t have an account?{' '}
-              <Link className="font-bold text-blue-600" href="/register">
+              <Link className="font-bold text-blue-600" href="/affiliate/register">
                 Register here.
               </Link>
             </p>
-            <p className="register_link mt-6 text-center">
+            {/* <p className="register_link mt-6 text-center">
               Forgot Password?{' '}
               <Link className="font-bold text-blue-600" href="/forgot-password">
                 Reset here.
               </Link>
-            </p>
+            </p> */}
 
 
           </AnimatedBlock>

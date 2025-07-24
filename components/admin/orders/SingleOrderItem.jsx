@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 
 const SingleOrderItem = ({order,sl}) => {
   
-  // console.log("Order from single Order Item:", order)
+  console.log("Order from single Order Item:", order)
   const divRef = useRef(null);
   
   const [showOptions, setShowOptions] = useState(false)

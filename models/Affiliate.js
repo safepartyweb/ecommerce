@@ -32,6 +32,7 @@ const affiliateSchema = new mongoose.Schema({
   totalSignups: { type: Number, default: 0 },
   totalOrders: { type: Number, default: 0 },
   totalEarned: { type: Number, default: 0 },
+  pendingWithdraw: { type: Number, default: 0 },
   currentBalance: {
     type: Number,
     default: 0,

@@ -39,9 +39,9 @@ export default function AdminAffiliateList() {
           {affiliates.map((a) => (
             <tr key={a._id}>
               <td className="p-2 border">{a.name || '—'}</td>
-              <td className="p-2 border">{a.totalReferred}</td>
+              <td className="p-2 border">{a.referredCustomers.length}</td>
               <td className="p-2 border">${a.totalEarned.toFixed(2)}</td>
-              {/* <td className="p-2 border">${a.pendingWithdraw.toFixed(2)}</td> */}
+              <td className="p-2 border">${a.pendingWithdraw.toFixed(2)}</td>
             </tr>
           ))}
         </tbody>

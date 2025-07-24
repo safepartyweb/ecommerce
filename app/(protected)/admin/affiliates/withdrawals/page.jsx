@@ -25,9 +25,11 @@ export default function AdminWithdrawalsPage() {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      await axios.put(`/api/admin/affiliate/withdrawals/${id}`, {
+      const res = await axios.patch(`/api/admin/affiliate/withdrawals/${id}`, {
         status: newStatus,
       });
+
+      console.log(" updateStatus res",res)
       fetchWithdrawals(); // refresh list
     } catch (err) {
       console.error('Failed to update withdrawal:', err);
@@ -36,7 +38,7 @@ export default function AdminWithdrawalsPage() {
 
   if(isLoading ) return <Loader />
 
-  console.log("withdrawals",withdrawals)
+  // console.log("withdrawals",withdrawals)
 
   return (
     <div className="max-w-6xl mx-auto p-4">

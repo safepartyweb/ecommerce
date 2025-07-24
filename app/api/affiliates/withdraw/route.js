@@ -32,8 +32,18 @@ export async function POST(req) {
     requestedAt: new Date(),
   });
 
-  affiliate.currentBalance -= amount;
-  await affiliate.save();
+  // affiliate.currentBalance -= amount;
+  // affiliate.pendingWithdraw += amount;
+
+  await Affiliate.findByIdAndUpdate(user.id, {
+    $inc: {
+      currentBalance: -amount,
+      pendingWithdraw: amount,
+    }
+  });
+
+
+
 
   return NextResponse.json({ message: 'Withdrawal requested', withdrawal });
 }
