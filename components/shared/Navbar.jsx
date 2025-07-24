@@ -34,8 +34,14 @@ export default function Navbar() {
       dispatch(logout())
       const logOutHandler = await logOut();
       // console.log("logOutHandler", logOutHandler)
+      if(userInfo.role == 'customer'){
+         window.location.href = '/login'
+      }else if(userInfo.role == 'affiliate'){
+        window.location.href = '/affiliate/login'
+      }else{
+        window.location.href = '/admin-login'
+      }
       
-      {userInfo.role !== 'customer' ? window.location.href = '/admin-login' :  window.location.href = '/login' }
      
     } catch (error) {
       console.error('Logout failed:', error);
@@ -212,9 +218,14 @@ export default function Navbar() {
                     <ul>
                     {userInfo ? (
                     <>
-                      { ( userInfo?.role !== 'admin') &&
+                      { ( userInfo?.role == 'customer') &&
                         <li onClick={() => {setShowProfile(false)}} className='px-4 py-2 border-b border-white text-center font-medium' >
                           <Link href='/dashboard'>Dashboard</Link>
+                        </li>
+                      }
+                      { ( userInfo?.role == 'affiliate') &&
+                        <li onClick={() => {setShowProfile(false)}} className='px-4 py-2 border-b border-white text-center font-medium' >
+                          <Link href='/affiliate/dashboard'>Dashboard</Link>
                         </li>
                       }
 
