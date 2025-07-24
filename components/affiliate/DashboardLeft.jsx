@@ -11,6 +11,7 @@ const DashboardLeft = () => {
         <ul className='flex flex-col gap-1'>
           {/* <li className='border-b border-gray-500 py-2 px-2  text-white font-medium'><Link href="/dashboard">Dashboard</Link></li> */}
           <Link className='text-white' href="/affiliate/dashboard" label="Dashboard" >Dashboard </Link>
+          <Link className='text-white' href="/affiliate/dashboard/withdrawals" label="Dashboard" >Withdrawals </Link>
           {/* <Link href="/affiliate/dashboard/settings" label="Settings" >Settings</Link> */}
           {/* <NavLink href="/dashboard/shipping" label="Shipping Address" /> */}
           {/* <NavLink href="/dashboard/orders" label="Orders" /> */}
