@@ -50,7 +50,9 @@ const SlideSingleProduct = ({product}) => {
       
       <div className="btn_wrap flex flex-row sm:flex-col md:flex-row lg:flex-col xl:flex-row gap-3 items-center justify-center mt-6">
           <Link className='bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-4 py-2 font-bold font-lg inline-block cursor-pointer max-w-[175px] text-center' href={`/products/${product.slug}`}>View Details</Link>
-          <button className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-4 py-2 font-bold font-lg inline-block cursor-pointer max-w-[175px] text-center" onClick={handleAddToCart}>Add to cart </button>
+          {!product.isVariable && (
+            <button className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-4 py-2 font-bold font-lg inline-block cursor-pointer max-w-[175px] text-center" onClick={handleAddToCart}>Add to cart </button>
+          )}
         </div>
     </div>
   </div>

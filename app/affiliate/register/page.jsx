@@ -4,7 +4,7 @@ import AnimatedBlock from '@/components/shared/MotionParent'
 import { Eye, EyeClosed } from 'lucide-react'
 import { useRegisterMutation } from '@/lib/api/affiliateApi'
 import { toast } from 'react-toastify'
-
+import Link from 'next/link'
 
 
 
@@ -110,6 +110,13 @@ export default function RegisterPage() {
               Your link: <code>{`?ref=${code}`}</code>
             </div>
           )}
+
+            <p className="register_link mt-6 text-center">
+              Don&apos;t have an account?{' '}
+              <Link className="font-bold text-blue-600" href="/affiliate/login">
+                Back to Login.
+              </Link>
+            </p>
 
 
 

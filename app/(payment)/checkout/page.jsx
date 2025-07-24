@@ -11,10 +11,15 @@ import Tick from '/images/tick-green.svg'
 import { toast } from 'react-toastify';
 
 
+
+
+
 export default function CheckoutPage() {
   const [showLoader, setShowLoader] = useState(false)
-
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false)
   const [showOrderSuccess, setShowOrderSuccess] = useState(false)
+  const [orderPrice, setOrderPrice] = useState(0)
+  const [orderId, setOrderId] = useState('')
 
 
   const dispatch = useDispatch();
@@ -81,7 +86,7 @@ export default function CheckoutPage() {
     return null; // Or return a loading spinner
   }
 
-  if (cartItems.length === 0 && !showOrderSuccess) {
+  if (cartItems.length === 0 && !showPaymentOptions) {
     return (
       <div className="text-center py-10">
         <p>Your cart is empty.</p>
@@ -92,6 +97,7 @@ export default function CheckoutPage() {
     );
   }
 
+  // Place order handler
   const placeOrderHandler = async (e) => {
     e.preventDefault();
     setShowLoader(true);
@@ -111,7 +117,8 @@ export default function CheckoutPage() {
     let shippingPrice = itemsPrice > 500 ? 0 : 100;
     const taxPrice = 0;
     const totalPrice = itemsPrice + shippingPrice + taxPrice;
-  
+    
+    setOrderPrice(totalPrice);
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
@@ -139,52 +146,23 @@ export default function CheckoutPage() {
   
       const data = await res.json();
       console.log('✅ Order created successfully:', data);
-      dispatch(clearCart());
-      toast.success("Order created successfully. Redirecting to payment processor. Please wait!")
+      
+      toast.success("Order created successfully!")
       
 
       //2. Get Order Id, amount etc
       const orderId = data._id;
+      setOrderId(orderId)
       // console.log('📦 Order ID:', orderId);
-
+      setShowPaymentOptions(true)
       
 
-      try {
-        const externalApiRes = await fetch('/api/payment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            price_amount: totalPrice,
-            // shippingAddress,
-            // paymentMethod,
-            price_currency:'usd',
-            order_id:orderId,
-
-          }),
-        });
-        console.log("externalApiRes",externalApiRes)
-        if (!externalApiRes.ok) {
-          throw new Error('Failed to create payment link');
-        }
-        const paymentLinkData = await externalApiRes.json();
-        console.log('✅ Payment link created successfully:', paymentLinkData);
-        if (paymentLinkData) {
-          window.location.href = paymentLinkData.data.invoice_url;
-        } else {
-          console.error('No payment URL returned');
-        }
-      } catch (error) {
-        console.error('❌ Failed to create payment link: ', error);
-      }
-
-
-      //return data;
+    //return data;
     } catch (error) {
       console.error('❌ Error creating order:', error);
+      toast.error("Something went wrong. Please try again!")
     }finally{
-      
+      setShowLoader(false);
       // setShowOrderSuccess(false)
     }
 
@@ -206,8 +184,69 @@ export default function CheckoutPage() {
     //5. redirect user to payment url
   }
 
+
+  const paymentHandler = async (method) => {
+    setShowLoader(true)
+
+    try {
+      const externalApiRes = await fetch('/api/payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          price_amount: orderPrice,
+          // shippingAddress,
+          // paymentMethod,
+          price_currency:'usd',
+          order_id:orderId,
+          payment_method:method,
+          email: userInfo.email,
+
+        }),
+      });
+      console.log("externalApiRes",externalApiRes)
+      
+      if (!externalApiRes.ok) {
+        throw new ErrorEvent(error.message ?  error.message : 'Something went wrong!');
+      }
+
+
+      const paymentLinkData = await externalApiRes.json();
+      
+      if (paymentLinkData?.data?.invoice_url) {
+        toast.success("Redirecting to payment processor!")
+        window.location.href = paymentLinkData.data.invoice_url;
+      }else{
+        console.log('Payment processed successfully:', paymentLinkData);
+        console.log("Do staffs!")
+        toast.success("Payment instruction sent to your email!")
+        setShowPaymentOptions(false)
+      }
+
+
+
+    } catch (error) {
+      console.error('Something went wrong', error);
+    } finally{
+      setShowLoader(false)
+      dispatch(clearCart());
+    }
+
+
+
+
+  }
+
+  const closePaymentOptionsHandler = () => {
+    dispatch(clearCart());
+    setShowPaymentOptions(false)
+  } 
+
+
   return (
     <div className="max-w-5xl mx-auto p-4 relative">
+      
       {showLoader && <Loader />}
       {showOrderSuccess && <>
         <div className="orderSuccessScreen flex flex-col gap-10 items-center justify-center absolute w-full h-full z-20 bg-white">
@@ -312,6 +351,29 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      
+      
+      { showPaymentOptions && (
+          <div className="modal fixed top-0 left-0 w-full h-full backdrop-blur-sm p-4 flex items-center justify-center z-[60]">
+            <div className="modal_inner w-full max-w-[550px] bg-green-600 px-4 py-8 rounded text-white relative">
+                <Image onClick={closePaymentOptionsHandler} className='absolute -top-10 -right-10 cursor-pointer' src="images/close-x-circled.svg" alt="Close Icon" width={48} height={48} />
+                <p className="text-lg font-medium text-center">Congratulations, order placed successfully!</p>
+                <p className="text-xl font-bold text-center">Please select payment option.</p>
+
+                <div className="w-full flex gap-6 justify-center items-center mt-10">
+                  <div onClick={e => paymentHandler('crypto')} className="bg-white border rounded text-black hover:bg-black hover:text-white px-4 py-2 cursor-pointer font-bold">Crypto Payment</div>
+                  <div onClick={e => paymentHandler('interac')} className="bg-white border rounded text-black hover:bg-black hover:text-white px-4 py-2 cursor-pointer font-bold">Interac Payment</div>
+                </div>
+            </div>
+          </div>
+      
+      
+      )}
+
+     
+
+
     </div>
   );
 }

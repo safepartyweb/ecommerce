@@ -11,6 +11,17 @@ const SingProductItemforGrid = ({ product }) => {
   console.log("Product from single product item for grid:", product);
   const dispatch = useDispatch();
 
+  let lowestPrice, highestPrice;
+  if(product.isVariable){
+    const prices = product.variations.map(v => v.price);
+    lowestPrice = Math.min(...prices);
+    highestPrice = Math.max(...prices);
+  }
+
+
+
+
+
   const handleAddToCart = () => {
     dispatch(addToCart({
       productId: product._id,
@@ -39,8 +50,8 @@ const SingProductItemforGrid = ({ product }) => {
 
       <div className="flex flex-col gap-1">
         <h2 className="text-lg font-semibold">{product.title}</h2>
-        <p>Price: ${product.price}</p>
-        <p>Stock: {product.stock}</p>
+        {product.isVariable ? <p className="product_price font-bold text-lg text-center">${lowestPrice} - ${highestPrice}</p> : <p className="product_price font-bold text-lg text-center">${product.price}</p>}
+        {/* <p>Stock: {product.stock}</p> */}
         {/* {product.weight ? (
           <p>Quantity: {product.weight} {product.unit}</p>
         ) : ''} */}
@@ -50,9 +61,14 @@ const SingProductItemforGrid = ({ product }) => {
         
       </div>
       
-      <div className="flex gap-4">
+      <div className="flex gap-4 justify-center">
         <Link className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer max-w-[175px]" href={`/products/${product.slug}`}>View Details</Link>
-        <button className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer max-w-[175px]" onClick={handleAddToCart}>Add to cart </button>
+        {!product.isVariable && (
+          <button className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer max-w-[175px]" onClick={handleAddToCart}>Add to cart </button>
+        )}
+        
+
+
       </div>
 
 

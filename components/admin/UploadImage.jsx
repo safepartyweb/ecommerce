@@ -1,6 +1,8 @@
 'use client'
-const cloud_name = 'dijb4fddq';
-const upload_preset = 'lotus_ecommerce';
+// const cloud_name = 'dijb4fddq';
+const cloud_name = 'dvsfes74e';
+// const upload_preset = 'lotus_ecommerce';
+const upload_preset = 'safeparty';
 
 /*
 const uploadImage = async (file) => {
@@ -33,6 +35,8 @@ const uploadImages = async (files) => {
     });
 
     const data = await res.json();
+
+    console.log("Uplaod data", data)
     return { url: data.secure_url, public_id: data.public_id }; 
   });
 

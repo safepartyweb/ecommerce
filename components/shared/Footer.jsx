@@ -60,6 +60,7 @@ const Footer = () => {
                   <h3 className="font-semibold mb-4">RESOURCES</h3>
                   <ul className="space-y-2 text-sm">
                     <li><Link href="/shop" className="hover:underline">Shop</Link></li>
+                    <li><Link href="/affiliate/login" className="hover:underline">Affiliate</Link></li>
                     <li><Link href="/faq" className="hover:underline">FAQs</Link></li>
                     <li><Link href="/harm-reduction" className="hover:underline">Harm Reduction</Link></li>
                     <li><Link href="/self-exclusion" className="hover:underline">Self-Exclusion</Link></li>

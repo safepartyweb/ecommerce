@@ -45,6 +45,8 @@ export default function ProductPage() {
         quantity: parseInt(quantity),
       })
     );
+
+    toast.success("Added to cart!")
   };
 
   return (

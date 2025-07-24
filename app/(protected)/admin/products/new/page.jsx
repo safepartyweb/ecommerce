@@ -48,7 +48,7 @@ export default function AddProduct() {
     }else{
       const files = Array.from(e.target.files);
       const imgApiRes =  await uploadImage(files)
-      // console.log("imgApiRes",imgApiRes)
+      console.log("imgApiRes",imgApiRes)
       
       
       setData((prev) => ({
@@ -118,9 +118,9 @@ export default function AddProduct() {
       formData.append("stock", data.stock);
     }
 
-    // for (const [key, value] of formData.entries()) {
-    //   console.log(`${key}: ${value}`);
-    // }
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
   
     
     try {
@@ -159,7 +159,7 @@ export default function AddProduct() {
             accept="image/*"
             multiple
           />
-          {data.image? <Image src={data.image} alt="Product Image" width={50} height={50} /> : ''}
+          {data?.images[0] ? <Image src={data?.images[0]?.url} alt="Product Image" width={50} height={50} /> : ''}
           
         </div>
         
