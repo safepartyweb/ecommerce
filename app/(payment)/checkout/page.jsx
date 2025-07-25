@@ -9,7 +9,7 @@ import { clearCart } from '@/store/cartSlice';
 import Image from 'next/image';
 import Tick from '/images/tick-green.svg'
 import { toast } from 'react-toastify';
-
+import { useGetOrdersQuery } from '@/lib/api/customerApi';
 
 
 
@@ -20,6 +20,9 @@ export default function CheckoutPage() {
   const [showOrderSuccess, setShowOrderSuccess] = useState(false)
   const [orderPrice, setOrderPrice] = useState(0)
   const [orderId, setOrderId] = useState('')
+  const [discount, setDiscount] = useState(0)
+  const [taxPrice, setTaxPrice] = useState(0)
+  const [isFirstOrder, setIsFirstOder] = useState(false)
 
 
   const dispatch = useDispatch();
@@ -28,7 +31,6 @@ export default function CheckoutPage() {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const { userInfo } = useSelector((state) => state.auth);
   
-  console.log("userInfo",userInfo)
   console.log("cartItems",cartItems)
 
   const [form, setForm] = useState({
@@ -36,13 +38,17 @@ export default function CheckoutPage() {
     email: '',
     address: '',
     city: '',
+    state: '',
     postalCode: '',
     country: '',
   });
 
-  const [total, setTotal] = useState(0);
+  // const [total, setTotal] = useState(0);
   const [subTotal, setSubTotal] = useState(0);
   const [shipping, setShipping] = useState(0);
+
+
+  const {data, isLoading:isOrdersLoading} = useGetOrdersQuery()
 
   useEffect(() => {
     if (!userInfo) {
@@ -51,40 +57,69 @@ export default function CheckoutPage() {
   }, [userInfo, router]);
 
   useEffect(() => {
-    const calculated = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0 );
-    setSubTotal(calculated);
-    if(calculated > 500){
-      setShipping(0)
-    }else{
-      setShipping(100)
-    }
-  }, [cartItems]);
-
-  useEffect(() => {
-    if (!userInfo) {
-      //router.push('/login?redirect=checkout');
-    } else {
-      // Prefill form
+    if (userInfo) {
       setForm((prev) => ({
         ...prev,
         name: userInfo.fullName || '',
         email: userInfo.email || '',
         address: userInfo.address || '',
         city: userInfo.city || '',
+        state: userInfo.city || '',
         postalCode: userInfo.postalCode || '',
         country: userInfo.country || '',
       }));
     }
-  }, [userInfo, router]);
+  }, [userInfo]);
+
+
+
+  useEffect(() => {
+    if (data?.orders?.length === 0) {
+      setIsFirstOder(true);
+    }
+  }, [data]);
+
+  
+
+
+
+
+  useEffect(() => {
+    const calculated = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0 );
+    setSubTotal(calculated);
+
+    if(calculated >= 500 || isFirstOrder ){
+      let discountAmount = calculated * 0.10
+      setDiscount(discountAmount)
+
+      let subShipping = (calculated - discountAmount) * 0.06
+      let finalShipping = subShipping > 50 ? 50 : subShipping
+      
+      setShipping( finalShipping )
+      setOrderPrice( calculated - discountAmount + finalShipping )
+    } else {
+      let subShipping = calculated * 0.06
+      let finalShipping = subShipping > 50 ? 50 : subShipping
+      setShipping( finalShipping  )
+      setOrderPrice( calculated + finalShipping )
+    }
+  }, [cartItems,userInfo]);
+
+
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
 
-  if (!userInfo) {
-    return null; // Or return a loading spinner
+  if (!userInfo || isOrdersLoading) {
+    return <Loader />;
   }
+
+  // console.log("Order data",data)
+ 
+
+  // console.log("userInfo on checkout page", userInfo)
 
   if (cartItems.length === 0 && !showPaymentOptions) {
     return (
@@ -101,24 +136,10 @@ export default function CheckoutPage() {
   const placeOrderHandler = async (e) => {
     e.preventDefault();
     setShowLoader(true);
-    // setShowOrderSuccess(true)
 
-    //1. Create order on db
+    // console.log("Form Data", form)
 
-    // const cartItems = useSelector((state) => state.cart.items);
-    // const shippingAddress = useSelector((state) => state.cart.shippingAddress);
-    // const paymentMethod = useSelector((state) => state.cart.paymentMethod || 'Cash on Delivery');
-  
-    const itemsPrice = cartItems.reduce(
-      (sum, item) => sum + (item.price * item.quantity),
-      0
-    );
-
-    let shippingPrice = itemsPrice > 500 ? 0 : 100;
-    const taxPrice = 0;
-    const totalPrice = itemsPrice + shippingPrice + taxPrice;
     
-    setOrderPrice(totalPrice);
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
@@ -127,37 +148,35 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({
           orderItems: cartItems,
-          // shippingAddress,
+          shippingAddress : form,
           // paymentMethod,
-          itemsPrice,
-          shippingPrice,
+          itemsPrice: subTotal,
+          discount,
+          shippingPrice:shipping,
           taxPrice,
-          totalPrice,
+          totalPrice:orderPrice,
           userId: userInfo.id,
           referredBy: userInfo.referredBy,
+          
         }),
       });
 
-      // console.log("res", res)
+      console.log("Order place res", res)
   
       if (!res.ok) {
         throw new Error('Failed to create order');
       }
   
       const data = await res.json();
-      console.log('✅ Order created successfully:', data);
+      console.log('Order created successfully:', data);
       
       toast.success("Order created successfully!")
       
-
-      //2. Get Order Id, amount etc
       const orderId = data._id;
       setOrderId(orderId)
-      // console.log('📦 Order ID:', orderId);
+      // console.log('Order ID:', orderId);
       setShowPaymentOptions(true)
-      
 
-    //return data;
     } catch (error) {
       console.error('❌ Error creating order:', error);
       toast.error("Something went wrong. Please try again!")
@@ -166,22 +185,8 @@ export default function CheckoutPage() {
       // setShowOrderSuccess(false)
     }
 
-
-
-
-
-
-
-
-
-
     
 
-    //3. Create api call to payment route
-
-    //4. get payment url
-
-    //5. redirect user to payment url
   }
 
 
@@ -247,7 +252,7 @@ export default function CheckoutPage() {
   return (
     <div className="max-w-5xl mx-auto p-4 relative">
       
-      {showLoader && <Loader />}
+      {/* {showLoader && <Loader />} */}
       {showOrderSuccess && <>
         <div className="orderSuccessScreen flex flex-col gap-10 items-center justify-center absolute w-full h-full z-20 bg-white">
           <Image src={Tick} width={120} height={120} alt="Tick" />
@@ -340,6 +345,13 @@ export default function CheckoutPage() {
             <span>Sub Total:</span>
             <span>${subTotal.toFixed(2)}</span>
           </div>
+
+          { discount > 0 ? <div className="text-lg font-semibold flex justify-between">
+            <span>Discount:</span>
+            <span>${discount.toFixed(2)}</span>
+          </div> : '' }
+          
+
           <div className="text-lg font-semibold flex justify-between">
             <span>Shipping:</span>
             <span>${shipping.toFixed(2)}</span>
@@ -347,7 +359,7 @@ export default function CheckoutPage() {
 
           <div className="text-lg font-semibold flex justify-between">
             <span>Total:</span>
-            <span>${(subTotal + shipping).toFixed(2)}</span>
+            <span>${orderPrice.toFixed(2)}</span>
           </div>
         </div>
       </div>
@@ -357,7 +369,7 @@ export default function CheckoutPage() {
       { showPaymentOptions && (
           <div className="modal fixed top-0 left-0 w-full h-full backdrop-blur-sm p-4 flex items-center justify-center z-[60]">
             <div className="modal_inner w-full max-w-[550px] bg-green-600 px-4 py-8 rounded text-white relative">
-                <Image onClick={closePaymentOptionsHandler} className='absolute -top-10 -right-10 cursor-pointer' src="images/close-x-circled.svg" alt="Close Icon" width={48} height={48} />
+                <Image onClick={closePaymentOptionsHandler} className='absolute -top-10 -right-10 cursor-pointer' src="/images/close-x-circled.svg" alt="Close Icon" width={48} height={48} />
                 <p className="text-lg font-medium text-center">Congratulations, order placed successfully!</p>
                 <p className="text-xl font-bold text-center">Please select payment option.</p>
 

@@ -51,6 +51,7 @@ export async function POST(req) {
 
 
   if(payment_method == 'interac'){
+    console.log("Interac payment initiated!")
 
       try {
 
@@ -74,7 +75,8 @@ export async function POST(req) {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
           },
-        })      
+        })
+        console.log("Customer Email:", email)
   
         await transporter.sendMail({
           from: `"Safe Party" <${process.env.EMAIL_USER}>`,

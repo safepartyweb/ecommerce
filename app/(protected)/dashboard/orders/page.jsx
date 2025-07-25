@@ -13,7 +13,7 @@ const page = () => {
   const [totalCount, setTotalCount] = useState()
   const [orders, setOrders] = useState()
 
-  const limit = 5;
+  const limit = 10;
   const {data,isLoading} = useGetPaginatedOrdersQuery({page,limit})
 
   useEffect(() => {

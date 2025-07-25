@@ -80,6 +80,7 @@ export async function POST(req) {
       totalPrice,
       userId,
       referredBy,
+      discount,
     } = body;
 
     if (!orderItems || orderItems.length === 0) {
@@ -96,6 +97,7 @@ export async function POST(req) {
       taxPrice,
       totalPrice,
       referredBy,
+      discount,
     });
 
     //console.log("new order:", )

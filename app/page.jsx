@@ -30,7 +30,7 @@ export default function Home() {
     const lastClosed = localStorage.getItem('popupClosedAt');
     const now = new Date();
 
-    if (!lastClosed || new Date(lastClosed) < new Date(now -  1 * 60 * 1000)) {
+    if (!lastClosed || new Date(lastClosed) < new Date(now -  1 * 60 * 60 * 1000)) {
       setShowModal(true);
     }
   }, []);

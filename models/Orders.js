@@ -46,10 +46,11 @@ const orderSchema = new mongoose.Schema(
     orderItems: [orderItemSchema],
 
     shippingAddress: {
-      fullName: String,
+      name: String,
       address: String,
       city: String,
       postalCode: String,
+      state: String,
       country: String,
     },
 
@@ -75,7 +76,9 @@ const orderSchema = new mongoose.Schema(
     },
     taxPrice: {
       type: Number,
-      required: true,
+    },
+    discount: {
+      type: Number,
     },
     totalPrice: {
       type: Number,

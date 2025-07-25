@@ -48,7 +48,7 @@ const SingProductItemforGrid = ({ product }) => {
       />
 
       <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold">{product.title}</h2>
+        <h2 className="text-lg font-semibold text-center">{product.title}</h2>
         {product.isVariable ? <p className="product_price font-bold text-lg text-center">${lowestPrice} - ${highestPrice}</p> : <p className="product_price font-bold text-lg text-center">${product.price}</p>}
         {/* <p>Stock: {product.stock}</p> */}
         {/* {product.weight ? (
