@@ -38,7 +38,8 @@ const ThumbnailSlider = ({images}) => {
       </Swiper>
 
       {/* Thumbnail Swiper */}
-      <Swiper
+
+      {/* <Swiper
         onSwiper={setThumbsSwiper}
         spaceBetween={10}
         slidesPerView={4}
@@ -55,7 +56,9 @@ const ThumbnailSlider = ({images}) => {
             />
           </SwiperSlide>
         ))}
-      </Swiper>
+      </Swiper> */}
+
+
     </div>
     
     //   <div className="w-full">

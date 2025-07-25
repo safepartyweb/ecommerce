@@ -74,7 +74,7 @@ const SingleProductItem = ({prod,sl}) => {
             <li className='py-2 border-b border-gray-300 w-full cursor-pointer'>
               <Link href={`/admin/products/edit/${prod._id}`}>Edit</Link>
             </li>
-            <li className='py-2 border-b border-gray-300 w-full cursor-pointer'>Draft</li>
+            {/* <li className='py-2 border-b border-gray-300 w-full cursor-pointer'>Draft</li> */}
             <li onClick={e => setShowDelete(true)} className='py-2 border-b border-gray-300 w-full cursor-pointer'>Delete</li>
           </ul>
         </div>}

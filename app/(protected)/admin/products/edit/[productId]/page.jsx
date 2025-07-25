@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useGetSingleProductQuery } from '@/lib/api/productApi';
 import Loader from '@/components/Loader';
 import ProductEdit from '@/components/admin/product/ProductEdit';
+import Link from 'next/link';
 
 const Page = () => {
   const { productId } = useParams();
@@ -37,7 +38,11 @@ const Page = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Edit Product: {product.title}</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold ">Edit Product: {product.title}</h2>
+        <Link className="bg-black text-white px-4 py-2 rounded border hover:bg-white hover:text-black cursor-pointer" target='_blank' href={`/products/${product.slug}`} >View Product</Link>
+      </div>
+      
       <ProductEdit
         product={product}
         images={images}
