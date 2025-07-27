@@ -8,7 +8,7 @@ import slugify from "slugify";
 
 export async function GET() {
   // console.log("Get category route!")
-  const categories = await Category.find();
+  const categories = await Category.find().sort({ order: 1 });;
   return NextResponse.json(categories);
 }
 
@@ -23,7 +23,7 @@ export async function POST(req) {
 //edit category
 export async function PATCH(req) {
 
-  const { name, catId } = await req.json();
+  const { name, catId, order } = await req.json();
 
   try {
     const category = await Category.findById(catId);
@@ -32,6 +32,7 @@ export async function PATCH(req) {
     }
 
     category.name = name || category.name;
+    category.order = order || category.order;
     let slug;
     if(name){
       slug = slugify(name, { lower: true, strict: true });

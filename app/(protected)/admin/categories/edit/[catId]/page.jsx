@@ -11,6 +11,7 @@ const page = ({params}) => {
   const {data, isLoading,isError, error} = useGetCategoryByIdQuery({catId})
   const [editCategory, {isLoading: editLoading}] = useEditCategoryMutation()
   const [name, setName] = useState('')
+  const [order, setOrder] = useState('')
 
   const router = useRouter();
 
@@ -20,6 +21,7 @@ const page = ({params}) => {
 
     if(data){
       setName(data.category.name)
+      setOrder(data.category.order ? data.category.order : 0 )
     }
 
   },[data])
@@ -40,7 +42,8 @@ const page = ({params}) => {
     e.preventDefault();
     const data = {
       name,
-      catId
+      catId,
+      order
     }
 
     try {
@@ -71,6 +74,21 @@ const page = ({params}) => {
           <label htmlFor="name" className='text-lg font-medium'>New Name</label>
           <input id="name" value={name} onChange={(e) => setName(e.target.value)} className="border rounded w-full px-3 py-2 mt-2"  />
         </div>
+        
+        <div className="input_group">
+          <label className="block font-medium">Category Order</label>
+          <input
+            type="text"
+            name="title"
+            value={order}
+            onChange={(e) => setOrder(e.target.value) }
+            className="border rounded w-full px-3 py-2 mt-2"
+            placeholder="Category order"
+          />
+        </div>
+
+
+
 
         <button    type="submit"  className="mt-2 bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer" >
         Update Category

@@ -18,8 +18,9 @@ import { Link as ScrollLink, Element } from 'react-scroll'
 const page = () => {
 
   const [prods, setProds] = useState([]);
+  const [cats, setCats] = useState([])
   const { data, isLoading } = useGetProductsQuery()
-  // const { data: catData, isLoading: catLoading } = useGetCategoriesQuery()
+  const { data: catData, isLoading: catLoading } = useGetCategoriesQuery()
 
   const [weight, setWeight] = useState('')
   const [unit, setUnit] = useState('')
@@ -30,11 +31,21 @@ const page = () => {
       console.log("Data came to me!")
       setProds(data.products)
     }
-  }, [data])
+    if(catData){
+      setCats(catData)
+    }
+  }, [data,catData])
 
-  if (isLoading) {
+  if (isLoading || catLoading) {
     return <Loader />
   }
+
+  // console.log("catData", catData)
+
+  const filteredCats = cats.filter(cat =>
+    prods.some(p => p.category?._id === cat._id)
+  )
+
 
   const grouped = prods.reduce((acc, product) => {
     const catName = product.category?.name || "Uncategorized";
@@ -58,15 +69,45 @@ const page = () => {
         <div className='container max-w-sitemax px-4 mx-auto '>
 
           <div className="flex flex-wrap gap-4 mb-12 justify-center">
-            {categories.map((cat, index) => (
+
+            {filteredCats.map(cat => (
+              <ScrollLink
+                key={cat._id}
+                className="px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition cursor-pointer"
+                to={slugify(cat.name, { lower: true })}
+                smooth
+                duration={500}
+              >
+                {cat.name}
+              </ScrollLink>
+            ))}
+
+
+            {/* {categories.map((cat, index) => (
               <ScrollLink key={index} className="px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition cursor-pointer" to={slugify(cat, { lower: true })} smooth={true} duration={500}>
                 {cat}
               </ScrollLink>
-            ))}
+            ))} */}
           </div>
+          
+          {filteredCats.map(cat => {
+            const catProducts = prods.filter(p => p.category?._id === cat._id)
 
+            return (
+              <Element key={cat._id} name={slugify(cat.name, { lower: true })}>
+                <div className="mb-16 scroll-mt-24 border-b border-gray-300 pb-10">
+                  <h2 className="text-4xl font-bold mb-10 text-center">{cat.name}</h2>
+                  <div className="flex items-center flex-wrap justify-center gap-6">
+                    {catProducts.map(product => (
+                      <SingProductItemforGrid key={product._id} product={product} />
+                    ))}
+                  </div>
+                </div>
+              </Element>
+            )
+          })}
 
-          {Object.entries(grouped).map(([categoryName, products]) => (
+          {/* {Object.entries(grouped).map(([categoryName, products]) => (
             <Element key={categoryName} name={slugify(categoryName, { lower: true })}>
               <div
                 key={categoryName}
@@ -74,7 +115,6 @@ const page = () => {
                 className="mb-16 scroll-mt-24 border-b border-gray-300 pb-10"
               >
                 <h2 className="text-4xl font-bold mb-10 text-center ">{categoryName}</h2>
-                {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"> */}
                 <div className="flex items-center flex-wrap justify-center gap-6">
                   {products.map((product) => (
                     <SingProductItemforGrid key={product._id} product={product} />
@@ -82,7 +122,7 @@ const page = () => {
                 </div>
               </div>
             </Element>
-          ))}
+          ))} */}
 
       </div>
       </section>

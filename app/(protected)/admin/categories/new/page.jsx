@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 
 export default function AddProduct() {
   const [name, setName] = useState('')
+  const [order, setOrder] = useState('')
   const [showLoader, setShowLoader] = useState(false)
 
   const [createCategory, {isLoading}] = useCreateCategoryMutation();
@@ -22,7 +23,8 @@ export default function AddProduct() {
     setShowLoader(true)
 
     const data = {
-      name
+      name,
+      order,
     }
 
     // console.log("data",data)
@@ -68,6 +70,19 @@ export default function AddProduct() {
             onChange={(e) => setName(e.target.value) }
             className="border rounded w-full px-3 py-2 mt-2"
             placeholder="Category Name"
+          />
+        </div>
+        
+
+        <div className="input_group">
+          <label className="block font-medium">Category Order</label>
+          <input
+            type="text"
+            name="title"
+            value={order}
+            onChange={(e) => setOrder(e.target.value) }
+            className="border rounded w-full px-3 py-2 mt-2"
+            placeholder="Category order"
           />
         </div>
 
