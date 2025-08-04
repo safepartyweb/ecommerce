@@ -20,7 +20,7 @@ const Footer = () => {
               <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
                 {/* Left Section */}
                 <div>
-                  <Image src='/images/logo-new.jpg' alt="logo" width={100} height={150} />
+                  <Image src='/images/logo-4-8-final.png' alt="logo" width={100} height={150} />
                   <p className="mb-6 max-w-sm">
                     Psychedelics with Benefits. The next dimension in mind-body growth. Join our newsletter.
                   </p>

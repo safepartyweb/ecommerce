@@ -18,9 +18,9 @@ export async function GET() {
 
   try {
     const orders = await Order.find({user:user.id}).sort({ createdAt: -1 }).limit(5);;
-    if(orders.length == 0){
-      throw new Error('No order found!')
-    }
+    // if(orders.length == 0){
+    //   throw new Error('No order found!')
+    // }
     return Response.json({ message: "Success!", orders }, { status: 200 });
   } catch (error) {
     console.log("Error:", error)

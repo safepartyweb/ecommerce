@@ -88,22 +88,42 @@ export default function CheckoutPage() {
     const calculated = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0 );
     setSubTotal(calculated);
 
-    if(calculated >= 500 || isFirstOrder ){
+    if(data?.orders?.length === 0){
       let discountAmount = calculated * 0.10
       setDiscount(discountAmount)
 
-      let subShipping = (calculated - discountAmount) * 0.06
+      let subShipping = (calculated - discountAmount) * 0.30
+      let finalShipping = calculated >= 200 ? 0 : subShipping
+      setShipping( finalShipping )
+      setOrderPrice( calculated - discountAmount + finalShipping )
+    }else{
+      let subShipping = calculated  * 0.30
+      let finalShipping = calculated >= 200 ? 0 : subShipping
+      setShipping( finalShipping )
+      setOrderPrice( calculated + finalShipping )
+    }
+
+    /*
+    if(calculated >= 200 || isFirstOrder ){
+      let discountAmount = calculated * 0.10
+      setDiscount(discountAmount)
+
+      let subShipping = (calculated - discountAmount) * 0.30
       let finalShipping = subShipping > 50 ? 50 : subShipping
       
       setShipping( finalShipping )
       setOrderPrice( calculated - discountAmount + finalShipping )
     } else {
-      let subShipping = calculated * 0.06
+      let subShipping = calculated * 0.30
       let finalShipping = subShipping > 50 ? 50 : subShipping
       setShipping( finalShipping  )
       setOrderPrice( calculated + finalShipping )
     }
-  }, [cartItems,userInfo]);
+      */
+
+
+
+  }, [cartItems,userInfo,data]);
 
 
 
@@ -116,7 +136,7 @@ export default function CheckoutPage() {
     return <Loader />;
   }
 
-  // console.log("Order data",data)
+  console.log("Order data",data)
  
 
   // console.log("userInfo on checkout page", userInfo)
@@ -138,6 +158,16 @@ export default function CheckoutPage() {
     setShowLoader(true);
 
     // console.log("Form Data", form)
+    // console.log("Order details",cartItems, form,subTotal,discount,shipping,taxPrice,orderPrice,userInfo.id,userInfo.referredBy)
+
+/*
+    console.log("subTotal",subTotal)
+    console.log("discount",discount)
+    console.log("shipping",shipping)
+    console.log("taxPrice",taxPrice)
+    console.log("orderPrice",orderPrice)
+    console.log("isFirstOrder",isFirstOrder)
+*/
 
     
     try {
@@ -184,6 +214,8 @@ export default function CheckoutPage() {
       setShowLoader(false);
       // setShowOrderSuccess(false)
     }
+
+    
 
     
 

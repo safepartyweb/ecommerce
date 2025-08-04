@@ -94,7 +94,7 @@ export default function Navbar() {
               
               <Link href='/'>
                 <Image
-                  src='/images/logo-new.jpg'
+                  src='/images/logo-4-8-final.png'
                   alt='Logo image'
                   width={80}
                   height={90}
@@ -213,7 +213,7 @@ export default function Navbar() {
                 <Image  src="/images/user.svg" alt='profile' width={36} height={36} />
                 
                 
-                  <div className={`dropdown absolute min-w-[150px]  h-auto right-0 bg-siteBlack text-white rounded transition-all duration-300 ${showProfile ? 'opacity-100 visible top-[70%]' 
+                  <div className={`dropdown absolute min-w-[150px]  h-auto right-0 bg-siteBlack text-white rounded transition-all duration-300 ${showProfile ? 'opacity-100 visible top-[65%]' 
                   : 'opacity-0 invisible top-[50px] pointer-events-none'}`}>
                     <ul>
                     {userInfo ? (
