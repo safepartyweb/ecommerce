@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Loader from '@/components/Loader';
 import { clearCart } from '@/store/cartSlice';
 import Image from 'next/image';
-import Tick from '/images/tick-green.svg'
+// import Tick from '/images/tick-green.svg'
 import { toast } from 'react-toastify';
 import { useGetOrdersQuery } from '@/lib/api/customerApi';
 
@@ -287,7 +287,7 @@ export default function CheckoutPage() {
       {/* {showLoader && <Loader />} */}
       {showOrderSuccess && <>
         <div className="orderSuccessScreen flex flex-col gap-10 items-center justify-center absolute w-full h-full z-20 bg-white">
-          <Image src={Tick} width={120} height={120} alt="Tick" />
+          {/* <Image src={Tick} width={120} height={120} alt="Tick" /> */}
           <div>
             <h1 className='text-xl font-bold text-center'>Order successful!</h1>
             <p className="text-lg font-medium text-center">Redirect you to payment page in a moment!</p>
