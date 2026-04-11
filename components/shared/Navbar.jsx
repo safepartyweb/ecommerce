@@ -86,7 +86,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="top_bar flex justify-center px-4 py-2 bg-gray-300 text-sm font-medium">Free Shipping | 10% Off First Order</div>
+      {/* <div className="top_bar flex justify-center px-4 py-2 bg-gray-300 text-sm font-medium">Free Shipping | 10% Off First Order</div> */}
       <header className=' border-gray-500 py-4 relative z-[40]'>
         <div className='container max-w-sitemax px-4 mx-auto'>
           <div className='header_wrapper flex justify-between items-center text-siteBlack relative'>

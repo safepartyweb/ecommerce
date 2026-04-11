@@ -96,7 +96,7 @@ export default function Home() {
         <NewsLetter />
       </AnimatedBlock>
 
-      {showModal && <PopupModal onClose={handleClose} />}
+      {/* {showModal && <PopupModal onClose={handleClose} />} */}
       
       
       

@@ -105,10 +105,10 @@ const Hero = ({productsData}) => {
 
             {/* Text Content */}
             <div className="relative z-20 flex flex-col items-center justify-center text-center text-white h-full px-4">
-              <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                Transform Your Life With
+              <h1 className="text-4xl md:text-6xl leading-[1.2] mb-4 text-center">
+              Ease your mind with <br/><span className="font-bold">Safe Party</span>
               </h1>
-              <p className="text-xl md:text-2xl mb-6">Psychedelic Medicine</p>
+              {/* <p className="text-xl md:text-2xl mb-6">Psychedelic Medicine</p> */}
 
                 <Link className="px-6 py-3 border border-white hover:bg-white hover:text-black transition-all rounded-md text-lg" href="/shop">Shop Now</Link>
 

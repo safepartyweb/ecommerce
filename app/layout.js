@@ -23,7 +23,7 @@ export const metadata = {
   title: 'Safe Party',
   description: '',
   icons: {
-    icon: '/images/favicon.ico', // or '/favicon.png'
+    icon: '/images/favicon.ico',
   },
 };
 

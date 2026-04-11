@@ -89,7 +89,8 @@ export default function CheckoutPage() {
     setSubTotal(calculated);
 
     if(data?.orders?.length === 0){
-      let discountAmount = calculated * 0.10
+      // let discountAmount = calculated * 0.10
+      let discountAmount = 0;
       setDiscount(discountAmount)
 
       let subShipping = (calculated - discountAmount) * 0.30
@@ -187,7 +188,6 @@ export default function CheckoutPage() {
           totalPrice:orderPrice,
           userId: userInfo.id,
           referredBy: userInfo.referredBy,
-          
         }),
       });
 
