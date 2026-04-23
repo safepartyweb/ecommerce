@@ -1,59 +1,56 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { useGetSingleProductQuery } from '@/lib/api/productApi';
-import Loader from '@/components/Loader';
-import ProductEdit from '@/components/admin/product/ProductEdit';
+// app/(protected)/admin/products/edit/[productId]/page.jsx
+import React from 'react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import ProductEdit from '@/components/admin/product/ProductEdit';
+import connectMongo from '@/lib/db';
+import Product from '@/models/Product';
+import Category from '@/models/Category';
 
-const Page = () => {
-  const { productId } = useParams();
-  const { data, isLoading } = useGetSingleProductQuery({ productId });
+async function getProduct(productId) {
+  await connectMongo();
 
-  const [images, setImages] = useState([]);
-  const [newImages, setNewImages] = useState([]);
+  const product = await Product.findById(productId).lean();
+  if (!product) return null;
 
-  // Remove existing image
-  const removeExistingImage = (id) => {
-    setImages(images.filter(img => img._id !== id));
-  };
+  return JSON.parse(JSON.stringify(product));
+}
 
-  // Upload new image
-  const handleNewImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setNewImages(prev => [...prev, ...files]);
-  };
+async function getCategories() {
+  await connectMongo();
 
-  useEffect(() => {
-    if (data) {
-      setImages(data.product.images);
-    }
-  }, [data]);
+  const categories = await Category.find({}).sort({ createdAt: -1 }).lean();
+  return JSON.parse(JSON.stringify(categories));
+}
 
-  if (isLoading) {
-    return <Loader />;
+const Page = async ({ params }) => {
+  const { productId } = await params;
+
+  const [product, categories] = await Promise.all([
+    getProduct(productId),
+    getCategories(),
+  ]);
+
+  if (!product) {
+    notFound();
   }
-
-  const product = data.product;
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold ">Edit Product: {product.title}</h2>
-        <Link className="bg-black text-white px-4 py-2 rounded border hover:bg-white hover:text-black cursor-pointer" target='_blank' href={`/products/${product.slug}`} >View Product</Link>
+        <h2 className="text-xl font-bold">Edit Product: {product.title}</h2>
+        <Link
+          className="bg-black text-white px-4 py-2 rounded border hover:bg-white hover:text-black cursor-pointer"
+          target="_blank"
+          href={`/products/${product.slug}`}
+        >
+          View Product
+        </Link>
       </div>
-      
-      <ProductEdit
-        product={product}
-        images={images}
-        setImages={setImages}
-        newImages={newImages}
-        setNewImages={setNewImages}
-        removeExistingImage={removeExistingImage}
-        handleNewImageUpload={handleNewImageUpload}
-      />
+
+      <ProductEdit product={product} categories={categories} />
     </div>
   );
 };
 
-export default Page;
+export default Page

@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import Image from 'next/image'
 import ProductImage from '../../images/products/bubblegum.gif'
@@ -12,7 +13,7 @@ import SingleFeaturedProduct from './SingleFeaturedProduct'
 
 
 const Featured = ({productsData}) => {
-  const products = productsData.products;
+  const products = productsData;
   console.log("products:", products)
   const newArrivals = products.slice(0,6);
   const featuredProds = products.filter(prod => prod.isFeatured)

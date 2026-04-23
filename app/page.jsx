@@ -1,56 +1,29 @@
-'use client'
-
-
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Loader from "@/components/Loader";
+// app/page.jsx
 import Hero from "@/components/home/Hero";
 import Bar from "@/components/home/Bar";
 import SecLeftRight from "@/components/home/SecLeftRight";
 import Marque from "@/components/home/Marque";
-import NewArrivals from "@/components/products/NewArrivals";
 import Featured from "@/components/products/Featured";
 import HomeSlider from "@/components/home/HomeSlider";
 import BestSeller from "@/components/home/BestSeller";
 import NewsLetter from "@/components/shared/NewsLetter";
-import AnimatedBlock from "@/components/shared/MotionParent";
-import { useGetProductsQuery } from "@/lib/api/productApi";
 import HomeQoutes from "@/components/home/HomeQoutes";
 import SafeHands from "@/components/home/SafeHands";
-import PopupModal from "@/components/home/PopUpModal";
-
-
-export default function Home() {
-
-  const [ showLoader, setShowLoader ] = useState()
-  const {data, isLoading} = useGetProductsQuery()
-  const [showModal, setShowModal] = useState(false);
-
-  useEffect(() => {
-    const lastClosed = localStorage.getItem('popupClosedAt');
-    const now = new Date();
-
-    if (!lastClosed || new Date(lastClosed) < new Date(now -  1 * 60 * 60 * 1000)) {
-      setShowModal(true);
-    }
-  }, []);
-
-  const handleClose = () => {
-    localStorage.setItem('popupClosedAt', new Date().toISOString());
-    setShowModal(false);
-  };
-
-
-  if(isLoading) return <Loader />
+import { getHomePageProducts } from "@/lib/data/home-products";
+import AnimatedBlock from "@/components/shared/MotionParent";
 
 
 
+export default async function Home() {
 
+  const { heroProducts, bestSellers, featuredProducts } =
+  await getHomePageProducts();
   return (
+    
     <div className="">
       
       
-      <Hero productsData={data} />
+      <Hero />
 
 
       <AnimatedBlock className='' direction="up">
@@ -58,7 +31,7 @@ export default function Home() {
       </AnimatedBlock>
 
       <AnimatedBlock className='' direction="up">
-        <BestSeller productsData={data} />
+        <BestSeller productsData={bestSellers} />
       </AnimatedBlock>     
 
       <AnimatedBlock className='' direction="up">
@@ -70,7 +43,7 @@ export default function Home() {
       </AnimatedBlock>
 
       <AnimatedBlock className='' direction="up">
-        <Featured productsData={data} />
+        <Featured productsData={featuredProducts} />
       </AnimatedBlock>
 
 
@@ -97,13 +70,6 @@ export default function Home() {
       </AnimatedBlock>
 
       {/* {showModal && <PopupModal onClose={handleClose} />} */}
-      
-      
-      
-      
-      
-      
-      
       
       
     </div>

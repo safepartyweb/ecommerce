@@ -3,7 +3,7 @@ import ProductSlider from '../products/ProductSlider';
 
 
 const BestSeller = ({productsData}) => {
-  const products = productsData.products;
+  const products = productsData;
   const bestProducts = products.filter(product => product.bestSeller)
   // console.log("bestProducts", bestProducts)
 

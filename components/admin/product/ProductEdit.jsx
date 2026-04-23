@@ -1,38 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import UploadSingleImage from '../UploadSingleImage';
-import { useEditProductMutation } from '@/lib/api/productApi';
 import Loader from '@/components/Loader';
-import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import Checkbox from '@/images/checkbox-black.svg';
-import CheckboxChecked from '@/images/checkbox-black-checked.svg';
-import Image from 'next/image';
-import { useGetCategoriesQuery } from '@/lib/api/categoryApi';
+import { updateProductAction } from '@/app/(protected)/admin/products/edit/[productId]/actions';
 
-export default function ProductEdit({ product }) {
-
-  console.log("Product from ProductEdit component:", product)
-
-  const [title, setTitle] = useState(product.title);
-  const [description, setDescription] = useState(product.description);
+export default function ProductEdit({ product, categories }) {
+  const [title, setTitle] = useState(product.title || '');
+  const [description, setDescription] = useState(product.description || '');
   const [images, setImages] = useState(product.images || []);
   const [price, setPrice] = useState(product.price || '');
   const [stock, setStock] = useState(product.stock || '');
   const [unit, setUnit] = useState(product.unit || '');
   const [weight, setWeight] = useState(product.weight || '');
-  const [category, setCategory] = useState(product.category);
-  const [bestSeller, setBestSeller] = useState(product.bestSeller);
-  const [showHero, setShowHero] = useState(product.showHero);
-  const [isFeatured, setIsFeatured] = useState(product.isFeatured);
-  const [isVariable, setIsVariable] = useState(product.isVariable || false);
+  const [category, setCategory] = useState(product.category || '');
+  const [bestSeller, setBestSeller] = useState(!!product.bestSeller);
+  const [showHero, setShowHero] = useState(!!product.showHero);
+  const [isFeatured, setIsFeatured] = useState(!!product.isFeatured);
+  const [isVariable, setIsVariable] = useState(!!product.isVariable);
   const [variations, setVariations] = useState(product.variations || []);
   const [showLoader, setShowLoader] = useState(false);
-
-  const router = useRouter();
-  const [editProduct] = useEditProductMutation();
-  const { data, isLoading: catLoading } = useGetCategoriesQuery();
+  const [isPending, startTransition] = useTransition();
 
   const removeImage = (index) => {
     const newImages = [...images];
@@ -43,8 +32,17 @@ export default function ProductEdit({ product }) {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const res = await UploadSingleImage(file);
-    setImages([...images, { url: res.secure_url, public_id: res.public_id }]);
+
+    setShowLoader(true);
+    try {
+      const res = await UploadSingleImage(file);
+      setImages((prev) => [...prev, { url: res.secure_url, public_id: res.public_id }]);
+    } catch (error) {
+      console.error(error);
+      toast.error('Image upload failed');
+    } finally {
+      setShowLoader(false);
+    }
   };
 
   const handleVariationChange = (index, field, value) => {
@@ -63,7 +61,6 @@ export default function ProductEdit({ product }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowLoader(true);
 
     const formData = new FormData();
     formData.append('productId', product._id);
@@ -71,43 +68,46 @@ export default function ProductEdit({ product }) {
     formData.append('description', description);
     formData.append('images', JSON.stringify(images));
     formData.append('category', category);
-    formData.append('bestSeller', bestSeller);
-    formData.append('isFeatured', isFeatured);
-    formData.append('showHero', showHero);
-    formData.append('isVariable', isVariable);
+    formData.append('bestSeller', String(bestSeller));
+    formData.append('isFeatured', String(isFeatured));
+    formData.append('showHero', String(showHero));
+    formData.append('isVariable', String(isVariable));
 
     if (isVariable) {
       formData.append('variations', JSON.stringify(variations));
     } else {
-      formData.append('price', price);
-      formData.append('stock', stock);
-      if (weight) formData.append('weight', weight);
-      if (unit) formData.append('unit', unit);
+      formData.append('price', String(price));
+      formData.append('stock', String(stock));
+      formData.append('weight', String(weight || ''));
+      formData.append('unit', String(unit || ''));
     }
 
-    try {
-      await editProduct(formData).unwrap();
-      toast.success('Product updated successfully!');
-      setTimeout(() => {
-        // router.push('/admin/products');
-      }, 1000);
-    } catch (err) {
-      console.error(err);
-      toast.error('Something went wrong');
-    } finally {
+    setShowLoader(true);
+
+    startTransition(async () => {
+      const result = await updateProductAction(formData);
+
+      if (result?.ok) {
+        toast.success(result.message);
+      } else {
+        toast.error(result?.message || 'Something went wrong');
+      }
+
       setShowLoader(false);
-    }
+    });
   };
-
-  if (catLoading) return <Loader />;
-  console.log("Categories", data)
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {showLoader && <Loader />}
+      {(showLoader || isPending) && <Loader />}
+
       <div>
         <label className="block font-semibold mb-1">Title</label>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} className="border w-full p-2 rounded" />
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="border w-full p-2 rounded"
+        />
       </div>
 
       <div>
@@ -131,9 +131,13 @@ export default function ProductEdit({ product }) {
 
       <div>
         <label className="block font-semibold mb-1">Category</label>
-        <select value={category} onChange={(e) => setCategory(e.target.value)} className="border w-full p-2 rounded">
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="border w-full p-2 rounded"
+        >
           <option value="">Select One</option>
-          {data.map((cat) => (
+          {categories.map((cat) => (
             <option key={cat._id} value={cat._id}>
               {cat.name}
             </option>
@@ -142,7 +146,11 @@ export default function ProductEdit({ product }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <input type="checkbox" checked={isVariable} onChange={(e) => setIsVariable(e.target.checked)} />
+        <input
+          type="checkbox"
+          checked={isVariable}
+          onChange={(e) => setIsVariable(e.target.checked)}
+        />
         <label>Variable Product?</label>
       </div>
 
@@ -196,20 +204,39 @@ export default function ProductEdit({ product }) {
         <>
           <div>
             <label className="block font-semibold">Price</label>
-            <input value={price} onChange={(e) => setPrice(e.target.value)} type="number" className="border w-full p-2 rounded" />
+            <input
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              type="number"
+              className="border w-full p-2 rounded"
+            />
           </div>
           <div>
             <label className="block font-semibold">Stock</label>
-            <input value={stock} onChange={(e) => setStock(e.target.value)} type="number" className="border w-full p-2 rounded" />
+            <input
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              type="number"
+              className="border w-full p-2 rounded"
+            />
           </div>
           <div className="flex gap-4">
             <div>
               <label className="block font-semibold">Weight</label>
-              <input value={weight} onChange={(e) => setWeight(e.target.value)} type="number" className="border p-2 rounded w-full" />
+              <input
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                type="number"
+                className="border p-2 rounded w-full"
+              />
             </div>
             <div>
               <label className="block font-semibold">Unit</label>
-              <select value={unit} onChange={(e) => setUnit(e.target.value)} className="border p-2 rounded w-full">
+              <select
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+                className="border p-2 rounded w-full"
+              >
                 <option value="">Select One</option>
                 <option value="Grams">Grams</option>
                 <option value="Oz">Oz</option>
@@ -222,21 +249,49 @@ export default function ProductEdit({ product }) {
 
       <div>
         <label className="block font-semibold">Description</label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} className="border w-full p-2 rounded" />
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="border w-full p-2 rounded"
+        />
       </div>
 
-      {/* Checkboxes */}
-      {[['Best Seller', bestSeller, setBestSeller, 'bestseller'], ['Featured', isFeatured, setIsFeatured, 'isFeatured']].map(
-        ([labelText, value, setter, id]) => (
-          <div className="flex items-center gap-2" key={id}>
-            <input id={id} type="checkbox" checked={value} onChange={(e) => setter(e.target.checked)} />
-            <label htmlFor={id}>{labelText}?</label>
-          </div>
-        )
-      )}
+      <div className="flex items-center gap-2">
+        <input
+          id="bestseller"
+          type="checkbox"
+          checked={bestSeller}
+          onChange={(e) => setBestSeller(e.target.checked)}
+        />
+        <label htmlFor="bestseller">Best Seller?</label>
+      </div>
 
-      <button type="submit" className="bg-black text-white px-6 py-3 rounded font-semibold border hover:bg-white hover:text-black cursor-pointer">
-        Update Product
+      <div className="flex items-center gap-2">
+        <input
+          id="isFeatured"
+          type="checkbox"
+          checked={isFeatured}
+          onChange={(e) => setIsFeatured(e.target.checked)}
+        />
+        <label htmlFor="isFeatured">Featured?</label>
+      </div>
+
+      {/* <div className="flex items-center gap-2">
+        <input
+          id="showHero"
+          type="checkbox"
+          checked={showHero}
+          onChange={(e) => setShowHero(e.target.checked)}
+        />
+        <label htmlFor="showHero">Show Hero?</label>
+      </div> */}
+
+      <button
+        type="submit"
+        className="bg-black text-white px-6 py-3 rounded font-semibold border hover:bg-white hover:text-black cursor-pointer"
+        disabled={isPending}
+      >
+        {isPending ? 'Updating...' : 'Update Product'}
       </button>
     </form>
   );

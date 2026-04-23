@@ -23,13 +23,11 @@ import HeroSlideSingleProduct from '../products/HeroSlideSingleProduct';
 
 
 
-const Hero = ({productsData}) => {
-  const products = productsData.products;
-  // console.log("products from hero",products )
+const Hero = () => {
+
 
   const [videoLoaded, setVideoLoaded] = useState(false);
 
-  const showHeroProducts = products.filter(product => product.showHero)
   // console.log("showHeroProducts", showHeroProducts)
 
   return (
