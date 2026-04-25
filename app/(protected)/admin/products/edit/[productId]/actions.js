@@ -5,6 +5,8 @@ import slugify from 'slugify';
 import connectMongo from '@/lib/db';
 import Product from '@/models/Product';
 
+
+
 function parseBoolean(value) {
   return value === 'true' || value === 'on';
 }
@@ -115,6 +117,8 @@ export async function updateProductAction(formData) {
 
     const updatedProduct = await product.save();
 
+    revalidatePath('/');
+    revalidatePath('/shop');
     revalidatePath('/admin/products');
     revalidatePath(`/admin/products/edit/${productId}`);
     revalidatePath(`/products/${updatedProduct.slug}`);
