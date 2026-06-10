@@ -36,7 +36,7 @@ const page = () => {
       // console.log("data arrived!",data)
       setOrders(data.orders)
       setTotalPages(data.totalPages || 1)
-      setTotalCount(data.totalCount || 0)
+      setTotalCount(data?.totalCount || 0)
     }
 
   },[data])
@@ -56,7 +56,7 @@ const page = () => {
   }
 
 
-  // console.log("orders data",data)
+  console.log("orders data",data)
   // const orders = data?.orders;
   // console.log("Orders", orders)
 
@@ -73,7 +73,7 @@ const page = () => {
 
       <div className="products_list overflow-x-auto">
         
-        <h1 className='text-lg font-semibold'>All Orders ({data.totalCount})</h1>
+        <h1 className='text-lg font-semibold'>All Orders ({data?.totalCount})</h1>
         
         <div className="min-w-[600px] mb-24">
           

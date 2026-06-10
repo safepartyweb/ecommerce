@@ -1,20 +1,16 @@
 "use client";
 
-import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import AnimatedBlock from "@/components/shared/MotionParent";
 
-function AdminLoginContent() {
+export default function AdminRegisterPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [loading, setLoading] = useState(true);
-  const [signingIn, setSigningIn] = useState(false);
-
-  const error = searchParams.get("error");
-  const callbackUrl = searchParams.get("callbackUrl") || "/admin";
+  const [registering, setRegistering] = useState(false);
 
   useEffect(() => {
     async function checkSession() {
@@ -39,11 +35,11 @@ function AdminLoginContent() {
     checkSession();
   }, [router]);
 
-  const handleGoogleLogin = async () => {
-    setSigningIn(true);
+  const handleGoogleRegister = async () => {
+    setRegistering(true);
 
     await signIn("google", {
-      callbackUrl,
+      callbackUrl: "/admin-pending",
     });
   };
 
@@ -53,7 +49,7 @@ function AdminLoginContent() {
         <div className="container max-w-sitemax px-4 mx-auto">
           <div className="login_wrapper max-w-xl mx-auto border border-siteBlack rounded p-4 sm:p-8 md:p-16 flex flex-col items-center justify-center">
             <p className="text-lg font-medium text-center">
-              Checking login status...
+              Checking account status...
             </p>
           </div>
         </div>
@@ -67,68 +63,44 @@ function AdminLoginContent() {
         <div className="login_wrapper max-w-xl mx-auto border border-siteBlack rounded p-4 sm:p-8 md:p-16 flex flex-col items-center justify-center">
           <AnimatedBlock direction="up">
             <h1 className="text-2xl font-bold text-center mb-2">
-              Admin Login
+              Admin Registration
             </h1>
 
             <p className="text-lg font-medium mb-8 text-center">
-              Continue with your Google account to access the admin dashboard.
+              Register with your Google account to request admin access.
             </p>
           </AnimatedBlock>
-
-          {error && (
-            <div className="w-full mb-6 rounded border border-red-500 bg-red-50 px-4 py-3 text-sm text-red-700 text-center">
-              Login failed. Please try again or contact the super admin.
-            </div>
-          )}
 
           <AnimatedBlock direction="up">
             <button
               type="button"
-              onClick={handleGoogleLogin}
-              disabled={signingIn}
+              onClick={handleGoogleRegister}
+              disabled={registering}
               className="w-full rounded bg-siteBlack px-6 py-3 text-white font-semibold hover:opacity-90 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {signingIn ? "Redirecting..." : "Continue with Google"}
+              {registering ? "Redirecting..." : "Register with Google"}
             </button>
 
-            <p className="mt-6 text-center text-sm">
-              New admin accounts need super admin approval before dashboard
-              access.
-            </p>
+            <div className="mt-6 text-center text-sm">
+              <p className="mb-2">
+                Your account will be created as pending.
+              </p>
 
+              <p className="mb-4">
+                A super admin must approve your account before you can access
+                the dashboard.
+              </p>
 
-            <p className="mt-3 text-center text-sm">
-              Need admin access?{" "}
-              <Link href="/admin-register" className="font-semibold underline">
-                Register here
-              </Link>
-            </p>
-
+              <p>
+                Already approved?{" "}
+                <Link href="/admin-login" className="font-semibold underline">
+                  Login here
+                </Link>
+              </p>
+            </div>
           </AnimatedBlock>
         </div>
       </div>
     </section>
-  );
-}
-
-function LoginPageFallback() {
-  return (
-    <section className="sec_login py-6 md:py-10">
-      <div className="container max-w-sitemax px-4 mx-auto">
-        <div className="login_wrapper max-w-xl mx-auto border border-siteBlack rounded p-4 sm:p-8 md:p-16 flex flex-col items-center justify-center">
-          <p className="text-lg font-medium text-center">
-            Loading login page...
-          </p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<LoginPageFallback />}>
-      <AdminLoginContent />
-    </Suspense>
   );
 }

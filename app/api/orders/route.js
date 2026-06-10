@@ -1,8 +1,7 @@
 import connectMongo from "@/lib/db";
 import Order from "@/models/Orders";
 import { NextResponse } from 'next/server';
-import { getAuthUser } from "@/lib/auth";
-import Customer from "@/models/Customer";
+import { requireAdmin } from "@/lib/AdminAuth";
 import User from "@/models/User";
 import Product from '@/models/Product';
 import mongoose from 'mongoose';
@@ -10,15 +9,17 @@ import mongoose from 'mongoose';
 
 
 // get all orders for admins
+/*
 export async function GET(request) {
 
-  const user = await getAuthUser();
+  const user = await requireAdmin();
   
-  console.log("user", user)
+  // console.log("user", user)
 
   if (!user) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
+  
   await connectMongo();
 
   const userData = await User.findById(user.id)
@@ -63,60 +64,53 @@ export async function GET(request) {
 
   
 }
+*/
 
-//create Order
-/*
-export async function POST(req) {
-  
+// get all orders for admins
+export async function GET(request) {
+  const user = await requireAdmin();
+
+  if (!user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
   await connectMongo();
-  const body = await req.json();
-  // console.log("Request Data", body);
+
+  const { searchParams } = new URL(request.url);
+  const page = parseInt(searchParams.get("page")) || 1;
+  const limit = parseInt(searchParams.get("limit")) || 10;
 
   try {
-    const {
-      orderItems,
-      shippingAddress,
-      paymentMethod,
-      itemsPrice,
-      shippingPrice,
-      taxPrice,
-      totalPrice,
-      userId,
-      referredBy,
-      discount,
-    } = body;
+    const skip = (page - 1) * limit;
 
-    if (!orderItems || orderItems.length === 0) {
-      return NextResponse.json({ error: 'No order items' }, { status: 400 });
-    }
+    const [orders, totalCount] = await Promise.all([
+      Order.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .populate("user"),
+      Order.countDocuments(),
+    ]);
 
-    const newOrder = new Order({
-      user: userId,
-      orderItems,
-      shippingAddress,
-      paymentMethod,
-      itemsPrice,
-      shippingPrice,
-      taxPrice,
-      totalPrice,
-      referredBy,
-      discount,
+    return NextResponse.json({
+      success: true,
+      orders,
+      totalCount,
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
     });
-
-    //console.log("new order:", )
-
-    const savedOrder = await newOrder.save();
-
-    return NextResponse.json(savedOrder, { status: 201 });
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({ message: 'Failed to create order', error }, { status: 500 });
-  }  
+    console.log("Error:", error);
 
-
-  
+    return NextResponse.json(
+      { message: "Failed!", error: error.message },
+      { status: 500 }
+    );
+  }
 }
-*/
+
+
+
 
 function round2(num) {
   return Math.round((num + Number.EPSILON) * 100) / 100;

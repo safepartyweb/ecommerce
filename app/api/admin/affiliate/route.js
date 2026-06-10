@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import connectMongo from '@/lib/db';
 import Affiliate from '@/models/Affiliate';
-import { getAuthUser } from '@/lib/auth';
+import { requireAdmin } from "@/lib/AdminAuth";
 
 export async function GET() {
   try {
     await connectMongo();
 
-    const user = await getAuthUser();
+    const user = await requireAdmin();
     if (!user || user.role !== 'admin') {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }

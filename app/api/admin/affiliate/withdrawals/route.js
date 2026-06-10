@@ -1,12 +1,12 @@
 // /app/api/admin/affiliate/withdrawals/route.js
 import { NextResponse } from 'next/server';
 import connectMongo from '@/lib/db';
-import { getAuthUser } from '@/lib/auth';
+import { requireAdmin } from '@/lib/AdminAuth';
 import AffiliateWithdrawal from '@/models/AffiliateWithdrawal';
 
 export async function GET() {
   await connectMongo();
-  const user = await getAuthUser();
+  const user = await requireAdmin();
 
   if (!user || user.role !== 'admin') {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
