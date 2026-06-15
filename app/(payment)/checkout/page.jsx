@@ -193,11 +193,13 @@ export default function CheckoutPage() {
 
       console.log("Order place res", res)
   
-      if (!res.ok) {
-        throw new Error('Failed to create order');
-      }
-  
+      // parse JSON first
       const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to create order');
+      }
+
       console.log('Order created successfully:', data);
       
       toast.success("Order created successfully!")
@@ -209,7 +211,7 @@ export default function CheckoutPage() {
 
     } catch (error) {
       console.error('❌ Error creating order:', error);
-      toast.error("Something went wrong. Please try again!")
+      toast.error(error.message)
     }finally{
       setShowLoader(false);
       // setShowOrderSuccess(false)

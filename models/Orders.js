@@ -1,11 +1,8 @@
 import mongoose from 'mongoose';
 import Product from './Product';
 import Customer from './Customer';
-import Affiliate from '@/models/Affiliate'
-
-
-
-
+import Affiliate from '@/models/Affiliate';
+import ShippingMethod from './ShippingMethod';
 
 const orderItemSchema = new mongoose.Schema(
   {
@@ -16,18 +13,16 @@ const orderItemSchema = new mongoose.Schema(
     },
     name: String,
     image: String,
-    isVariable:{
-      type:Boolean,
-      required:true
+    isVariable: {
+      type: Boolean,
+      required: true,
     },
     variationId: {
       type: mongoose.Schema.Types.ObjectId,
-      // required: true,
     },
-    variationLabel: String, // e.g., "10g"
-    unit: String,           // e.g., "g", "ml"
-    price: Number,          // price of selected variation
-
+    variationLabel: String,
+    unit: String,
+    price: Number,
     quantity: {
       type: Number,
       required: true,
@@ -43,6 +38,7 @@ const orderSchema = new mongoose.Schema(
       ref: 'Customer',
       required: true,
     },
+
     orderItems: [orderItemSchema],
 
     shippingAddress: {
@@ -54,6 +50,20 @@ const orderSchema = new mongoose.Schema(
       country: String,
     },
 
+    // ✅ NEW: reference to ShippingMethod collection
+    shippingMethod: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'ShippingMethod',
+      required: true,
+    },
+
+    shippingSnapshot: {
+      name: String,
+      shortNote: String,
+      price: Number,
+      deliveryTime: String,
+    },
+    
     paymentMethod: {
       type: String,
     },
@@ -70,16 +80,20 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+
     shippingPrice: {
       type: Number,
       required: true,
     },
+
     taxPrice: {
       type: Number,
     },
+
     discount: {
       type: Number,
     },
+
     totalPrice: {
       type: Number,
       required: true,
@@ -89,12 +103,14 @@ const orderSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
     paidAt: Date,
 
     isDelivered: {
       type: Boolean,
       default: false,
     },
+
     deliveredAt: Date,
 
     status: {
@@ -107,15 +123,12 @@ const orderSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Affiliate',
       default: null,
-    }
-
-
-
-
+    },
   },
   { timestamps: true }
 );
 
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
+const Order =
+  mongoose.models.Order || mongoose.model('Order', orderSchema);
 
 export default Order;

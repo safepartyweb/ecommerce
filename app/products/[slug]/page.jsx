@@ -20,7 +20,7 @@ export default function ProductPage() {
     return <Loader />;
   }
 
-  const product = data.product;
+  const product = data?.product;
   
 
   const handleAddToCart = () => {
@@ -53,7 +53,7 @@ export default function ProductPage() {
     <section className="sec_hero_bar py-6 md:py-10">
       <div className="container max-w-sitemax px-4 mx-auto">
         <div className="mx-auto p-4">
-          <h1 className="text-2xl font-bold mb-4">{product.title}</h1>
+          <h1 className="text-2xl font-bold mb-4">{product?.title}</h1>
           <div className="product_wrap grid grid-cols-2 gap-16">
             <div className="images col-span-2 lg:col-span-1">
               <ThumbnailSlider images={product.images} />

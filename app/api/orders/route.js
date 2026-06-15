@@ -165,20 +165,20 @@ async function validateAndPriceOrderItems(orderItems = []) {
       variationLabel = selectedVariation.label || '';
 
       if (typeof selectedVariation.stock === 'number' && selectedVariation.stock < quantity) {
-        throw new Error(`Insufficient stock for ${product.name} - ${variationLabel}`);
+        throw new Error(`Insufficient stock for ${product.title} - ${variationLabel}`);
       }
     } else {
       unitPrice = Number(product.price ?? 0);
 
       if (typeof product.stock === 'number' && product.stock < quantity) {
-        throw new Error(`Insufficient stock for ${product.name}`);
+        throw new Error(`Insufficient stock for ${product.title}`);
       }
 
       variationId = null;
     }
 
     if (!Number.isFinite(unitPrice) || unitPrice < 0) {
-      throw new Error(`Invalid price for product ${product.name}`);
+      throw new Error(`Invalid price for product ${product.title}`);
     }
 
     const lineTotal = round2(unitPrice * quantity);
@@ -187,7 +187,7 @@ async function validateAndPriceOrderItems(orderItems = []) {
     validatedItems.push({
       product: product._id, // use this if your Order schema expects product ref
       productId: product._id, // keep if your current schema uses productId
-      name: product.name,
+      title: product.title,
       image: product.image || product.thumbnail || item.image || '',
       isVariable: !!product.isVariable,
       variation: product.isVariable
@@ -257,7 +257,7 @@ export async function POST(req) {
 
     return NextResponse.json(savedOrder, { status: 201 });
   } catch (error) {
-    console.log(error);
+    console.log("Api order error:",error);
     return NextResponse.json(
       { message: error.message || 'Failed to create order' },
       { status: 500 }
