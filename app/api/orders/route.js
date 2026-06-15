@@ -1,70 +1,11 @@
 import connectMongo from "@/lib/db";
 import Order from "@/models/Orders";
-import { NextResponse } from 'next/server';
+import ShippingMethod from "@/models/ShippingMethod";
+import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/AdminAuth";
 import User from "@/models/User";
-import Product from '@/models/Product';
-import mongoose from 'mongoose';
-
-
-
-// get all orders for admins
-/*
-export async function GET(request) {
-
-  const user = await requireAdmin();
-  
-  // console.log("user", user)
-
-  if (!user) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  }
-  
-  await connectMongo();
-
-  const userData = await User.findById(user.id)
-
-  if (userData.role !== 'admin') {
-    return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
-  }
-
-  const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get('page')) || 1;
-  const limit = parseInt(searchParams.get('limit')) || 10;
-
-  try {
-
-    const skip = (page - 1) * limit;
-
-    const [orders, totalCount] = await Promise.all([
-      Order.find()
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit).populate('user'),
-      Order.find().countDocuments()
-    ]);
-
-    return NextResponse.json({
-      success: true,
-      orders,
-      totalCount,
-      currentPage: page,
-      totalPages: Math.ceil(totalCount / limit)
-    });
-
-
-
-
-    //const orders = await Order.find().populate('user', 'fullName email').sort({"createdAt":-1});
-    //return Response.json({ message: "Success!", orders }, { status: 200 });
-  } catch (error) {
-    console.log("Error:", error)
-    return Response.json({ message: "Failed!", error }, { status: 500 });
-  }
-
-  
-}
-*/
+import Product from "@/models/Product";
+import mongoose from "mongoose";
 
 // get all orders for admins
 export async function GET(request) {
@@ -88,7 +29,8 @@ export async function GET(request) {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate("user"),
+        .populate("user")
+        .populate("shippingMethod"),
       Order.countDocuments(),
     ]);
 
@@ -109,16 +51,13 @@ export async function GET(request) {
   }
 }
 
-
-
-
 function round2(num) {
   return Math.round((num + Number.EPSILON) * 100) / 100;
 }
 
 async function validateAndPriceOrderItems(orderItems = []) {
   if (!Array.isArray(orderItems) || orderItems.length === 0) {
-    throw new Error('No order items');
+    throw new Error("No order items");
   }
 
   const validatedItems = [];
@@ -143,15 +82,20 @@ async function validateAndPriceOrderItems(orderItems = []) {
 
     let unitPrice = 0;
     let variationId = item.variationId || null;
-    let variationLabel = '';
+    let variationLabel = "";
+    let unit = "";
     let selectedVariation = null;
 
     if (product.isVariable) {
       if (!variationId || !mongoose.Types.ObjectId.isValid(variationId)) {
-        throw new Error(`Variation ID is required for variable product ${product._id}`);
+        throw new Error(
+          `Variation ID is required for variable product ${product._id}`
+        );
       }
 
-      const variations = Array.isArray(product.variations) ? product.variations : [];
+      const variations = Array.isArray(product.variations)
+        ? product.variations
+        : [];
 
       selectedVariation = variations.find(
         (v) => String(v._id || v.id) === String(variationId)
@@ -162,19 +106,27 @@ async function validateAndPriceOrderItems(orderItems = []) {
       }
 
       unitPrice = Number(selectedVariation.price ?? 0);
-      variationLabel = selectedVariation.label || '';
+      variationLabel = selectedVariation.label || "";
+      unit = selectedVariation.unit || "";
 
-      if (typeof selectedVariation.stock === 'number' && selectedVariation.stock < quantity) {
-        throw new Error(`Insufficient stock for ${product.title} - ${variationLabel}`);
+      if (
+        typeof selectedVariation.stock === "number" &&
+        selectedVariation.stock < quantity
+      ) {
+        throw new Error(
+          `Insufficient stock for ${product.title} - ${variationLabel}`
+        );
       }
     } else {
       unitPrice = Number(product.price ?? 0);
 
-      if (typeof product.stock === 'number' && product.stock < quantity) {
+      if (typeof product.stock === "number" && product.stock < quantity) {
         throw new Error(`Insufficient stock for ${product.title}`);
       }
 
       variationId = null;
+      variationLabel = "";
+      unit = "";
     }
 
     if (!Number.isFinite(unitPrice) || unitPrice < 0) {
@@ -185,38 +137,21 @@ async function validateAndPriceOrderItems(orderItems = []) {
     itemsPrice = round2(itemsPrice + lineTotal);
 
     validatedItems.push({
-      product: product._id, // use this if your Order schema expects product ref
-      productId: product._id, // keep if your current schema uses productId
-      title: product.title,
-      image: product.image || product.thumbnail || item.image || '',
+      productId: product._id,
+      name: product.title,
+      image: product.image || product.thumbnail || item.image || "",
       isVariable: !!product.isVariable,
-      variation: product.isVariable
-        ? {
-            id: selectedVariation?._id,
-            label: variationLabel,
-            unit: selectedVariation?.unit || '',
-          }
-        : undefined,
       variationId,
       variationLabel,
+      unit,
       price: unitPrice,
       quantity,
-      lineTotal,
     });
   }
-
-  const discount = 0;
-  const taxPrice = 0;
-  const shippingPrice = itemsPrice >= 200 ? 0 : round2(itemsPrice * 0.3);
-  const totalPrice = round2(itemsPrice - discount + shippingPrice + taxPrice);
 
   return {
     validatedItems,
     itemsPrice,
-    shippingPrice,
-    taxPrice,
-    discount,
-    totalPrice,
   };
 }
 
@@ -229,37 +164,85 @@ export async function POST(req) {
     const {
       orderItems,
       shippingAddress,
+      shippingMethod,
       paymentMethod,
       userId,
       referredBy,
     } = body;
 
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return NextResponse.json(
+        { message: "Valid user ID is required" },
+        { status: 400 }
+      );
+    }
+
     if (!orderItems || orderItems.length === 0) {
-      return NextResponse.json({ error: 'No order items' }, { status: 400 });
+      return NextResponse.json(
+        { message: "No order items" },
+        { status: 400 }
+      );
+    }
+
+    if (!shippingMethod || !mongoose.Types.ObjectId.isValid(shippingMethod)) {
+      return NextResponse.json(
+        { message: "Shipping method is required" },
+        { status: 400 }
+      );
+    }
+
+    const selectedShippingMethod = await ShippingMethod.findOne({
+      _id: shippingMethod,
+      isActive: true,
+    }).lean();
+
+    if (!selectedShippingMethod) {
+      return NextResponse.json(
+        { message: "Invalid or unavailable shipping method" },
+        { status: 400 }
+      );
     }
 
     const pricing = await validateAndPriceOrderItems(orderItems);
+
+    const discount = 0;
+    const taxPrice = 0;
+    const shippingPrice = round2(Number(selectedShippingMethod.price || 0));
+    const totalPrice = round2(
+      pricing.itemsPrice - discount + shippingPrice + taxPrice
+    );
 
     const newOrder = new Order({
       user: userId,
       orderItems: pricing.validatedItems,
       shippingAddress,
-      paymentMethod: paymentMethod || '',
+
+      shippingMethod: selectedShippingMethod._id,
+
+      shippingSnapshot: {
+        name: selectedShippingMethod.name,
+        shortNote: selectedShippingMethod.shortNote || "",
+        price: shippingPrice,
+        deliveryTime: selectedShippingMethod.deliveryTime || "",
+      },
+
+      paymentMethod: paymentMethod || "",
       itemsPrice: pricing.itemsPrice,
-      shippingPrice: pricing.shippingPrice,
-      taxPrice: pricing.taxPrice,
-      totalPrice: pricing.totalPrice,
-      referredBy,
-      discount: pricing.discount,
+      shippingPrice,
+      taxPrice,
+      totalPrice,
+      referredBy: referredBy || null,
+      discount,
     });
 
     const savedOrder = await newOrder.save();
 
     return NextResponse.json(savedOrder, { status: 201 });
   } catch (error) {
-    console.log("Api order error:",error);
+    console.log("Api order error:", error);
+
     return NextResponse.json(
-      { message: error.message || 'Failed to create order' },
+      { message: error.message || "Failed to create order" },
       { status: 500 }
     );
   }

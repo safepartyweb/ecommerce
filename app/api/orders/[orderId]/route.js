@@ -3,6 +3,7 @@ import Order from "@/models/Orders";
 import { getAuthUser } from "@/lib/auth";
 import Affiliate from "@/models/Affiliate";
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/AdminAuth";
 
 
 
@@ -15,7 +16,9 @@ export async function GET(req, { params }) {
     const { orderId } = await params;
     console.log("Order Id", orderId)
     
-    const user = await getAuthUser();
+    const user = await requireAdmin();
+
+    // console.log("Auth user res on api:", user)
     
     if (!user) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
@@ -112,17 +115,22 @@ export async function PATCH(req, { params }) {
 
 */
 
-
+/*
 export async function PATCH(req, { params }) {
   await connectMongo();
 
   try {
-    const { orderId } = params;
+    const { orderId } = await params;
     const data = await req.json();
 
-    const user = await getAuthUser();
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    const user = await requireAdmin();
+    console.log("Auth user res on order edit api:", user)
+
+    if (!user || !["admin", "super_admin"].includes(user.role)) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
     }
 
     if (!orderId) {
@@ -180,7 +188,122 @@ export async function PATCH(req, { params }) {
     return NextResponse.json({ message: 'Internal Server Error', error: error.message }, { status: 500 });
   }
 }
+*/
 
+
+
+export async function PATCH(req, { params }) {
+  await connectMongo();
+
+  try {
+    const { orderId } = await params;
+    const data = await req.json();
+
+    const user = await requireAdmin();
+
+    console.log("Auth user res on order edit api:", user);
+
+    if (!user || !["admin", "super_admin"].includes(user.role)) {
+      return NextResponse.json(
+        { message: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    if (!orderId) {
+      return NextResponse.json(
+        { success: false, message: "Order ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return NextResponse.json(
+        { message: "Order not found" },
+        { status: 404 }
+      );
+    }
+
+    const allowedStatuses = [
+      "Pending",
+      "Processing",
+      "Shipped",
+      "Delivered",
+      "Cancelled",
+    ];
+
+    if (data.status && !allowedStatuses.includes(data.status)) {
+      return NextResponse.json(
+        { message: "Invalid order status" },
+        { status: 400 }
+      );
+    }
+
+    const wasPaid = order.isPaid;
+
+    const paymentStatus =
+      data.isPaid === true || data.isPaid === "true";
+
+    order.isPaid = paymentStatus;
+    order.status = data.status || order.status;
+
+    if (paymentStatus && !wasPaid) {
+      order.paidAt = new Date();
+    }
+
+    if (!paymentStatus && wasPaid) {
+      order.paidAt = null;
+    }
+
+    // Add affiliate commission only when payment is newly marked as paid
+    if (paymentStatus && !wasPaid && order.referredBy) {
+      const commission = order.itemsPrice * 0.1;
+
+      await Affiliate.findByIdAndUpdate(order.referredBy, {
+        $inc: {
+          totalOrders: 1,
+          totalEarned: commission,
+          currentBalance: commission,
+        },
+      });
+    }
+
+    // Remove affiliate commission only when payment is changed from paid to unpaid
+    if (!paymentStatus && wasPaid && order.referredBy) {
+      const commission = order.itemsPrice * 0.1;
+
+      await Affiliate.findByIdAndUpdate(order.referredBy, {
+        $inc: {
+          totalOrders: -1,
+          totalEarned: -commission,
+          currentBalance: -commission,
+        },
+      });
+    }
+
+    const updatedOrder = await order.save();
+
+    return NextResponse.json(
+      {
+        message: "Order updated",
+        order: updatedOrder,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Order edit error:", error);
+
+    return NextResponse.json(
+      {
+        message: "Internal Server Error",
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
 
 
 

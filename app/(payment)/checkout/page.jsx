@@ -7,31 +7,37 @@ import Link from 'next/link';
 import Loader from '@/components/Loader';
 import { clearCart } from '@/store/cartSlice';
 import Image from 'next/image';
-// import Tick from '/images/tick-green.svg'
 import { toast } from 'react-toastify';
 import { useGetOrdersQuery } from '@/lib/api/customerApi';
 
-
-
-
 export default function CheckoutPage() {
-  const [showLoader, setShowLoader] = useState(false)
-  const [showPaymentOptions, setShowPaymentOptions] = useState(false)
-  const [showOrderSuccess, setShowOrderSuccess] = useState(false)
-  const [orderPrice, setOrderPrice] = useState(0)
-  const [orderId, setOrderId] = useState('')
-  const [discount, setDiscount] = useState(0)
-  const [taxPrice, setTaxPrice] = useState(0)
-  const [isFirstOrder, setIsFirstOder] = useState(false)
+  const [showLoader, setShowLoader] = useState(false);
+  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+  const [showOrderSuccess, setShowOrderSuccess] = useState(false);
+  const [orderPrice, setOrderPrice] = useState(0);
+  const [orderId, setOrderId] = useState('');
+  const [discount, setDiscount] = useState(0);
+  const [taxPrice, setTaxPrice] = useState(0);
+  const [isFirstOrder, setIsFirstOder] = useState(false);
 
+  const [subTotal, setSubTotal] = useState(0);
+  const [shipping, setShipping] = useState(0);
+
+  const [shippingMethods, setShippingMethods] = useState([]);
+  const [shippingMethodsLoading, setShippingMethodsLoading] = useState(true);
+  const [selectedShippingMethodId, setSelectedShippingMethodId] = useState('');
 
   const dispatch = useDispatch();
   const router = useRouter();
 
   const cartItems = useSelector((state) => state.cart.cartItems);
   const { userInfo } = useSelector((state) => state.auth);
-  
-  console.log("cartItems",cartItems)
+
+  const { data, isLoading: isOrdersLoading } = useGetOrdersQuery();
+
+  const selectedShippingMethod = shippingMethods.find(
+    (method) => method._id === selectedShippingMethodId
+  );
 
   const [form, setForm] = useState({
     name: '',
@@ -42,13 +48,6 @@ export default function CheckoutPage() {
     postalCode: '',
     country: '',
   });
-
-  // const [total, setTotal] = useState(0);
-  const [subTotal, setSubTotal] = useState(0);
-  const [shipping, setShipping] = useState(0);
-
-
-  const {data, isLoading:isOrdersLoading} = useGetOrdersQuery()
 
   useEffect(() => {
     if (!userInfo) {
@@ -64,14 +63,48 @@ export default function CheckoutPage() {
         email: userInfo.email || '',
         address: userInfo.address || '',
         city: userInfo.city || '',
-        state: userInfo.city || '',
+        state: userInfo.state || '',
         postalCode: userInfo.postalCode || '',
         country: userInfo.country || '',
       }));
     }
   }, [userInfo]);
 
+  useEffect(() => {
+    async function loadShippingMethods() {
+      try {
+        setShippingMethodsLoading(true);
 
+        const res = await fetch('/api/admin/shipping', {
+          method: 'GET',
+          cache: 'no-store',
+        });
+
+        const result = await res.json();
+        
+        console.log("Method Result:", result)
+
+        if (!res.ok) {
+          throw new Error(result.message || 'Failed to load shipping methods');
+        }
+
+        const methods = result.methods || [];
+
+        setShippingMethods(methods);
+
+        if (methods.length > 0) {
+          setSelectedShippingMethodId(methods[0]._id);
+        }
+      } catch (error) {
+        console.error('Shipping methods load error:', error);
+        toast.error(error.message || 'Failed to load shipping methods');
+      } finally {
+        setShippingMethodsLoading(false);
+      }
+    }
+
+    loadShippingMethods();
+  }, []);
 
   useEffect(() => {
     if (data?.orders?.length === 0) {
@@ -79,68 +112,40 @@ export default function CheckoutPage() {
     }
   }, [data]);
 
-  
-
-
-
-
   useEffect(() => {
-    const calculated = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0 );
+    const calculated = cartItems.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
     setSubTotal(calculated);
 
-    if(data?.orders?.length === 0){
-      // let discountAmount = calculated * 0.10
-      let discountAmount = 0;
-      setDiscount(discountAmount)
+    let discountAmount = 0;
 
-      let subShipping = (calculated - discountAmount) * 0.30
-      let finalShipping = calculated >= 200 ? 0 : subShipping
-      setShipping( finalShipping )
-      setOrderPrice( calculated - discountAmount + finalShipping )
-    }else{
-      let subShipping = calculated  * 0.30
-      let finalShipping = calculated >= 200 ? 0 : subShipping
-      setShipping( finalShipping )
-      setOrderPrice( calculated + finalShipping )
+    if (data?.orders?.length === 0) {
+      // First order discount can be added here later.
+      discountAmount = 0;
     }
 
-    /*
-    if(calculated >= 200 || isFirstOrder ){
-      let discountAmount = calculated * 0.10
-      setDiscount(discountAmount)
+    setDiscount(discountAmount);
 
-      let subShipping = (calculated - discountAmount) * 0.30
-      let finalShipping = subShipping > 50 ? 50 : subShipping
-      
-      setShipping( finalShipping )
-      setOrderPrice( calculated - discountAmount + finalShipping )
-    } else {
-      let subShipping = calculated * 0.30
-      let finalShipping = subShipping > 50 ? 50 : subShipping
-      setShipping( finalShipping  )
-      setOrderPrice( calculated + finalShipping )
-    }
-      */
+    const selectedShippingPrice = Number(selectedShippingMethod?.price || 0);
 
-
-
-  }, [cartItems,userInfo,data]);
-
-
+    setShipping(selectedShippingPrice);
+    setOrderPrice(calculated - discountAmount + selectedShippingPrice);
+  }, [cartItems, data, selectedShippingMethod]);
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const handleShippingMethodChange = (e) => {
+    setSelectedShippingMethodId(e.target.value);
+  };
 
-  if (!userInfo || isOrdersLoading) {
+  if (!userInfo || isOrdersLoading || shippingMethodsLoading) {
     return <Loader />;
   }
-
-  console.log("Order data",data)
- 
-
-  // console.log("userInfo on checkout page", userInfo)
 
   if (cartItems.length === 0 && !showPaymentOptions) {
     return (
@@ -153,79 +158,67 @@ export default function CheckoutPage() {
     );
   }
 
-  // Place order handler
   const placeOrderHandler = async (e) => {
     e.preventDefault();
+  
+    if (!selectedShippingMethod) {
+      toast.error("Please select a shipping method.");
+      return;
+    }
+  
     setShowLoader(true);
-
-    // console.log("Form Data", form)
-    // console.log("Order details",cartItems, form,subTotal,discount,shipping,taxPrice,orderPrice,userInfo.id,userInfo.referredBy)
-
-/*
-    console.log("subTotal",subTotal)
-    console.log("discount",discount)
-    console.log("shipping",shipping)
-    console.log("taxPrice",taxPrice)
-    console.log("orderPrice",orderPrice)
-    console.log("isFirstOrder",isFirstOrder)
-*/
-
-    
+  
     try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
+      const res = await fetch("/api/orders", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
+  
         body: JSON.stringify({
           orderItems: cartItems,
-          shippingAddress : form,
-          // paymentMethod,
+          shippingAddress: form,
+  
+          shippingMethod: selectedShippingMethod._id,
+  
+          shippingSnapshot: {
+            name: selectedShippingMethod.name,
+            shortNote: selectedShippingMethod.shortNote || "",
+            price: Number(selectedShippingMethod.price || 0),
+            deliveryTime: selectedShippingMethod.deliveryTime || "",
+          },
+  
           itemsPrice: subTotal,
           discount,
-          shippingPrice:shipping,
+          shippingPrice: shipping,
           taxPrice,
-          totalPrice:orderPrice,
+          totalPrice: orderPrice,
           userId: userInfo.id,
           referredBy: userInfo.referredBy,
         }),
       });
-
-      console.log("Order place res", res)
   
-      // parse JSON first
       const data = await res.json();
-
+  
       if (!res.ok) {
-        throw new Error(data.message || 'Failed to create order');
+        throw new Error(data.message || "Failed to create order");
       }
-
-      console.log('Order created successfully:', data);
-      
-      toast.success("Order created successfully!")
-      
+  
+      toast.success("Order created successfully!");
+  
       const orderId = data._id;
-      setOrderId(orderId)
-      // console.log('Order ID:', orderId);
-      setShowPaymentOptions(true)
-
+      setOrderId(orderId);
+      setShowPaymentOptions(true);
     } catch (error) {
-      console.error('❌ Error creating order:', error);
-      toast.error(error.message)
-    }finally{
+      console.error("❌ Error creating order:", error);
+      toast.error(error.message);
+    } finally {
       setShowLoader(false);
-      // setShowOrderSuccess(false)
     }
-
-    
-
-    
-
-  }
-
+  };
 
   const paymentHandler = async (method) => {
-    setShowLoader(true)
+    setShowLoader(true);
 
     try {
       const externalApiRes = await fetch('/api/payment', {
@@ -233,75 +226,67 @@ export default function CheckoutPage() {
         headers: {
           'Content-Type': 'application/json',
         },
+
         body: JSON.stringify({
           price_amount: orderPrice,
-          // shippingAddress,
-          // paymentMethod,
-          price_currency:'usd',
-          order_id:orderId,
-          payment_method:method,
+          price_currency: 'usd',
+          order_id: orderId,
+          payment_method: method,
           email: userInfo.email,
-
         }),
       });
-      console.log("externalApiRes",externalApiRes)
-      
-      if (!externalApiRes.ok) {
-        throw new ErrorEvent(error.message ?  error.message : 'Something went wrong!');
-      }
 
+      if (!externalApiRes.ok) {
+        throw new Error('Something went wrong!');
+      }
 
       const paymentLinkData = await externalApiRes.json();
-      
+
       if (paymentLinkData?.data?.invoice_url) {
-        toast.success("Redirecting to payment processor!")
+        toast.success('Redirecting to payment processor!');
         window.location.href = paymentLinkData.data.invoice_url;
-      }else{
-        console.log('Payment processed successfully:', paymentLinkData);
-        console.log("Do staffs!")
-        toast.success("Payment instruction sent to your email!")
-        setShowPaymentOptions(false)
+      } else {
+        toast.success('Payment instruction sent to your email!');
+        setShowPaymentOptions(false);
       }
-
-
-
     } catch (error) {
       console.error('Something went wrong', error);
-    } finally{
-      setShowLoader(false)
+      toast.error(error.message || 'Something went wrong');
+    } finally {
+      setShowLoader(false);
       dispatch(clearCart());
     }
-
-
-
-
-  }
+  };
 
   const closePaymentOptionsHandler = () => {
     dispatch(clearCart());
-    setShowPaymentOptions(false)
-  } 
-
+    setShowPaymentOptions(false);
+  };
 
   return (
     <div className="max-w-5xl mx-auto p-4 relative">
-      
-      {/* {showLoader && <Loader />} */}
-      {showOrderSuccess && <>
+      {showLoader && <Loader />}
+
+      {showOrderSuccess && (
         <div className="orderSuccessScreen flex flex-col gap-10 items-center justify-center absolute w-full h-full z-20 bg-white">
-          {/* <Image src={Tick} width={120} height={120} alt="Tick" /> */}
           <div>
-            <h1 className='text-xl font-bold text-center'>Order successful!</h1>
-            <p className="text-lg font-medium text-center">Redirect you to payment page in a moment!</p>
+            <h1 className="text-xl font-bold text-center">
+              Order successful!
+            </h1>
+            <p className="text-lg font-medium text-center">
+              Redirect you to payment page in a moment!
+            </p>
           </div>
         </div>
-      </>}
+      )}
+
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Shipping Form */}
         <form onSubmit={placeOrderHandler} className="space-y-4">
           <h2 className="text-xl font-semibold mb-2">Shipping Details</h2>
+
           <input
             name="name"
             placeholder="Full Name"
@@ -310,6 +295,7 @@ export default function CheckoutPage() {
             required
             className="w-full p-2 border rounded"
           />
+
           <input
             name="email"
             type="email"
@@ -319,6 +305,7 @@ export default function CheckoutPage() {
             required
             className="w-full p-2 border rounded"
           />
+
           <input
             name="address"
             placeholder="Address"
@@ -327,6 +314,7 @@ export default function CheckoutPage() {
             required
             className="w-full p-2 border rounded"
           />
+
           <input
             name="city"
             placeholder="City"
@@ -335,6 +323,15 @@ export default function CheckoutPage() {
             required
             className="w-full p-2 border rounded"
           />
+
+          <input
+            name="state"
+            placeholder="State"
+            value={form.state}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+          />
+
           <input
             name="postalCode"
             placeholder="Postal Code"
@@ -343,6 +340,7 @@ export default function CheckoutPage() {
             required
             className="w-full p-2 border rounded"
           />
+
           <input
             name="country"
             placeholder="Country"
@@ -351,28 +349,117 @@ export default function CheckoutPage() {
             required
             className="w-full p-2 border rounded"
           />
-          <div className="btn_wrap flex items-center justify-between gap-8">
+
+          {/* Shipping Methods */}
+          <div className="border rounded p-4 bg-gray-50">
+            <h2 className="text-xl font-semibold mb-3">Shipping Method</h2>
+
+            {shippingMethods.length === 0 ? (
+              <div className="border border-red-300 bg-red-50 text-red-700 p-3 rounded text-sm">
+                No shipping method is available right now. Please contact
+                support before placing an order.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {shippingMethods.map((method) => {
+                  const methodPrice = Number(method.price || 0);
+                  const isSelected = selectedShippingMethodId === method._id;
+
+                  return (
+                    <label
+                      key={method._id}
+                      htmlFor={`shipping-${method._id}`}
+                      className={`block cursor-pointer rounded border p-4 transition ${
+                        isSelected
+                          ? 'border-siteBlack bg-white shadow-sm'
+                          : 'border-gray-300 bg-white hover:border-siteBlack'
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <input
+                          id={`shipping-${method._id}`}
+                          type="radio"
+                          name="shippingMethod"
+                          value={method._id}
+                          checked={isSelected}
+                          onChange={handleShippingMethodChange}
+                          required
+                          className="mt-1"
+                        />
+
+                        <div className="w-full">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                            <h3 className="font-bold text-base">
+                              {method.name}
+                            </h3>
+
+                            <span className="font-bold text-siteBlack">
+                              ${methodPrice.toFixed(2)}
+                            </span>
+                          </div>
+
+                          {method.description && (
+                            <p className="text-sm text-gray-700 mt-2">
+                              {method.description}
+                            </p>
+                          )}
+
+                          {method.shortNote && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              {method.shortNote}
+                            </p>
+                          )}
+
+                          {method.deliveryTime && (
+                            <p className="text-sm font-medium mt-2">
+                              Delivery time: {method.deliveryTime}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          <div className="btn_wrap flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <button
               type="submit"
-              className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer "
+              disabled={shippingMethods.length === 0 || showLoader}
+              className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Place Order
             </button>
-            <Link className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer " href="/cart">Go back to Cart</Link>
+
+            <Link
+              className="bg-siteBlack text-white border border-siteBlack rounded hover:bg-white hover:text-siteBlack px-6 py-3 font-bold font-lg inline-block cursor-pointer"
+              href="/cart"
+            >
+              Go back to Cart
+            </Link>
           </div>
         </form>
 
         {/* Order Summary */}
         <div className="bg-gray-50 border p-4 rounded">
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+
           <ul className="space-y-2">
-            {cartItems.map((item,index) => (
-              <li key={index} className="flex justify-between items-center">
-                <span>{item.name} {item.isVariable ? ` - ${item.variation.label}`  : ''} ( {item.price} × {item.quantity})</span>
+            {cartItems.map((item, index) => (
+              <li key={index} className="flex justify-between items-center gap-4">
+                <span>
+                  {item.name}
+                  {item.isVariable ? ` - ${item.variation.label}` : ''} (
+                  {item.price} × {item.quantity})
+                </span>
+
                 <span>${(item.price * item.quantity).toFixed(2)}</span>
               </li>
             ))}
           </ul>
+
           <hr className="my-4" />
 
           <div className="text-lg font-semibold flex justify-between">
@@ -380,46 +467,77 @@ export default function CheckoutPage() {
             <span>${subTotal.toFixed(2)}</span>
           </div>
 
-          { discount > 0 ? <div className="text-lg font-semibold flex justify-between">
-            <span>Discount:</span>
-            <span>${discount.toFixed(2)}</span>
-          </div> : '' }
-          
+          {discount > 0 && (
+            <div className="text-lg font-semibold flex justify-between">
+              <span>Discount:</span>
+              <span>${discount.toFixed(2)}</span>
+            </div>
+          )}
 
           <div className="text-lg font-semibold flex justify-between">
-            <span>Shipping:</span>
+            <span>
+              Shipping:
+              {selectedShippingMethod?.name
+                ? ` ${selectedShippingMethod.name}`
+                : ''}
+            </span>
+
             <span>${shipping.toFixed(2)}</span>
           </div>
 
-          <div className="text-lg font-semibold flex justify-between">
+          {selectedShippingMethod?.deliveryTime && (
+            <p className="text-sm text-gray-600 mt-1">
+              Estimated delivery: {selectedShippingMethod.deliveryTime}
+            </p>
+          )}
+
+          <hr className="my-4" />
+
+          <div className="text-lg font-bold flex justify-between">
             <span>Total:</span>
             <span>${orderPrice.toFixed(2)}</span>
           </div>
         </div>
       </div>
 
-      
-      
-      { showPaymentOptions && (
-          <div className="modal fixed top-0 left-0 w-full h-full backdrop-blur-sm p-4 flex items-center justify-center z-[60]">
-            <div className="modal_inner w-full max-w-[550px] bg-green-600 px-4 py-8 rounded text-white relative">
-                <Image onClick={closePaymentOptionsHandler} className='absolute -top-10 -right-10 cursor-pointer' src="/images/close-x-circled.svg" alt="Close Icon" width={48} height={48} />
-                <p className="text-lg font-medium text-center">Congratulations, order placed successfully!</p>
-                <p className="text-xl font-bold text-center">Please select payment option.</p>
+      {showPaymentOptions && (
+        <div className="modal fixed top-0 left-0 w-full h-full backdrop-blur-sm p-4 flex items-center justify-center z-[60]">
+          <div className="modal_inner w-full max-w-[550px] bg-green-600 px-4 py-8 rounded text-white relative">
+            <Image
+              onClick={closePaymentOptionsHandler}
+              className="absolute -top-10 -right-10 cursor-pointer"
+              src="/images/close-x-circled.svg"
+              alt="Close Icon"
+              width={48}
+              height={48}
+            />
 
-                <div className="w-full flex gap-6 justify-center items-center mt-10">
-                  <div onClick={e => paymentHandler('crypto')} className="bg-white border rounded text-black hover:bg-black hover:text-white px-4 py-2 cursor-pointer font-bold">Crypto Payment</div>
-                  <div onClick={e => paymentHandler('interac')} className="bg-white border rounded text-black hover:bg-black hover:text-white px-4 py-2 cursor-pointer font-bold">Interac Payment</div>
-                </div>
+            <p className="text-lg font-medium text-center">
+              Congratulations, order placed successfully!
+            </p>
+
+            <p className="text-xl font-bold text-center">
+              Please select payment option.
+            </p>
+
+            <div className="w-full flex flex-col sm:flex-row gap-6 justify-center items-center mt-10">
+              <div
+                onClick={() => paymentHandler('crypto')}
+                className="bg-white border rounded text-black hover:bg-black hover:text-white px-4 py-2 cursor-pointer font-bold"
+              >
+                Crypto Payment
+              </div>
+
+              <div
+                onClick={() => paymentHandler('interac')}
+                className="bg-white border rounded text-black hover:bg-black hover:text-white px-4 py-2 cursor-pointer font-bold"
+              >
+                Interac Payment
+              </div>
             </div>
           </div>
-      
-      
+        </div>
       )}
-
-     
-
-
     </div>
   );
 }

@@ -39,7 +39,7 @@ const SingleOrderItem = ({order,sl}) => {
   const [deleteOrder,{isLoading}] = useDeleteOrderMutation()
 
   const deleteOrderHandler = async (orderId) => {
-    console.log("Delete Handler!")
+    // console.log("Delete Handler!")
     setShowLoader(true)
 
     try {
@@ -51,6 +51,7 @@ const SingleOrderItem = ({order,sl}) => {
       toast.error("Something went wrong!")
     } finally{
       setShowLoader(false)
+      setShowDelete(false)
     }
 
     
@@ -87,7 +88,7 @@ const SingleOrderItem = ({order,sl}) => {
       {showDelete && (
 
         <div className="modal fixed w-full h-full top-0 left-0 flex items-center justify-center p-6 z-50 backdrop-blur-sm">
-          <div className="overlay_inner w-full max-w-[360px] min-h-[200px] bg-siteGray text-white flex justify-center p-6 flex-col justify-center">
+          <div className="overlay_inner w-full max-w-[360px] min-h-[200px] bg-siteGray text-white flex justify-center p-6 flex-col">
               <h1 className='text-2xl font-bold mb-4 text-center text-black'>Delete Order?</h1>
               <p className="text-lg mb-6 text-center text-black ">You can't undo this delete.</p>
               <div className="flex gap-4 justify-center">

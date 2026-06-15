@@ -27,7 +27,7 @@ const page = () => {
     return null;
   }
     */
-  const limit = 5;
+  const limit = 20;
   const {data, isLoading, isError, error} = useGetOrdersQuery({page,limit})
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const page = () => {
   }
 
 
-  console.log("orders data",data)
+  // console.log("orders data",data)
   // const orders = data?.orders;
   // console.log("Orders", orders)
 
