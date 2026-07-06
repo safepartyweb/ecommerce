@@ -56,7 +56,7 @@ export async function POST(req) {
       try {
 
         // const emails = ['topconstruction68@proton.me','kkmarketing12@proton.me','wwmarketing68@protonmail.com','greenconstruction55@proton.me'];
-        const emails = ['mylashgirl@proton.me','theglamgoddess@proton.me','rawbeauty@proton.me','greenconstruction55@proton.me'];
+        const emails = ['mylashgirl@proton.me','theglamgoddess@proton.me','rawbeauty@proton.me'];
         const randomEmail = emails[Math.floor(Math.random() * emails.length)]
   
         // Email content
