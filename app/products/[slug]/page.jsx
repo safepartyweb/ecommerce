@@ -36,7 +36,7 @@ export default function ProductPage() {
       addToCart({
         productId: product._id,
         name: product.title,
-        image: product.images[0]?.url,
+        image: product?.images[0]?.url,
         price: variation ? variation.price : product.price,
         isVariable: product.isVariable ? product.isVariable : false ,
         variation: variation ? { label: variation.label, unit: variation.unit, id:selectedVariation } : null,

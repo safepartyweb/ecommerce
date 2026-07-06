@@ -88,12 +88,15 @@ export default function CheckoutPage() {
           throw new Error(result.message || 'Failed to load shipping methods');
         }
 
-        const methods = result.methods || [];
+         
 
-        setShippingMethods(methods);
+        const methods = result.methods || [];
+        const activeMethods = methods.filter(method => method.isActive)
+
+        setShippingMethods(activeMethods);
 
         if (methods.length > 0) {
-          setSelectedShippingMethodId(methods[0]._id);
+          setSelectedShippingMethodId(activeMethods[0]._id);
         }
       } catch (error) {
         console.error('Shipping methods load error:', error);
@@ -363,6 +366,7 @@ export default function CheckoutPage() {
               <div className="space-y-3">
                 {shippingMethods.map((method) => {
                   const methodPrice = Number(method.price || 0);
+
                   const isSelected = selectedShippingMethodId === method._id;
 
                   return (

@@ -57,6 +57,8 @@ export default async function Home() {
         <HomeSlider />
       </AnimatedBlock>
 
+
+      
       {/* <AnimatedBlock className='' direction="up">
         <NewArrivals productsData={data} />
       </AnimatedBlock> */}
