@@ -66,6 +66,13 @@ export async function POST(req) {
           <p>Please send an Interac e-Transfer of <strong>$${price_amount}</strong> to the following email:</p>
           <h3>${randomEmail}</h3>
           <p>Use your Order ID <strong>${order_id}</strong> as the message/reference.</p>
+
+          <p>Save our contact details as
+          * Name : Hair Products or Beauty Products 
+          * Email : ${randomEmail}
+          * Note will Order number - ${order_id}
+          Promo code : Save20
+          Warning : All illegal mentions will result in your account being banned.</p>
           <p>We'll process your order once the payment is received.</p>
         `
   
