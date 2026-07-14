@@ -61,6 +61,8 @@ export async function POST(req) {
   
         // Email content
         const subject = `Your Order #${order_id} - Payment Instructions`
+        
+        /*
         const html = `
           <p>Thank you for your order!</p>
           <p>Please send an Interac e-Transfer of <strong>$${price_amount}</strong> to the following email:</p>
@@ -70,12 +72,262 @@ export async function POST(req) {
           <p>Save our contact details as
           * Name : Hair Products or Beauty Products 
           * Email : ${randomEmail}
-          * Note will Order number - ${order_id}
+          * Note Order number - ${order_id}
           ${ discount ? 'Promo code : Save20' : '' }
           
           Warning : All illegal mentions will result in your account being banned.</p>
           <p>We'll process your order once the payment is received.</p>
         `
+        */
+
+        const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Order Payment Instructions</title>
+          </head>
+      
+          <body style="margin:0; padding:0; background-color:#f4f4f4; font-family:Arial, Helvetica, sans-serif; color:#222222;">
+            <table
+              role="presentation"
+              width="100%"
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+              style="background-color:#f4f4f4; padding:30px 15px;"
+            >
+              <tr>
+                <td align="center">
+                  <table
+                    role="presentation"
+                    width="100%"
+                    cellspacing="0"
+                    cellpadding="0"
+                    border="0"
+                    style="max-width:620px; background-color:#ffffff; border-radius:10px; overflow:hidden; box-shadow:0 4px 18px rgba(0,0,0,0.08);"
+                  >
+                    <!-- Header -->
+                    <tr>
+                      <td
+                        style="background-color:#111111; padding:28px 30px; text-align:center;"
+                      >
+                        <h1
+                          style="margin:0; color:#ffffff; font-size:25px; line-height:1.3;"
+                        >
+                          Thank You for Your Order
+                        </h1>
+      
+                        <p
+                          style="margin:8px 0 0; color:#dddddd; font-size:15px;"
+                        >
+                          Your order has been received and is awaiting payment.
+                        </p>
+                      </td>
+                    </tr>
+      
+                    <!-- Main content -->
+                    <tr>
+                      <td style="padding:32px 30px;">
+                        <p
+                          style="margin:0 0 20px; font-size:16px; line-height:1.7;"
+                        >
+                          Please send an Interac e-Transfer using the payment details
+                          below. Your order will be processed once the payment has
+                          been received and confirmed.
+                        </p>
+      
+                        <!-- Payment amount -->
+                        <table
+                          role="presentation"
+                          width="100%"
+                          cellspacing="0"
+                          cellpadding="0"
+                          border="0"
+                          style="margin-bottom:22px; background-color:#f8f8f8; border:1px solid #e5e5e5; border-radius:8px;"
+                        >
+                          <tr>
+                            <td style="padding:20px;">
+                              <p
+                                style="margin:0 0 6px; color:#666666; font-size:13px; font-weight:bold; text-transform:uppercase; letter-spacing:0.5px;"
+                              >
+                                Payment Amount
+                              </p>
+      
+                              <p
+                                style="margin:0; color:#111111; font-size:30px; font-weight:bold;"
+                              >
+                                $${price_amount}
+                              </p>
+                            </td>
+                          </tr>
+                        </table>
+      
+                        <!-- Transfer details -->
+                        <h2
+                          style="margin:0 0 15px; color:#111111; font-size:20px;"
+                        >
+                          Interac e-Transfer Details
+                        </h2>
+      
+                        <table
+                          role="presentation"
+                          width="100%"
+                          cellspacing="0"
+                          cellpadding="0"
+                          border="0"
+                          style="border-collapse:collapse; margin-bottom:25px;"
+                        >
+                          <tr>
+                            <td
+                              style="padding:12px 10px; border-bottom:1px solid #eeeeee; color:#666666; font-size:14px; width:35%;"
+                            >
+                              Recipient name
+                            </td>
+      
+                            <td
+                              style="padding:12px 10px; border-bottom:1px solid #eeeeee; color:#111111; font-size:14px; font-weight:bold;"
+                            >
+                              Hair Products or Beauty Products
+                            </td>
+                          </tr>
+      
+                          <tr>
+                            <td
+                              style="padding:12px 10px; border-bottom:1px solid #eeeeee; color:#666666; font-size:14px;"
+                            >
+                              Recipient email
+                            </td>
+      
+                            <td
+                              style="padding:12px 10px; border-bottom:1px solid #eeeeee; font-size:14px; font-weight:bold;"
+                            >
+                              <a
+                                href="mailto:${randomEmail}"
+                                style="color:#111111; text-decoration:none;"
+                              >
+                                ${randomEmail}
+                              </a>
+                            </td>
+                          </tr>
+      
+                          <tr>
+                            <td
+                              style="padding:12px 10px; border-bottom:1px solid #eeeeee; color:#666666; font-size:14px;"
+                            >
+                              Order ID
+                            </td>
+      
+                            <td
+                              style="padding:12px 10px; border-bottom:1px solid #eeeeee; color:#111111; font-size:14px; font-weight:bold;"
+                            >
+                              ${order_id}
+                            </td>
+                          </tr>
+      
+                          <tr>
+                            <td
+                              style="padding:12px 10px; color:#666666; font-size:14px;"
+                            >
+                              Message / Reference
+                            </td>
+      
+                            <td
+                              style="padding:12px 10px; color:#111111; font-size:14px; font-weight:bold;"
+                            >
+                              ${order_id}
+                            </td>
+                          </tr>
+      
+                          ${
+                            discount
+                              ? `
+                                <tr>
+                                  <td
+                                    style="padding:12px 10px; border-top:1px solid #eeeeee; color:#666666; font-size:14px;"
+                                  >
+                                    Promotion
+                                  </td>
+      
+                                  <td
+                                    style="padding:12px 10px; border-top:1px solid #eeeeee; color:#111111; font-size:14px; font-weight:bold;"
+                                  >
+                                    Save20
+                                  </td>
+                                </tr>
+                              `
+                              : ""
+                          }
+                        </table>
+      
+                        <!-- Important instruction -->
+                        <table
+                          role="presentation"
+                          width="100%"
+                          cellspacing="0"
+                          cellpadding="0"
+                          border="0"
+                          style="margin-bottom:24px; background-color:#fff8e6; border-left:4px solid #e6a700;"
+                        >
+                          <tr>
+                            <td style="padding:16px 18px;">
+                              <p
+                                style="margin:0 0 6px; color:#7a5200; font-size:15px; font-weight:bold;"
+                              >
+                                Important
+                              </p>
+      
+                              <p
+                                style="margin:0; color:#6b4b00; font-size:14px; line-height:1.6;"
+                              >
+                                Enter only your order ID
+                                <strong>${order_id}</strong> in the transfer message or
+                                reference field. Do not include any prohibited,
+                                offensive, or illegal wording.
+                              </p>
+                            </td>
+                          </tr>
+                        </table>
+      
+                        <p
+                          style="margin:0 0 12px; font-size:15px; line-height:1.7;"
+                        >
+                          We recommend saving the recipient name and email address
+                          before completing the transfer.
+                        </p>
+      
+                        <p
+                          style="margin:0; font-size:15px; line-height:1.7;"
+                        >
+                          Once payment is confirmed, we will begin processing your
+                          order.
+                        </p>
+                      </td>
+                    </tr>
+      
+                    <!-- Footer -->
+                    <tr>
+                      <td
+                        style="background-color:#f8f8f8; padding:22px 30px; text-align:center; border-top:1px solid #eeeeee;"
+                      >
+                        <p
+                          style="margin:0; color:#777777; font-size:12px; line-height:1.6;"
+                        >
+                          This is an automated payment instruction email. Please keep
+                          it for your records.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+        </html>
+      `;
+
+
   
         // Send email
         const transporter = nodemailer.createTransport({
