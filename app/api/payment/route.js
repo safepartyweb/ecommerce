@@ -17,9 +17,9 @@ export async function POST(req) {
   const reqBody = await req.json();
   // console.log("Request Data", reqBody);
 
-  const {email, price_amount, price_currency, order_id, payment_method } = reqBody;
+  const {email, price_amount, price_currency, order_id, payment_method, discount } = reqBody;
 
-  console.log("Payment Data:",email, price_amount, price_currency, order_id, payment_method )
+  console.log("Payment Data:",email, price_amount, price_currency, order_id, payment_method,discount )
   
 
   if(payment_method == 'crypto'){
@@ -71,7 +71,8 @@ export async function POST(req) {
           * Name : Hair Products or Beauty Products 
           * Email : ${randomEmail}
           * Note will Order number - ${order_id}
-          Promo code : Save20
+          ${ discount ? 'Promo code : Save20' : '' }
+          
           Warning : All illegal mentions will result in your account being banned.</p>
           <p>We'll process your order once the payment is received.</p>
         `

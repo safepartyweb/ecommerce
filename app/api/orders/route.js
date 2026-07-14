@@ -168,6 +168,7 @@ export async function POST(req) {
       paymentMethod,
       userId,
       referredBy,
+      // discount,
     } = body;
 
     if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
@@ -205,7 +206,19 @@ export async function POST(req) {
 
     const pricing = await validateAndPriceOrderItems(orderItems);
 
-    const discount = 0;
+    const previousOrderExists = await Order.exists({
+      user: new mongoose.Types.ObjectId(userId),
+    });
+
+    const isFirstOrder = !previousOrderExists;
+    const firstOrderDiscountPercentage = 20;
+    
+    const discount = isFirstOrder ? round2(
+        pricing.itemsPrice * (firstOrderDiscountPercentage / 100)
+      )
+    : 0;  
+
+
     const taxPrice = 0;
     const shippingPrice = round2(Number(selectedShippingMethod.price || 0));
     const totalPrice = round2(
