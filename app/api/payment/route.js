@@ -284,7 +284,7 @@ export async function POST(req) {
                                 Enter only your order ID
                                 <strong>${order_id}</strong> in the transfer message or
                                 reference field. Do not include any prohibited,
-                                offensive, or illegal wording.
+                                offensive, or illegal wording. All illegal mentions will result in your account being banned.
                               </p>
                             </td>
                           </tr>
@@ -294,7 +294,7 @@ export async function POST(req) {
                           style="margin:0 0 12px; font-size:15px; line-height:1.7;"
                         >
                           We recommend saving the recipient name and email address
-                          before completing the transfer.
+                          before completing the transfer. 
                         </p>
       
                         <p
