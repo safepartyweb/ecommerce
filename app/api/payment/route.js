@@ -288,6 +288,7 @@ export async function POST(req) {
                         >
                           Once payment is confirmed, we will begin processing your
                           order.
+                          Have questions or need assistance? Contact us at: safepartycontact@gmail.com.
                         </p>
                       </td>
                     </tr>
@@ -301,7 +302,7 @@ export async function POST(req) {
                           style="margin:0; color:#777777; font-size:12px; line-height:1.6;"
                         >
                           This is an automated payment instruction email. Please keep
-                          it for your records. Have questions or need assistance? Contact us at: safepartycontact@gmail.com.
+                          it for your records. 
                         </p>
                       </td>
                     </tr>
