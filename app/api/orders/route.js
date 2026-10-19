@@ -220,7 +220,12 @@ export async function POST(req) {
 
 
     const taxPrice = 0;
-    const shippingPrice = round2(Number(selectedShippingMethod.price || 0));
+    let shippingPrice;
+    if(pricing.itemsPrice >= 200){
+      shippingPrice = 0
+    }else{
+      shippingPrice = round2(Number(selectedShippingMethod.price || 0));
+    }
     const totalPrice = round2(
       pricing.itemsPrice - discount + shippingPrice + taxPrice
     );

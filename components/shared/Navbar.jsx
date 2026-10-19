@@ -7,6 +7,8 @@ import { useLogOutMutation } from "@/lib/api/authApi";
 import Image from "next/image";
 import { logout, setCredentials } from "@/store/authSlice";
 import { getSession, signOut as nextAuthSignOut } from "next-auth/react";
+import Bar from "../home/Bar";
+import AnnouncementSlider from "../home/AnnouncementSlider";
 
 export default function Navbar() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -399,6 +401,9 @@ export default function Navbar() {
               />
             </div>
           </div>
+          <AnnouncementSlider />
+
+
         </div>
       </header>
     </>
