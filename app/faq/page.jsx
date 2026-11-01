@@ -66,7 +66,7 @@ const faqData = [
   {
     question: 'Can you ship outside of Canada?',
     answer:
-      'No',
+      'We do not ship outside of Canada only shipping Canada wide.',
   },
 
 ];

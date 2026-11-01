@@ -170,6 +170,16 @@ export default function Navbar() {
                   <Link href="/reviews">Reviews</Link>
                 </li>
 
+                <li className="text-center">
+                  <Link className="text-center w-full" href="/faq">
+                    FAQ
+                  </Link>
+                </li>
+
+
+
+
+{/* 
                 <li className="relative has_children group">
                   <div className="flex gap-1 items-center">
                     Support
@@ -195,7 +205,7 @@ export default function Navbar() {
                       </Link>
                     </li>
                   </ul>
-                </li>
+                </li> */}
               </nav>
               {/* End Desktop Nav */}
 
@@ -219,13 +229,8 @@ export default function Navbar() {
                 </li>
 
                 <li onClick={() => setIsMobileMenuOpen(false)}>
-                  <Link href="/about">About</Link>
+                  <Link href="/faq">Faq</Link>
                 </li>
-
-                <li onClick={() => setIsMobileMenuOpen(false)}>
-                  <Link href="/contact">Contact</Link>
-                </li>
-
                 {isAnyLoggedIn ? (
                   <>
                     {isCustomer && (
