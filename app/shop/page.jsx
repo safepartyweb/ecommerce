@@ -6,6 +6,10 @@ import CategoryNav from "./CategoryNav";
 // always fetch fresh data (optional)
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Shop",
+};
+
 const Page = async () => {
   const { products = [], categories = [] } = await getShopProductsData();
 

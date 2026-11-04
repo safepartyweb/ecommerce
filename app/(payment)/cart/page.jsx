@@ -4,12 +4,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { removeFromCart, updateQuantity, clearCart } from '@/store/cartSlice';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { trackViewCart } from "@/lib/analytics/cart";
+
+
 
 const CartPage = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const [subtotal, setSubtotal] = useState(0);
   const [hasMounted, setHasMounted] = useState(false);
+
 
   useEffect(() => {
     setHasMounted(true);
@@ -20,6 +24,12 @@ const CartPage = () => {
     const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     setSubtotal(total);
   }, [cartItems]);
+
+  useEffect(() => {
+    if (!hasMounted || cartItems.length === 0) return;
+  
+    trackViewCart(cartItems);
+  }, [hasMounted]);
 
   /*
   const handleQtyChange = (productId, qty, variation) => {
@@ -66,6 +76,8 @@ const CartPage = () => {
     </Link>
   </div>
   }
+
+
 
   return (
     <section className='sec_hero_bar py-6 md:py-10 '>

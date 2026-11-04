@@ -12,14 +12,31 @@ import BlackButton from '@/components/BlackButton'
 const page = () => {
   const {orderId} = useParams()
   console.log("Order Id", orderId)
-  const {data,isLoading} = useGetSingleOrderQuery({orderId})
 
-  if(isLoading){
-    return <Loader />
+  const { data, isLoading, isError, error } = useGetSingleOrderQuery(
+    { orderId },
+    { skip: !orderId }
+  );
+  
+  if (isLoading) {
+    return <Loader />;
   }
-  console.log("Oder Data:", data)
+  
+  if (isError || !data?.order) {
+    console.error("Order fetch error:", error || data);
+  
+    return (
+      <div className="p-6 text-center">
+        <h2 className="text-xl font-semibold">Unable to load order</h2>
+        <p className="text-gray-600 mt-2">
+          {error?.data?.message || data?.message || "Order not found or access denied."}
+        </p>
+      </div>
+    );
+  }
+  
   const order = data.order;
-  const user = data.order.user
+  const user = order.user;
 
 
   return (

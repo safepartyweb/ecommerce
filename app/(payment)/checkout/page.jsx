@@ -1,7 +1,7 @@
 'use client';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { useState, useEffect } from 'react';
+import { useSelector, useDispatch, } from 'react-redux';
+import { useState, useEffect, useRef  } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Loader from '@/components/Loader';
@@ -9,6 +9,11 @@ import { clearCart } from '@/store/cartSlice';
 import Image from 'next/image';
 import { toast } from 'react-toastify';
 import { useGetOrdersQuery } from '@/lib/api/customerApi';
+import { trackBeginCheckout } from "@/lib/analytics/cart";
+import { trackPlaceOrder } from "@/lib/analytics/cart";
+
+
+
 
 export default function CheckoutPage() {
   const [showLoader, setShowLoader] = useState(false);
@@ -48,6 +53,8 @@ export default function CheckoutPage() {
     postalCode: '',
     country: '',
   });
+
+  const checkoutTracked = useRef(false);
 
   useEffect(() => {
     if (!userInfo) {
@@ -138,6 +145,14 @@ export default function CheckoutPage() {
     setOrderPrice(amountBeforeShipping + selectedShippingPrice);
   }, [cartItems, data, selectedShippingMethod]);
 
+  useEffect(() => {
+    if (!userInfo || isOrdersLoading || shippingMethodsLoading) return;
+    if (cartItems.length === 0 || checkoutTracked.current) return;
+  
+    trackBeginCheckout(cartItems);
+    checkoutTracked.current = true;
+  }, [userInfo, isOrdersLoading, shippingMethodsLoading, cartItems]);
+
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -161,6 +176,7 @@ export default function CheckoutPage() {
     );
   }
 
+  /*
   const placeOrderHandler = async (e) => {
     e.preventDefault();
   
@@ -219,6 +235,74 @@ export default function CheckoutPage() {
       setShowLoader(false);
     }
   };
+  */
+
+
+  const placeOrderHandler = async (e) => {
+    e.preventDefault();
+  
+    if (!selectedShippingMethod) {
+      toast.error("Please select a shipping method.");
+      return;
+    }
+  
+    setShowLoader(true);
+  
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+  
+        body: JSON.stringify({
+          orderItems: cartItems,
+          shippingAddress: form,
+  
+          shippingMethod: selectedShippingMethod._id,
+  
+          shippingSnapshot: {
+            name: selectedShippingMethod.name,
+            shortNote: selectedShippingMethod.shortNote || "",
+            price: Number(shipping),
+            deliveryTime: selectedShippingMethod.deliveryTime || "",
+          },
+  
+          itemsPrice: subTotal,
+          discount,
+          shippingPrice: shipping,
+          taxPrice,
+          totalPrice: orderPrice,
+          userId: userInfo.id,
+          referredBy: userInfo.referredBy,
+        }),
+      });
+  
+      const data = await res.json();
+  
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to create order");
+      }
+  
+      // Track successful order placement
+      trackPlaceOrder(data);
+  
+      toast.success("Order created successfully!");
+  
+      const orderId = data._id;
+      setOrderId(orderId);
+      setShowPaymentOptions(true);
+  
+    } catch (error) {
+      console.error("❌ Error creating order:", error);
+      toast.error(error.message);
+    } finally {
+      setShowLoader(false);
+    }
+  };
+  
+
+
 
   const paymentHandler = async (method) => {
     setShowLoader(true);

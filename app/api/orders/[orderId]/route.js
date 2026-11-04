@@ -5,9 +5,14 @@ import Affiliate from "@/models/Affiliate";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/AdminAuth";
 
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import Customer from "@/models/Customer";
+import { auth } from "@/auth";
 
 
 //get single order
+/*
 export async function GET(req, { params }) {
 
   // console.log("Individual Order route hit!")
@@ -52,6 +57,100 @@ export async function GET(req, { params }) {
     );
   }
 }
+*/
+export async function GET(req, { params }) {
+  try {
+    await connectMongo();
+
+    const { orderId } = await params;
+
+    if (!orderId) {
+      return NextResponse.json(
+        { success: false, message: "Order ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // 1. Check admin authentication through NextAuth
+    const session = await auth();
+
+    const isAdmin =
+      session?.user &&
+      ["admin", "super_admin"].includes(session.user.role);
+
+    // 2. If not admin, check customer JWT authentication
+    let customer = null;
+
+    if (!isAdmin) {
+      const cookieStore = await cookies();
+      const token = cookieStore.get("token")?.value;
+
+      if (!token) {
+        return NextResponse.json(
+          { success: false, message: "Unauthorized" },
+          { status: 401 }
+        );
+      }
+
+      let decoded;
+
+      try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+      } catch (error) {
+        return NextResponse.json(
+          { success: false, message: "Invalid or expired token" },
+          { status: 401 }
+        );
+      }
+
+      customer = await Customer.findById(decoded.userId).select("_id");
+
+      if (!customer) {
+        return NextResponse.json(
+          { success: false, message: "Customer not found" },
+          { status: 401 }
+        );
+      }
+    }
+
+    // 3. Find order
+    const order = await Order.findById(orderId).populate("user");
+
+    if (!order) {
+      return NextResponse.json(
+        { success: false, message: "Order not found" },
+        { status: 404 }
+      );
+    }
+
+    // 4. Verify customer owns this order
+    if (
+      !isAdmin &&
+      String(order.user?._id) !== String(customer._id)
+    ) {
+      return NextResponse.json(
+        { success: false, message: "You cannot access this order" },
+        { status: 403 }
+      );
+    }
+
+    return NextResponse.json(
+      { success: true, order },
+      { status: 200 }
+    );
+
+  } catch (error) {
+    console.error("Error fetching order:", error);
+
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+
+
 
 
 //edit single order
