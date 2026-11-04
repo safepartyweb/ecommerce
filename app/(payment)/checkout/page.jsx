@@ -285,7 +285,17 @@ export default function CheckoutPage() {
       }
   
       // Track successful order placement
-      trackPlaceOrder(data);
+      // trackPlaceOrder(data);
+      trackPlaceOrder(data, {
+        userId: userInfo.id,
+        name: form.name,
+        email: form.email,
+        address: form.address,
+        city: form.city,
+        state: form.state,
+        postalCode: form.postalCode,
+        country: form.country,
+      });
   
       toast.success("Order created successfully!");
   
