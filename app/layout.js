@@ -39,15 +39,18 @@ export default function RootLayout({ children }) {
     <html lang="en">
 
       <head>
-        <Script id="my-custom-script" strategy="beforeInteractive">
+        <Script id="google-tag-manager" strategy="beforeInteractive">
           {`
-            <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-MSW6PCMP"></script>
-            <script>
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-            </script> 
-
+            (function(w,d,s,l,i){
+              w[l]=w[l]||[];
+              w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+              var f=d.getElementsByTagName(s)[0],
+                  j=d.createElement(s),
+                  dl=l!='dataLayer'?'&l='+l:'';
+              j.async=true;
+              j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+              f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-MSW6PCMP');
           `}
         </Script>
       </head>
@@ -57,6 +60,18 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
       >
+      <noscript>
+        <iframe
+          src="https://www.googletagmanager.com/ns.html?id=GTM-MSW6PCMP"
+          height="0"
+          width="0"
+          style={{ display: "none", visibility: "hidden" }}
+          title="Google Tag Manager"
+        />
+      </noscript>
+
+
+
         <DataLayer />
         <AuthProvider>
           <ToastContainer />
