@@ -7,6 +7,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ContactWidget from "@/components/shared/ContactWidget";
 import DataLayer from "@/components/analytics/DataLayer";
+import Script from "next/script";
 
 
 
@@ -36,6 +37,23 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+
+      <head>
+        <Script id="my-custom-script" strategy="beforeInteractive">
+          {`
+            <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-MSW6PCMP"></script>
+            <script>
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+            </script> 
+
+          `}
+        </Script>
+      </head>
+
+
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased scroll-smooth`}
       >
