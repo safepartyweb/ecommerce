@@ -8,7 +8,7 @@ const ContactWidget = () => {
 
   // Replace these with your actual phone numbers (include country code without '+' for WhatsApp, or with '+' for Signal if needed)
   const whatsappNumber = "2365011811" 
-  const signalNumber = "2365011811"
+  const signalNumber = "+12365011811"
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
